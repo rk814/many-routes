@@ -1,0 +1,4 @@
+spring:
+  application.name: kgp-backend
+server:
+  port: 8888
