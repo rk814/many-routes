@@ -17,11 +17,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
+@Table(name = "actor")
 public class User {
 
     @Id
     @EqualsAndHashCode.Include
-    private UUID id;
+    private UUID id = UUID.randomUUID();
 
     @NotBlank
     @Column(unique = true)
