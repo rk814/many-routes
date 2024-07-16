@@ -4,7 +4,6 @@ import com.codecool.kgp.common.Coordinates;
 import com.codecool.kgp.common.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -55,4 +54,9 @@ public class User {
 
     @Version
     private int version;
+
+
+    public double[] getCoordinatessArray() {
+        return new double[]{coordinates.getLatitude(), coordinates.getLongitude()};
+    }
 }
