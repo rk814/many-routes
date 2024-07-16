@@ -1,11 +1,10 @@
 package com.codecool.kgp.controller;
 
 import com.codecool.kgp.controller.dto.UserDto;
+import com.codecool.kgp.controller.dto.UserRequestDto;
 import com.codecool.kgp.service.UserService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,8 +22,18 @@ public class UserController {
     public List<UserDto> getUsers() {
         return userService.getUsers();
     }
+
     @GetMapping("/{login}")
     public UserDto getUsers(@PathVariable String login) {
         return userService.getUserByLogin(login);
     }
+
+    @PostMapping
+    public UserDto registerUser(@Valid @RequestBody UserRequestDto dto) {
+        return userService.setUser(dto);
+    }
+
+    // TODO PUT
+
+    // TODO LOGIN
 }

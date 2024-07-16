@@ -4,4 +4,15 @@ GET localhost:8888/got/v1/users
 
 ###
 
-GET localhost:8888/got/vi/users/Tatroszaman81
+GET localhost:8888/got/v1/users/furczak
+
+###
+
+POST localhost:8888/got/v1/users
+Content-Type: application/json
+
+{
+  "login": "furczak",
+  "password": "test123",
+  "email": "furczak@gmail.com"
+}

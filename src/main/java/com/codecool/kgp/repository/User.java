@@ -33,7 +33,6 @@ public class User {
     @Column(unique = true)
     private String hashPassword;
 
-    @NotBlank
     @Size(max=50, message = "Imię może mieć maksymalnie 50 znaków")
     private String name;
 
@@ -57,7 +56,16 @@ public class User {
     private int version;
 
 
-    public double[] getCoordinatessArray() {
+    public User(String login, String hashPassword, String email) {
+        this.login = login;
+        this.hashPassword = hashPassword;
+        this.email = email;
+    }
+
+    public double[] getCoordinatesArray() {
+        if (coordinates==null) {
+            return null;
+        }
         return new double[]{coordinates.getLatitude(), coordinates.getLongitude()};
     }
 }
