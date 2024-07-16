@@ -36,4 +36,8 @@ public class UserController {
     // TODO PUT
 
     // TODO LOGIN
+
+    // TODO DELETE
+
+    // TODO jednostkowe
 }

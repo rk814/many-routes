@@ -3,6 +3,7 @@ package com.codecool.kgp.repository;
 import com.codecool.kgp.common.Coordinates;
 import com.codecool.kgp.common.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
@@ -30,13 +31,13 @@ public class User {
     private String login;
 
     @NotBlank
-    @Column(unique = true)
     private String hashPassword;
 
     @Size(max=50, message = "Imię może mieć maksymalnie 50 znaków")
     private String name;
 
     @NotBlank
+    @Email
     @Column(unique = true)
     @Size(max=100, message = "E-mail może mieć maksymalnie 100 znaków")
     private String email;
