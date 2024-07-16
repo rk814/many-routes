@@ -3,6 +3,7 @@ package com.codecool.kgp.controller;
 import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,5 +22,9 @@ public class UserController {
     @GetMapping
     public List<UserDto> getUsers() {
         return userService.getUsers();
+    }
+    @GetMapping("/{login}")
+    public UserDto getUsers(@PathVariable String login) {
+        return userService.getUserByLogin(login);
     }
 }
