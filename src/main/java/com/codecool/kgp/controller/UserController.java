@@ -2,8 +2,12 @@ package com.codecool.kgp.controller;
 
 import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.controller.dto.UserRequestDto;
+import com.codecool.kgp.controller.validation.UserLogin;
+import com.codecool.kgp.controller.validation.UserRegister;
+import com.codecool.kgp.controller.validation.UserUpdate;
 import com.codecool.kgp.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,18 +33,17 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto registerUser(@Valid @RequestBody UserRequestDto dto) {
+    public UserDto registerUser(@Validated(UserRegister.class) @RequestBody UserRequestDto dto) {
         return userService.setUser(dto);
     }
 
     @PostMapping("/{login}")
-    public UserDto loginUser(@PathVariable String login, @Valid @RequestBody UserRequestDto dto) {
+    public UserDto loginUser(@PathVariable String login, @Validated(UserLogin.class) @RequestBody UserRequestDto dto) {
         return userService.logInUser(login, dto);
     }
 
-    // TODO Valid groups one for register and second for update and third for login
     @PutMapping("/{login}")
-    public UserDto updateUser(@PathVariable String login, @Valid @RequestBody UserRequestDto dto) {
+    public UserDto updateUser(@PathVariable String login, @Validated(UserUpdate.class) @RequestBody UserRequestDto dto) {
         return userService.updateUser(login, dto);
     }
 
