@@ -44,7 +44,7 @@ public class UserController {
         return userService.updateUser(login, dto);
     }
 
-    @DeleteMapping("/{login}")
+    @DeleteMapping("/{login}/hard")
     public void deleteUser(@PathVariable String login) {
         userService.deleteUser(login);
     }

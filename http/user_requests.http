@@ -45,4 +45,8 @@ Content-Type: application/json
 
 ### HARD DELETE
 
+DELETE localhost:8888/got/v1/users/furczak/hard
+
+### SOFT DELETE
+
 DELETE localhost:8888/got/v1/users/furczak
