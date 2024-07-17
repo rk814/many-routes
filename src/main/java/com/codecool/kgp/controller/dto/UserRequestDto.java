@@ -10,18 +10,15 @@ import jakarta.validation.constraints.Size;
 
 public record UserRequestDto(
 
-        @NotBlank(groups = UserRegister.class, message = "Login nie może być pusty")
-        @NotBlank(groups = UserLogin.class, message = "Login nie może być pusty")
+        @NotBlank(groups = {UserRegister.class, UserLogin.class}, message = "Login nie może być pusty")
         @Size(max = 50, message = "Login może mieć maksymalnie 50 znaków")
         String login,
 
-        @NotBlank(groups = UserRegister.class, message = "Hasło nie może być puste")
-        @NotBlank(groups = UserLogin.class, message = "Hasło nie może być puste")
+        @NotBlank(groups = {UserRegister.class, UserLogin.class}, message = "Hasło nie może być puste")
         @Size(max = 50, message = "Login może mieć maksymalnie 50 znaków")
         String password,
 
-        @NotBlank(groups = UserRegister.class, message = "E-mail nie może być puste")
-        @NotBlank(groups = UserUpdate.class, message = "E-mail nie może być puste")
+        @NotBlank(groups = {UserRegister.class, UserUpdate.class}, message = "E-mail nie może być puste")
         @Email
         @Size(max = 100, message = "E-mail może mieć maksymalnie 100 znaków")
         String email,
@@ -34,10 +31,10 @@ public record UserRequestDto(
 
         boolean newsletter,
 
-        @Min(value = 0, message = "Wartość musi być większa od 0")
+        @Min(value = 0, message = "Szrokość geograficzna musi być większa od 0")
         Double latitude,
 
-        @Min(value = 0, message = "Wartość musi być większa od 0")
+        @Min(value = 0, message = "Długość geograficzna musi być większa od 0")
         Double longitude
 ) {
 

@@ -33,17 +33,17 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto registerUser(@Validated(UserRegister.class) @RequestBody UserRequestDto dto) {
+    public UserDto registerUser(@Valid @Validated(UserRegister.class) @RequestBody UserRequestDto dto) {
         return userService.setUser(dto);
     }
 
     @PostMapping("/{login}")
-    public UserDto loginUser(@PathVariable String login, @Validated(UserLogin.class) @RequestBody UserRequestDto dto) {
+    public UserDto loginUser(@PathVariable String login, @Valid @Validated(UserLogin.class) @RequestBody UserRequestDto dto) {
         return userService.logInUser(login, dto);
     }
 
     @PutMapping("/{login}")
-    public UserDto updateUser(@PathVariable String login, @Validated(UserUpdate.class) @RequestBody UserRequestDto dto) {
+    public UserDto updateUser(@PathVariable String login, @Valid @Validated(UserUpdate.class) @RequestBody UserRequestDto dto) {
         return userService.updateUser(login, dto);
     }
 

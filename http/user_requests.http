@@ -34,7 +34,7 @@ Content-Type: application/json
 
 {
   "name": "furczak",
-  "email": null,
+  "email": "xxx@gmail.com",
   "latitude": null,
   "longitude": null,
   "phone": null,
