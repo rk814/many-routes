@@ -5,6 +5,7 @@ import com.codecool.kgp.controller.dto.UserRequestDto;
 import com.codecool.kgp.mappers.UserMapper;
 import com.codecool.kgp.repository.User;
 import com.codecool.kgp.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -12,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
+@Transactional
 public class UserService {
 
     private final UserRepository userRepository;
@@ -38,5 +40,11 @@ public class UserService {
         User user = userMapper.mapRequestDtoToEntity(dto);
         User userFromDb = userRepository.save(user);
         return userMapper.mapEntityToDto(userFromDb);
+    }
+
+    public void deleteUser(String login) {
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje"));
+        userRepository.delete(user);
     }
 }

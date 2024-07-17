@@ -4,6 +4,7 @@ import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.controller.dto.UserRequestDto;
 import com.codecool.kgp.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,11 +34,24 @@ public class UserController {
         return userService.setUser(dto);
     }
 
-    // TODO PUT
-
     // TODO LOGIN
+    @PostMapping("/{login}")
+    public UserDto loginUser(@PathVariable String login, @Valid @RequestBody UserRequestDto dto) {
+        return null;
+    }
 
-    // TODO DELETE
+    // TODO PUT
+    @PutMapping("/{login}")
+    public UserDto updateUser(@Valid @RequestBody UserRequestDto dto) {
+        return null;
+    }
 
-    // TODO jednostkowe
+    @DeleteMapping("/{login}")
+    public void deleteUser(@PathVariable String login) {
+        userService.deleteUser(login);
+    }
+
+    // TODO SOFT DELETE
+
+    // TODO user lists endpoints
 }

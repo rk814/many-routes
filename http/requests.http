@@ -12,7 +12,11 @@ POST localhost:8888/got/v1/users
 Content-Type: application/json
 
 {
-  "login": "",
+  "login": "furczak",
   "password": "test123",
   "email": "furczak31@gmail.com"
 }
+
+###
+
+DELETE localhost:8888/got/v1/users/furczak
