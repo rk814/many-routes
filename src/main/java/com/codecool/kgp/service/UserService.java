@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -28,7 +29,7 @@ public class UserService {
 
     public List<UserDto> getUsers() {
         List<User> users = userRepository.findAll();
-        return users.stream().map(userMapper::mapEntityToDto).toList();
+        return users.stream().filter(user->!user.getEmail().startsWith("deleted-")).map(userMapper::mapEntityToDto).toList();
     }
 
     public UserDto getUserByLogin(String login) {
@@ -41,12 +42,6 @@ public class UserService {
         User user = userMapper.mapRequestDtoToEntity(dto);
         User userFromDb = userRepository.save(user);
         return userMapper.mapEntityToDto(userFromDb);
-    }
-
-    public void deleteUser(String login) {
-        User user = userRepository.findByLogin(login)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje"));
-        userRepository.delete(user);
     }
 
     public UserDto updateUser(String login, UserRequestDto dto) {
@@ -77,5 +72,39 @@ public class UserService {
         } else {
             throw new ResponseStatusException(HttpStatus.valueOf(401), "Błąd logowania");
         }
+    }
+
+    public void deleteUser(String login) {
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje"));
+        userRepository.delete(user);
+    }
+
+    public void softDeleteUser(String login) {
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje"));
+        obfuscatePiData(user);
+        userRepository.save(user);
+    }
+
+    private void obfuscatePiData(User user) {
+        user.setHashPassword("*".repeat(user.getHashPassword().length()));
+        user.setNewsletter(false);
+
+        if (user.getLogin()!=null) {
+        user.setLogin("*".repeat(user.getLogin().length()));
+        }
+
+        if (user.getName()!=null) {
+        user.setName("*".repeat(user.getName().length()));
+        }
+
+        if (user.getPhone()!=null) {
+        user.setPhone("*".repeat(user.getPhone().length()));
+        }
+
+        int charPos = user.getEmail().indexOf("@");
+        String randomPrefix = "deleted-" + UUID.randomUUID();
+        user.setEmail(randomPrefix + user.getEmail().substring(charPos));
     }
 }

@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @GetMapping("/{login}")
-    public UserDto getUsers(@PathVariable String login) {
+    public UserDto getUser(@PathVariable String login) {
         return userService.getUserByLogin(login);
     }
 
@@ -49,7 +49,10 @@ public class UserController {
         userService.deleteUser(login);
     }
 
-    // TODO SOFT DELETE
+    @DeleteMapping("/{login}")
+    public void softDeleteUser(@PathVariable String login) {
+        userService.softDeleteUser(login);
+    }
 
     // TODO user lists endpoints
 }
