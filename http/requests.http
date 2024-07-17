@@ -1,12 +1,12 @@
-### GOT
+### GET ALL
 
 GET localhost:8888/got/v1/users
 
-###
+### GET ONE
 
 GET localhost:8888/got/v1/users/furczak
 
-###
+### NEW USER
 
 POST localhost:8888/got/v1/users
 Content-Type: application/json
@@ -17,6 +17,32 @@ Content-Type: application/json
   "email": "furczak31@gmail.com"
 }
 
-###
+### LOGIN
+
+POST localhost:8888/got/v1/users/furczak
+Content-Type: application/json
+
+{
+  "login": "furczak",
+  "password": "test123X"
+}
+
+### UPDATE
+
+PUT localhost:8888/got/v1/users/furczak
+Content-Type: application/json
+
+{
+  "login": "furczak",
+  "password": "test123",
+  "name": "furczak",
+  "email": "nowy@email.com",
+  "latitude": null,
+  "longitude": null,
+  "phone": null,
+  "newsletter": true
+}
+
+### HARD DELETE
 
 DELETE localhost:8888/got/v1/users/furczak

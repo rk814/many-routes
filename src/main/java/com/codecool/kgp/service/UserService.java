@@ -1,5 +1,6 @@
 package com.codecool.kgp.service;
 
+import com.codecool.kgp.common.Coordinates;
 import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.controller.dto.UserRequestDto;
 import com.codecool.kgp.mappers.UserMapper;
@@ -32,7 +33,7 @@ public class UserService {
 
     public UserDto getUserByLogin(String login) {
         User user = userRepository.findByLogin(login)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje"));
         return userMapper.mapEntityToDto(user);
     }
 
@@ -44,7 +45,37 @@ public class UserService {
 
     public void deleteUser(String login) {
         User user = userRepository.findByLogin(login)
-                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje"));
         userRepository.delete(user);
+    }
+
+    public UserDto updateUser(String login, UserRequestDto dto) {
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje"));
+
+        user.setName(dto.name());
+        user.setEmail(dto.email());
+        user.setPhone(dto.phone());
+        user.setNewsletter(dto.newsletter());
+        if (dto.latitude() != null && dto.longitude() != null) {
+            user.setCoordinates(new Coordinates(dto.latitude(), dto.longitude()));
+        } else {
+            user.setCoordinates(null);
+        }
+
+        User userFromDb = userRepository.save(user);
+
+        return userMapper.mapEntityToDto(userFromDb);
+    }
+
+    public UserDto logInUser(String login, UserRequestDto dto) {
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje"));
+        // TODO password hash
+        if (user.getHashPassword().equals(dto.password())) {
+            return userMapper.mapEntityToDto(user);
+        } else {
+            throw new ResponseStatusException(HttpStatus.valueOf(401), "Błąd logowania");
+        }
     }
 }

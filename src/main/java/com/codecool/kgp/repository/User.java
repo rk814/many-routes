@@ -54,19 +54,20 @@ public class User {
     private Role role;
 
     @Version
-    private int version;
+    private Integer version;
 
 
-    public User(String login, String hashPassword, String email) {
+    public User(String login, String hashPassword, String email, Role role) {
         this.login = login;
         this.hashPassword = hashPassword;
         this.email = email;
+        this.role = role;
     }
 
-    public double[] getCoordinatesArray() {
+    public Double[] getCoordinatesArray() {
         if (coordinates==null) {
             return null;
         }
-        return new double[]{coordinates.getLatitude(), coordinates.getLongitude()};
+        return new Double[]{coordinates.getLatitude(), coordinates.getLongitude()};
     }
 }

@@ -6,7 +6,7 @@ public record UserDto(
         String login,
         String name,
         String email,
-        double[] coordinates,
+        Double[] coordinates,
         String phone,
         boolean newsletter,
         String role
