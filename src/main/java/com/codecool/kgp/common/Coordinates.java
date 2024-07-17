@@ -18,9 +18,9 @@ import lombok.Setter;
 @AttributeOverride(name="longitude", column=@Column(name="coords_longitude"))
 public class Coordinates {
 
-    @Min(value = 0, message = "Wartość musi być większa od 0")
+    @Min(value = 0, message = "Szrokość geograficzna musi być większa od 0")
     private Double latitude;
 
-    @Min(value = 0, message = "Wartość musi być większa od 0")
+    @Min(value = 0, message = "Długość geograficzna musi być większa od 0")
     private Double longitude;
 }
