@@ -50,7 +50,7 @@ public class User {
     @Size(max=100, message = "Numer telefonu może mieć maksymalnie 100 znaków")
     private String phone;
 
-    private boolean newsletter;
+    private Boolean newsletter;
 
     private LocalDateTime createdAt;
 

@@ -26,7 +26,7 @@ public record UserRequestDto(
         @Size(max = 100, message = "Numer telefonu może mieć maksymalnie 100 znaków")
         String phone,
 
-        boolean newsletter,
+        Boolean newsletter,
 
         @Min(value = -180, message = "Szerokość geograficzna musi być większa lub równa 180")
         @Max(value = 180, message = "Szerokość geograficzna musi być mniejsza lub równa 180")

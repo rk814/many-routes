@@ -16,7 +16,7 @@ public class UserMapper {
                 user.getEmail(),
                 user.getCoordinatesArray(),
                 user.getPhone(),
-                user.isNewsletter(),
+                user.getNewsletter(),
                 user.getCreatedAt(),
                 user.getDeletedAt(),
                 user.getRole().name()

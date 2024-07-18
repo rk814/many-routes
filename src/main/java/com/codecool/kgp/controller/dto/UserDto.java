@@ -9,7 +9,7 @@ public record UserDto(
         String email,
         Double[] coordinates,
         String phone,
-        boolean newsletter,
+        Boolean newsletter,
         LocalDateTime createAt,
         LocalDateTime deletedAt,
         String role
