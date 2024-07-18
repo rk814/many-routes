@@ -1,4 +1,5 @@
 package com.codecool.kgp.controller.dto;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record UserDto(
@@ -9,6 +10,8 @@ public record UserDto(
         Double[] coordinates,
         String phone,
         boolean newsletter,
+        LocalDateTime createAt,
+        LocalDateTime deletedAt,
         String role
 ) {
 }

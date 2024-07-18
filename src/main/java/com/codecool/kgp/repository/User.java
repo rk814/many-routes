@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -50,6 +52,10 @@ public class User {
 
     private boolean newsletter;
 
+    private LocalDateTime createdAt;
+
+    private LocalDateTime deletedAt;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -62,6 +68,7 @@ public class User {
         this.hashPassword = hashPassword;
         this.email = email;
         this.role = role;
+        this.createdAt = LocalDateTime.now();
     }
 
     public Double[] getCoordinatesArray() {

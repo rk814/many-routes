@@ -17,6 +17,8 @@ public class UserMapper {
                 user.getCoordinatesArray(),
                 user.getPhone(),
                 user.isNewsletter(),
+                user.getCreatedAt(),
+                user.getDeletedAt(),
                 user.getRole().name()
         );
     }

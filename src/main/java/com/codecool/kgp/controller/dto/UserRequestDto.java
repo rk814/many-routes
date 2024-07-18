@@ -3,10 +3,7 @@ package com.codecool.kgp.controller.dto;
 import com.codecool.kgp.controller.validation.UserLogin;
 import com.codecool.kgp.controller.validation.UserRegister;
 import com.codecool.kgp.controller.validation.UserUpdate;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 public record UserRequestDto(
 
@@ -31,10 +28,14 @@ public record UserRequestDto(
 
         boolean newsletter,
 
-        @Min(value = 0, message = "Szrokość geograficzna musi być większa od 0")
+        @Min(value = -180, message = "Szerokość geograficzna musi być większa lub równa 180")
+        @Max(value = 180, message = "Szerokość geograficzna musi być mniejsza lub równa 180")
+        @Digits(integer = 3, fraction = 3, message = "Współrzędne muszą posiadać maksymalnie 5 cyfr po przecinku")
         Double latitude,
 
-        @Min(value = 0, message = "Długość geograficzna musi być większa od 0")
+        @Min(value = -180, message = "Długość geograficzna musi być większa lub równa 180")
+        @Max(value = 180, message = "Długość geograficzna musi być mniejsza lub równa 180")
+        @Digits(integer = 3, fraction = 3, message = "Współrzędne muszą posiadać maksymalnie 5 cyfr po przecinku")
         Double longitude
 ) {
 

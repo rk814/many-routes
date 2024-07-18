@@ -43,7 +43,7 @@ Content-Type: application/json
 
 ### HARD DELETE
 
-DELETE localhost:8888/got/v1/users/furczak/hard
+DELETE localhost:8888/got/v1/users/test/hard
 
 ### SOFT DELETE
 

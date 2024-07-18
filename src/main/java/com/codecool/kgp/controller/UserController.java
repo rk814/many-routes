@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/got/v1/users")
 public class UserController {
 
@@ -27,22 +28,22 @@ public class UserController {
         return userService.getUsers();
     }
 
-    @GetMapping("/{login}")
+    @GetMapping("/{login}") // in use
     public UserDto getUser(@PathVariable String login) {
         return userService.getUserByLogin(login);
     }
 
-    @PostMapping
+    @PostMapping // in use
     public UserDto registerUser(@Valid @Validated(UserRegister.class) @RequestBody UserRequestDto dto) {
         return userService.setUser(dto);
     }
 
-    @PostMapping("/{login}")
+    @PostMapping("/{login}") // in use
     public UserDto loginUser(@PathVariable String login, @Valid @Validated(UserLogin.class) @RequestBody UserRequestDto dto) {
         return userService.logInUser(login, dto);
     }
 
-    @PutMapping("/{login}")
+    @PutMapping("/{login}") // in use
     public UserDto updateUser(@PathVariable String login, @Valid @Validated(UserUpdate.class) @RequestBody UserRequestDto dto) {
         return userService.updateUser(login, dto);
     }
