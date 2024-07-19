@@ -30,12 +30,12 @@ public record UserRequestDto(
 
         @Min(value = -180, message = "Szerokość geograficzna musi być większa lub równa 180")
         @Max(value = 180, message = "Szerokość geograficzna musi być mniejsza lub równa 180")
-        @Digits(integer = 3, fraction = 3, message = "Współrzędne muszą posiadać maksymalnie 5 cyfr po przecinku")
+        @Digits(integer = 3, fraction = 8, message = "Współrzędne muszą posiadać maksymalnie 8 cyfr po przecinku")
         Double latitude,
 
         @Min(value = -180, message = "Długość geograficzna musi być większa lub równa 180")
         @Max(value = 180, message = "Długość geograficzna musi być mniejsza lub równa 180")
-        @Digits(integer = 3, fraction = 3, message = "Współrzędne muszą posiadać maksymalnie 5 cyfr po przecinku")
+        @Digits(integer = 3, fraction = 8, message = "Współrzędne muszą posiadać maksymalnie 8 cyfr po przecinku")
         Double longitude
 ) {
 

@@ -23,11 +23,11 @@ public class Coordinates {
     // TODO better digits with fraction exactly 5 (not max)
     @Min(value = -180, message = "Szrokość geograficzna musi być większa lub równa 180")
     @Max(value = 180, message = "Szrokość geograficzna musi być mniejsza lub równa 180")
-    @Digits(integer = 3, fraction = 3, message = "Współrzędne muszą posiadać maksymalnie 5 cyfr po przecinku")
+    @Digits(integer = 3, fraction = 8, message = "Współrzędne muszą posiadać maksymalnie 8 cyfr po przecinku")
     private Double latitude;
 
     @Min(value = -180, message = "Szrokość geograficzna musi być większa lub równa 180")
     @Max(value = 180, message = "Szrokość geograficzna musi być mniejsza lub równa 180")
-    @Digits(integer = 3, fraction = 5, message = "Współrzędne muszą posiadać maksymalnie 5 cyfr po przecinku")
+    @Digits(integer = 3, fraction = 8, message = "Współrzędne muszą posiadać maksymalnie 8 cyfr po przecinku")
     private Double longitude;
 }
