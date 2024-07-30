@@ -1,5 +1,6 @@
 package com.codecool.kgp.repository;
 
+import com.codecool.kgp.controller.dto.UserRequestDto;
 import com.codecool.kgp.repository.geography.Coordinates;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -74,5 +75,17 @@ public class User {
             return null;
         }
         return new Double[]{coordinates.getLatitude(), coordinates.getLongitude()};
+    }
+
+    public void updateUser(UserRequestDto dto) {
+        setName(dto.name());
+        setEmail(dto.email());
+        setPhone(dto.phone());
+        setNewsletter(dto.newsletter());
+        if (dto.latitude() != null && dto.longitude() != null) {
+            setCoordinates(new Coordinates(dto.latitude(), dto.longitude()));
+        } else {
+            setCoordinates(null);
+        }
     }
 }

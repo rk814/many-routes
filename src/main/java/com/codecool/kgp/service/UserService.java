@@ -1,7 +1,6 @@
 package com.codecool.kgp.service;
 
 import com.codecool.kgp.errorhandling.DuplicateEntryException;
-import com.codecool.kgp.repository.geography.Coordinates;
 import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.controller.dto.UserRequestDto;
 import com.codecool.kgp.mappers.UserMapper;
@@ -71,15 +70,7 @@ public class UserService {
                     return new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje");
                 });
 
-        user.setName(dto.name());
-        user.setEmail(dto.email());
-        user.setPhone(dto.phone());
-        user.setNewsletter(dto.newsletter());
-        if (dto.latitude() != null && dto.longitude() != null) {
-            user.setCoordinates(new Coordinates(dto.latitude(), dto.longitude()));
-        } else {
-            user.setCoordinates(null);
-        }
+        user.updateUser(dto);
 
         User userFromDb = userRepository.save(user);
         log.info("User with id '{}' was updated",userFromDb.getId());
