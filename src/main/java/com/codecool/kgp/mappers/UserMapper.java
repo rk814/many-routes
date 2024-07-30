@@ -1,6 +1,6 @@
 package com.codecool.kgp.mappers;
 
-import com.codecool.kgp.common.Role;
+import com.codecool.kgp.repository.Role;
 import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.controller.dto.UserRequestDto;
 import com.codecool.kgp.repository.User;

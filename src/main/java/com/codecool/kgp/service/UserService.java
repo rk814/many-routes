@@ -1,6 +1,6 @@
 package com.codecool.kgp.service;
 
-import com.codecool.kgp.common.Coordinates;
+import com.codecool.kgp.repository.geography.Coordinates;
 import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.controller.dto.UserRequestDto;
 import com.codecool.kgp.mappers.UserMapper;
@@ -30,7 +30,9 @@ public class UserService {
 
     public List<UserDto> getUsers() {
         List<User> users = userRepository.findAll();
-        return users.stream().filter(user->!user.getEmail().startsWith("deleted-")).map(userMapper::mapEntityToDto).toList();
+        return users.stream()
+                .filter(user->!user.getEmail().startsWith("deleted-"))
+                .map(userMapper::mapEntityToDto).toList();
     }
 
     public UserDto getUserByLogin(String login) {

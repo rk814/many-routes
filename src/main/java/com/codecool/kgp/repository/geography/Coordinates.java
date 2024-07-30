@@ -1,4 +1,4 @@
-package com.codecool.kgp.common;
+package com.codecool.kgp.repository.geography;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;

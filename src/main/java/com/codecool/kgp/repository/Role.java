@@ -1,4 +1,4 @@
-package com.codecool.kgp.common;
+package com.codecool.kgp.repository;
 
 public enum Role {
     USER,

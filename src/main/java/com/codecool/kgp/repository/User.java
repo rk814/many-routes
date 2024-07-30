@@ -1,7 +1,6 @@
 package com.codecool.kgp.repository;
 
-import com.codecool.kgp.common.Coordinates;
-import com.codecool.kgp.common.Role;
+import com.codecool.kgp.repository.geography.Coordinates;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -11,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
