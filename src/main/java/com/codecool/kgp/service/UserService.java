@@ -47,7 +47,7 @@ public class UserService {
                     log.error("Attempted to get user data with login '{}', but no matching user was found in the database", login);
                     return new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje");
                 });
-        log.info("User with id '{}' sign in", user.getId());
+        log.info("User with id '{}' got user data", user.getId());
         return userMapper.mapEntityToDto(user);
     }
 
@@ -99,8 +99,8 @@ public class UserService {
                     log.error("Attempted to delete user with login '{}', but no matching user was found in the database", login);
                     return new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje");
                 });
-        log.info("User with id '{}' was deleted", user.getId());
         userRepository.delete(user);
+        log.info("User with id '{}' was deleted", user.getId());
     }
 
     public void softDeleteUser(String login) {
@@ -110,8 +110,8 @@ public class UserService {
                     return new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje");
                 });
         obfuscatePiData(user);
-        log.info("User with id '{}' was soft deleted", user.getId());
         userRepository.save(user);
+        log.info("User with id '{}' was soft deleted", user.getId());
     }
 
     private void obfuscatePiData(User user) {
