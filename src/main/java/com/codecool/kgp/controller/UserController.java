@@ -2,6 +2,7 @@ package com.codecool.kgp.controller;
 
 import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.controller.dto.UserRequestDto;
+import com.codecool.kgp.controller.validation.UserBasic;
 import com.codecool.kgp.controller.validation.UserLogin;
 import com.codecool.kgp.controller.validation.UserRegister;
 import com.codecool.kgp.controller.validation.UserUpdate;
@@ -34,17 +35,17 @@ public class UserController {
     }
 
     @PostMapping // in use
-    public UserDto registerUser(@Valid @Validated(UserRegister.class) @RequestBody UserRequestDto dto) {
+    public UserDto registerUser(@Validated({UserRegister.class, UserBasic.class}) @RequestBody UserRequestDto dto) {
         return userService.setUser(dto);
     }
 
     @PostMapping("/{login}") // in use
-    public UserDto loginUser(@PathVariable String login, @Valid @Validated(UserLogin.class) @RequestBody UserRequestDto dto) {
+    public UserDto loginUser(@PathVariable String login, @Validated({UserLogin.class, UserBasic.class}) @RequestBody UserRequestDto dto) {
         return userService.logInUser(login, dto);
     }
 
     @PutMapping("/{login}") // in use
-    public UserDto updateUser(@PathVariable String login, @Valid @Validated(UserUpdate.class) @RequestBody UserRequestDto dto) {
+    public UserDto updateUser(@PathVariable String login, @Validated({UserUpdate.class, UserBasic.class}) @RequestBody UserRequestDto dto) {
         return userService.updateUser(login, dto);
     }
 
