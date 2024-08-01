@@ -1,46 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration>
+    <!--        <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" />-->
+    <conversionRule conversionWord="customHighlight" converterClass="com.codecool.kgp.config.LogbackCustomHighlight"/>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <property name="DIR" value="${user.home}/logs/got"/>
     <property name="FILE" value="got"/>
 
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
-                <layout class="ch.qos.logback.classic.PatternLayout">
-                    <pattern>
-                        ${CONSOLE_LOG_PATTERN}
-                    </pattern>
-                </layout>
-<!--        <encoder>-->
-<!--            <pattern>-->
-<!--                %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %level %logger{36} - %msg%n-->
-<!--            </pattern>-->
-<!--        </encoder>-->
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>info</level>
-        </filter>
+        <encoder>
+            <pattern>
+                ${CONSOLE_LOG_PATTERN}
+            </pattern>
+        </encoder>
+        <!--        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">-->
+        <!--            <level>info</level>-->
+        <!--        </filter>-->
     </appender>
 
-    <appender name="File" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="ConsoleBold" class="ch.qos.logback.core.ConsoleAppender">
+<!--        <withJansi>true</withJansi>-->
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %customHighlight(%5level) : %boldBlue(%msg%n)
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="File" class="ch.qos.logback.core.rolling.RollingFileAppender" >
         <file>${DIR}/${FILE}.log</file>
         <encoder>
             <pattern>
                 %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %level %logger{36} - %msg%n
             </pattern>
         </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${DIR}/${FILE}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>1MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxFileSize>100MB</maxFileSize>
+            <totalSizeCap>2GB</totalSizeCap>
+            <maxHistory>60</maxHistory> <!--max 60 files-->
         </rollingPolicy>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>info</level>
-        </filter>
     </appender>
 
-    <root level="all">
-        <appender-ref ref="Console"/>
+    <logger name="com.codecool.kgp.service.UserService" level="INFO" additivity="false">
         <appender-ref ref="File"/>
+        <appender-ref ref="ConsoleBold"/>
+    </logger>
+
+    <root level="info">
+        <appender-ref ref="Console"/>
     </root>
+
 </configuration>
