@@ -29,8 +29,10 @@ public class UserChallenge {
     @JoinColumn(name="challenge_id", referencedColumnName = "id")
     private Challenge challenge;
 
+    @Column(updatable = false)
     private LocalDateTime startedAt;
 
+    @Column(updatable = false)
     private LocalDateTime finishedAt;
 
     private int score;
