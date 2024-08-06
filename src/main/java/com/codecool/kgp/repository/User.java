@@ -92,4 +92,8 @@ public class User {
             setCoordinates(null);
         }
     }
+
+    public void asignUserChallenge(UserChallenge userChallenge) {
+        this.userChallenges.add(userChallenge);
+    }
 }

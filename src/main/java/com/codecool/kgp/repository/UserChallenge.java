@@ -21,11 +21,11 @@ public class UserChallenge {
     @EqualsAndHashCode.Include
     private UUID id = UUID.randomUUID();
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name="user_id", referencedColumnName = "id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name="challenge_id", referencedColumnName = "id")
     private Challenge challenge;
 
@@ -46,4 +46,14 @@ public class UserChallenge {
         this.score = 0;
     }
 
+    public UserChallenge(User user, Challenge challenge) {
+        this.user = user;
+        this.challenge = challenge;
+        this.startedAt = LocalDateTime.now();
+        this.score = 0;
+    }
+
+    public void assignUserSummit(UserSummit userSummit) {
+        userSummitList.add(userSummit);
+    }
 }

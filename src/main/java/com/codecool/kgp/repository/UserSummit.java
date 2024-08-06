@@ -25,10 +25,18 @@ public class UserSummit {
     @JoinColumn(name="user_challenge_id", referencedColumnName = "id")
     private UserChallenge userChallenge;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="summit_id", referencedColumnName = "id")
+    private Summit summit;
+
     private LocalDateTime conqueredAt;
 
+    private Integer score;
 
-    public UserSummit(LocalDateTime conqueredAt) {
-        this.conqueredAt = LocalDateTime.now();
+
+    public UserSummit(UserChallenge userChallenge,Summit summit) {
+        this.userChallenge = userChallenge;
+        this.summit = summit;
+        this.score = 0;
     }
 }
