@@ -14,17 +14,20 @@ import java.util.UUID;
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
+@Table(name = "user_challenge")
 public class UserChallenge {
 
     @Id
     @EqualsAndHashCode.Include
     private UUID id = UUID.randomUUID();
 
-    @NotBlank
-    private UUID userId; // reference to user id
+    @ManyToOne(optional = false)
+    @JoinColumn(name="user_id", referencedColumnName = "id")
+    private User user;
 
-    @NotBlank
-    private UUID challengeId; //reference to challenge id
+    @ManyToOne
+    @JoinColumn(name="challenge_id", referencedColumnName = "id")
+    private Challenge challenge;
 
     private LocalDateTime startedAt;
 
@@ -32,11 +35,13 @@ public class UserChallenge {
 
     private int score;
 
-    @OneToMany
+    @OneToMany(mappedBy = "id", orphanRemoval = true)
     private List<UserSummit> userSummitList;
+
 
     public UserChallenge() {
         this.startedAt = LocalDateTime.now();
         this.score = 0;
     }
+
 }

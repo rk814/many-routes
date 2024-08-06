@@ -1,8 +1,6 @@
 package com.codecool.kgp.repository;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,22 +14,19 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
+@Table(name = "user_summit")
 public class UserSummit {
 
     @Id
     @EqualsAndHashCode.Include
     private UUID id = UUID.randomUUID();
 
-    @NotBlank
-    private UUID userId; // reference to user id
-
-    @NotBlank
-    private UUID challengeId; //reference to challenge id
-
-    @NotBlank
-    private UUID summitId; // reference to summit id
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="user_challenge_id", referencedColumnName = "id")
+    private UserChallenge userChallenge;
 
     private LocalDateTime conqueredAt;
+
 
     public UserSummit(LocalDateTime conqueredAt) {
         this.conqueredAt = LocalDateTime.now();

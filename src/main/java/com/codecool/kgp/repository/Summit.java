@@ -18,4 +18,5 @@ public class Summit {
     private final UUID id = UUID.randomUUID();
 
     private String name;
+
 }
