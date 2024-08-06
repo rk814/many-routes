@@ -1,44 +1,44 @@
 package com.codecool.kgp.controller;
 
 import org.springframework.web.bind.annotation.*;
+import com.codecool.kgp.controller.dto.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/got/v1/users")
+@RequestMapping("/got/v1/users/{login}/user-challenges")
 public class UserChallengeController {
 
-    @GetMapping("/{login}/challenges")
+    @GetMapping("/")
     public List<UserChallengeDao> getUserChallenges(@PathVariable String login) {
         return null;
     }
 
-    @GetMapping("/{login}/challenges/{id}")
+    @GetMapping("/{id}")
     public UserChallengeDao getUserChallenge(@PathVariable String login, @PathVariable UUID id) {
         return null;
     }
 
-    @PostMapping("/{login}/challenges")
-    public UserChallengeDao addUserChallenge(@PathVariable String login,
-                                             @RequestBody UserChallengeRequestDto dto) {
+    @PostMapping(value = "/add-new/{challengeId}")
+    public UserChallengeDao addUserChallenge(@PathVariable String login, @PathVariable UUID challengeId) {
         return null;
     }
 
-    @PostMapping("/{login}/challenges/{id}")
-    public void finishUserChallenge(@PathVariable String login, @PathVariable UUID id, @RequestBody FinishedAtDto dto) {
-        // send finishedAt time-date
+    @PostMapping("/{id}/finish")
+    public void finishUserChallenge(@PathVariable String login, @PathVariable UUID id) {
+        // send finishedAt time-date (generate on backend)
     }
 
-    @PostMapping("/{login}/challenges/{challengeId}/summit/{summitId}")
-    public void conquerSummit(@PathVariable String login, @PathVariable UUID challengeId, @PathVariable UUID summitId,
-                               @RequestBody SummitRequestDto dto) {
-        // conquer summit
-        // add score to challenge
+    @PatchMapping("/{id}/update-score/{score}")
+    public void updateUserChallengeScore(@PathVariable String login, @PathVariable UUID id, @PathVariable Integer score) {
+
     }
 
-    @DeleteMapping("/{login}/challenges/{id}")
+    @DeleteMapping("/{id}")
     public void deleteUserChallenge(@PathVariable String login, @PathVariable UUID id) {
 
     }
+
 }
