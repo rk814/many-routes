@@ -1,6 +1,9 @@
 package com.codecool.kgp.service;
 
 import com.codecool.kgp.controller.dto.UserChallengeDao;
+import com.codecool.kgp.entity.Challenge;
+import com.codecool.kgp.entity.User;
+import com.codecool.kgp.entity.UserChallenge;
 import com.codecool.kgp.mappers.UserChallengeMapper;
 import com.codecool.kgp.repository.*;
 import org.springframework.http.HttpStatus;

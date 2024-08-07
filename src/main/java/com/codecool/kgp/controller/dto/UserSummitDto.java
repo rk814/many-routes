@@ -1,6 +1,6 @@
 package com.codecool.kgp.controller.dto;
 
-import com.codecool.kgp.repository.Challenge;
+import com.codecool.kgp.entity.Challenge;
 
 import java.time.LocalDateTime;
 import java.util.List;

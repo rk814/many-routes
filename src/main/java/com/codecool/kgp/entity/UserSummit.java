@@ -1,5 +1,7 @@
-package com.codecool.kgp.repository;
+package com.codecool.kgp.entity;
 
+import com.codecool.kgp.entity.Summit;
+import com.codecool.kgp.entity.UserChallenge;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

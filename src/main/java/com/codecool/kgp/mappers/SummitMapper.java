@@ -1,7 +1,7 @@
 package com.codecool.kgp.mappers;
 
 import com.codecool.kgp.controller.dto.SummitDto;
-import com.codecool.kgp.repository.Summit;
+import com.codecool.kgp.entity.Summit;
 import org.springframework.stereotype.Component;
 
 @Component

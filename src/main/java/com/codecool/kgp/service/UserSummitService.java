@@ -1,5 +1,8 @@
 package com.codecool.kgp.service;
 
+import com.codecool.kgp.entity.Summit;
+import com.codecool.kgp.entity.UserChallenge;
+import com.codecool.kgp.entity.UserSummit;
 import com.codecool.kgp.repository.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

@@ -4,7 +4,7 @@ import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.controller.dto.UserRequestDto;
 import com.codecool.kgp.errorhandling.DuplicateEntryException;
 import com.codecool.kgp.mappers.UserMapper;
-import com.codecool.kgp.repository.User;
+import com.codecool.kgp.entity.User;
 import com.codecool.kgp.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.instancio.Instancio;

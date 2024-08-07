@@ -1,7 +1,8 @@
-package com.codecool.kgp.repository;
+package com.codecool.kgp.entity;
 
 import com.codecool.kgp.controller.dto.UserRequestDto;
-import com.codecool.kgp.repository.geography.Coordinates;
+import com.codecool.kgp.entity.enums.Role;
+import com.codecool.kgp.entity.geography.Coordinates;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

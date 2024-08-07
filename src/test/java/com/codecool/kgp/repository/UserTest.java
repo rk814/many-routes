@@ -1,7 +1,8 @@
 package com.codecool.kgp.repository;
 
 import com.codecool.kgp.controller.dto.UserRequestDto;
-import com.codecool.kgp.repository.geography.Coordinates;
+import com.codecool.kgp.entity.User;
+import com.codecool.kgp.entity.geography.Coordinates;
 import org.assertj.core.api.Assertions;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;

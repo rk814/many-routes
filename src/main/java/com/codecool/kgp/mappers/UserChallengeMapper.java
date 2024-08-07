@@ -3,8 +3,8 @@ package com.codecool.kgp.mappers;
 import com.codecool.kgp.controller.dto.SummitDto;
 import com.codecool.kgp.controller.dto.UserChallengeDao;
 import com.codecool.kgp.controller.dto.UserSummitDto;
-import com.codecool.kgp.repository.UserChallenge;
-import com.codecool.kgp.repository.UserSummit;
+import com.codecool.kgp.entity.UserChallenge;
+import com.codecool.kgp.entity.UserSummit;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

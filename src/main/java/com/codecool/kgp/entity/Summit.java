@@ -1,16 +1,15 @@
-package com.codecool.kgp.repository;
+package com.codecool.kgp.entity;
 
-import com.codecool.kgp.repository.geography.Coordinates;
+import com.codecool.kgp.entity.enums.Status;
+import com.codecool.kgp.entity.geography.Coordinates;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Range;
 
 import java.util.List;
 import java.util.UUID;

@@ -1,7 +1,6 @@
-package com.codecool.kgp.repository;
+package com.codecool.kgp.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
