@@ -21,17 +21,33 @@ public class UserChallengeController {
     }
 
     @GetMapping("/")
-    public List<UserChallengeDao> getUserChallenges(@PathVariable String login) {
+    public List<UserChallengeDto> getUserChallenges(@PathVariable String login) {
         return userChallengeService.getUserChallenges(login);
     }
 
     @GetMapping("/{id}")
-    public UserChallengeDao getUserChallenge(@PathVariable String login, @PathVariable UUID id) {
+    public UserChallengeDto getUserChallenge(@PathVariable String login, @PathVariable UUID id) {
         return userChallengeService.getUserChallenge(id);
     }
 
+    @GetMapping("/completed")
+    public List<UserChallengeDto> getCompletedUserChallenges(@PathVariable String login) {
+        return userChallengeService.getCompletedUserChallenges(login);
+    }
+
+    @GetMapping("/active")
+    public List<UserChallengeDto> getActiveUserChallenges(@PathVariable String login) {
+        return userChallengeService.getActiveUserChallenges(login);
+    }
+
+    // TODO move to ChallengeService
+    @GetMapping("/goals")
+    public List<ChallengeDto> getGoals(@PathVariable String login) {
+        return userChallengeService.getAvailableChallenges(login);
+    }
+
     @PostMapping(value = "/add-new/{challengeId}")
-    public UserChallengeDao addUserChallenge(@PathVariable String login, @PathVariable UUID challengeId) {
+    public UserChallengeDto addUserChallenge(@PathVariable String login, @PathVariable UUID challengeId) {
         return userChallengeService.saveUserChallenge(login, challengeId);
     }
 

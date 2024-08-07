@@ -17,8 +17,8 @@ public class UserChallengeMapper {
         this.summitMapper = summitMapper;
     }
 
-    public UserChallengeDao mapEntityToDto(UserChallenge userChallenge) {
-        return new UserChallengeDao(
+    public UserChallengeDto mapEntityToDto(UserChallenge userChallenge) {
+        return new UserChallengeDto(
                 userChallenge.getId(),
                 userChallenge.getUser().getId(),
                 new ChallengeDto(userChallenge.getChallenge().getId(),
@@ -30,8 +30,8 @@ public class UserChallengeMapper {
         );
     }
 
-    public UserChallengeSimpleDao mapEntityToSimpleDto(UserChallenge userChallenge) {
-        return new UserChallengeSimpleDao(
+    public UserChallengeSimpleDto mapEntityToSimpleDto(UserChallenge userChallenge) {
+        return new UserChallengeSimpleDto(
                 userChallenge.getId(),
                 userChallenge.getUser().getId(),
                 userChallenge.getChallenge().getName(),

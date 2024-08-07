@@ -1,9 +1,11 @@
 package com.codecool.kgp.service;
 
-import com.codecool.kgp.controller.dto.UserChallengeDao;
+import com.codecool.kgp.controller.dto.ChallengeDto;
+import com.codecool.kgp.controller.dto.UserChallengeDto;
 import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.User;
 import com.codecool.kgp.entity.UserChallenge;
+import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.mappers.UserChallengeMapper;
 import com.codecool.kgp.repository.*;
 import org.springframework.http.HttpStatus;
@@ -22,30 +24,55 @@ public class UserChallengeService {
     private final UserChallengeRepository userChallengeRepository;
     private final UserSummitService userSummitService;
     private final UserChallengeMapper userChallengeMapper;
+    private final ChallengeMapper challengeMapper;
 
     public UserChallengeService(UserRepository userRepository, ChallengeRepository challengeRepository,
-                                UserChallengeRepository userChallengeRepository,
-                                UserSummitService userSummitService, UserChallengeMapper userChallengeMapper) {
+                                UserChallengeRepository userChallengeRepository, UserSummitService userSummitService,
+                                UserChallengeMapper userChallengeMapper, ChallengeMapper challengeMapper) {
         this.userRepository = userRepository;
         this.challengeRepository = challengeRepository;
         this.userChallengeRepository = userChallengeRepository;
         this.userSummitService = userSummitService;
         this.userChallengeMapper = userChallengeMapper;
+        this.challengeMapper = challengeMapper;
     }
 
-    public List<UserChallengeDao> getUserChallenges(String login) {
-        User user = getUserByLogin(login);
-        List<UserChallenge> userChallenges = userChallengeRepository.findAllByUserId(user.getId());
+    public List<UserChallengeDto> getUserChallenges(String login) {
+        List<UserChallenge> userChallenges = getAllUserChallenges(login);
         return userChallenges.stream().map(userChallengeMapper::mapEntityToDto).toList();
     }
 
-    public UserChallengeDao getUserChallenge(UUID id) {
+    public UserChallengeDto getUserChallenge(UUID id) {
         UserChallenge userChallenge = getUserChallengeById(id);
         return userChallengeMapper.mapEntityToDto(userChallenge);
     }
 
+    public List<UserChallengeDto> getCompletedUserChallenges(String login) {
+        List<UserChallenge> userChallenges = getAllUserChallenges(login);
+        return userChallenges.stream()
+                .filter(ch -> ch.getFinishedAt() != null)
+                .map(userChallengeMapper::mapEntityToDto).toList();
+    }
 
-    public UserChallengeDao saveUserChallenge(String login, UUID challengeId) {
+    public List<UserChallengeDto> getActiveUserChallenges(String login) {
+        List<UserChallenge> userChallenges = getAllUserChallenges(login);
+        return userChallenges.stream()
+                .filter(ch -> ch.getFinishedAt() == null)
+                .map(userChallengeMapper::mapEntityToDto).toList();
+    }
+
+    // TODO move to ChallengeService
+    public List<ChallengeDto> getAvailableChallenges(String login) {
+        List<Challenge> challenges = challengeRepository.findAll();
+        List<UserChallenge> userChallenges = getAllUserChallenges(login);
+        return challenges.stream()
+                .filter(ch ->
+                        userChallenges.stream()
+                                .anyMatch(uCh -> ch.getId() == uCh.getChallenge().getId()))
+                .map(challengeMapper::mapEntityToDto).toList();
+    }
+
+    public UserChallengeDto saveUserChallenge(String login, UUID challengeId) {
         User user = getUserByLogin(login);
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -117,4 +144,10 @@ public class UserChallengeService {
         UserChallenge userChallenge = getUserChallengeById(id);
         return userChallenge.getUserSummitList().stream().allMatch(s -> s.getConqueredAt() != null);
     }
+
+    private List<UserChallenge> getAllUserChallenges(String login) {
+        User user = getUserByLogin(login);
+        return userChallengeRepository.findAllByUserId(user.getId());
+    }
+
 }

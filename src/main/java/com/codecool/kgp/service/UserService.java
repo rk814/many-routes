@@ -1,5 +1,6 @@
 package com.codecool.kgp.service;
 
+import com.codecool.kgp.entity.UserChallenge;
 import com.codecool.kgp.errorhandling.DuplicateEntryException;
 import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.controller.dto.UserRequestDto;
@@ -40,14 +41,15 @@ public class UserService {
                 .map(userMapper::mapEntityToDto).toList();
     }
 
-    public UserDto getUserByLogin(String login) {
-        User user = userRepository.findByLogin(login)
-                .orElseThrow(() -> {
-                    log.error("Attempted to get user data with login '{}', but no matching user was found in the database", login);
-                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje");
-                });
+    public UserDto getUser(String login) {
+        User user = getLoginByLogin(login);
         log.info("User with id '{}' got user data", user.getId());
         return userMapper.mapEntityToDto(user);
+    }
+
+    public int getUserScore(String login) {
+        User user = getLoginByLogin(login);
+        return user.getUserChallenges().stream().mapToInt(UserChallenge::getScore).sum();
     }
 
     public UserDto setUser(UserRequestDto dto) {
@@ -134,5 +136,13 @@ public class UserService {
         user.setEmail(randomPrefix + user.getEmail().substring(charPos));
 
         user.setDeletedAt(LocalDateTime.now());
+    }
+
+    private User getLoginByLogin(String login) {
+        return userRepository.findByLogin(login)
+                .orElseThrow(() -> {
+                    log.error("Attempted to get user data with login '{}', but no matching user was found in the database", login);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje");
+                });
     }
 }

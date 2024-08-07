@@ -68,7 +68,7 @@ class UserServiceTest {
         Mockito.when(userMapper.mapEntityToDto(user)).thenReturn(userDto);
 
         //when:
-        UserDto actual = userService.getUserByLogin(login);
+        UserDto actual = userService.getUser(login);
 
         //then:
         Assertions.assertThat(actual.login()).isEqualTo(login);
@@ -82,7 +82,7 @@ class UserServiceTest {
 
         //when:
         Throwable actual = Assertions.catchThrowable(
-                () -> userService.getUserByLogin(login)
+                () -> userService.getUser(login)
         );
 
         //then:

@@ -7,7 +7,6 @@ import com.codecool.kgp.controller.validation.UserLogin;
 import com.codecool.kgp.controller.validation.UserRegister;
 import com.codecool.kgp.controller.validation.UserUpdate;
 import com.codecool.kgp.service.UserService;
-import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +30,12 @@ public class UserController {
 
     @GetMapping("/{login}") // in use
     public UserDto getUser(@PathVariable String login) {
-        return userService.getUserByLogin(login);
+        return userService.getUser(login);
+    }
+
+    @GetMapping("/{login}/score") // in use
+    public int getUserScore(@PathVariable String login) {
+        return userService.getUserScore(login);
     }
 
     @PostMapping // in use

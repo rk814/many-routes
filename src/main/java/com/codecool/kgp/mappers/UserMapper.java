@@ -1,6 +1,6 @@
 package com.codecool.kgp.mappers;
 
-import com.codecool.kgp.controller.dto.UserChallengeSimpleDao;
+import com.codecool.kgp.controller.dto.UserChallengeSimpleDto;
 import com.codecool.kgp.entity.UserChallenge;
 import com.codecool.kgp.entity.enums.Role;
 import com.codecool.kgp.controller.dto.UserDto;
@@ -44,7 +44,7 @@ public class UserMapper {
         );
     }
 
-    private List<UserChallengeSimpleDao> getUserChallengeDtoList(List<UserChallenge> userChallenges) {
+    private List<UserChallengeSimpleDto> getUserChallengeDtoList(List<UserChallenge> userChallenges) {
         return userChallenges.stream().map(userChallengeMapper::mapEntityToSimpleDto).toList();
     }
 }
