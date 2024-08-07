@@ -4,6 +4,7 @@ import com.codecool.kgp.entity.Summit;
 import com.codecool.kgp.entity.UserChallenge;
 import com.codecool.kgp.entity.UserSummit;
 import com.codecool.kgp.repository.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -11,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class UserSummitService {
 
@@ -30,6 +32,7 @@ public class UserSummitService {
         userSummit.setConqueredAt(LocalDateTime.now());
         userSummit.setScore(score);
         userSummitRepository.save(userSummit);
+        log.info("User summit with id '{}' was conquered with score value of {}", id, score);
     }
 
     public void saveUserSummit(UUID userChallengeId, UUID summitId) {
@@ -43,17 +46,25 @@ public class UserSummitService {
         UserSummit userSummit = new UserSummit(userChallenge, summit);
         userSummitRepository.save(userSummit);
         userChallenge.assignUserSummit(userSummit);
+        log.info("User summit with id '{}' and with user challenge id '{}' was saved",
+                userSummit.getId(), userChallenge.getId());
     }
 
     private Summit getSummitById(UUID id) {
         return summitRepository.findById(id)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        String.format("Szczyt o id '%s' nie istnieje", id)));
+                .orElseThrow(() -> {
+                    log.warn("Summit with id {} was not found", id);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            String.format("Szczyt o id '%s' nie został znaleziony", id));
+                });
     }
 
     private UserSummit getUserSummitById(UUID id) {
         return userSummitRepository.findById(id)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        String.format("Szczyt użytkownika o id '%s' nie istnieje", id)));
+                .orElseThrow(() -> {
+                    log.warn("User summit with id {} was not found", id);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            String.format("Szczyt użytkownika o id '%s' nie został znaleziony", id));
+                });
     }
 }

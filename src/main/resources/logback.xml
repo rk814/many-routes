@@ -42,7 +42,12 @@
         </rollingPolicy>
     </appender>
 
-    <logger name="com.codecool.kgp.service.UserService" level="INFO" additivity="false">
+    <logger name="com.codecool.kgp.service" level="INFO" additivity="false">
+        <appender-ref ref="File"/>
+        <appender-ref ref="ConsoleBold"/>
+    </logger>
+
+    <logger name="com.codecool.kgp.controller" level="INFO" additivity="false">
         <appender-ref ref="File"/>
         <appender-ref ref="ConsoleBold"/>
     </logger>

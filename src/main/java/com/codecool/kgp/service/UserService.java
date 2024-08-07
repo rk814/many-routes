@@ -36,6 +36,7 @@ public class UserService {
 
     public List<UserDto> getUsers() {
         List<User> users = userRepository.findAll();
+        log.info("{} users was found", users.size());
         return users.stream()
                 .filter(user -> !user.getEmail().startsWith("deleted-"))
                 .map(userMapper::mapEntityToDto).toList();
@@ -43,13 +44,15 @@ public class UserService {
 
     public UserDto getUser(String login) {
         User user = getLoginByLogin(login);
-        log.info("User with id '{}' got user data", user.getId());
+        log.info("User with id '{}' was found", user.getId());
         return userMapper.mapEntityToDto(user);
     }
 
     public int getUserScore(String login) {
         User user = getLoginByLogin(login);
-        return user.getUserChallenges().stream().mapToInt(UserChallenge::getScore).sum();
+        int score = user.getUserChallenges().stream().mapToInt(UserChallenge::getScore).sum();
+        log.info("User with id '{}' has score of value {}", user.getId(), score);
+        return score;
     }
 
     public UserDto setUser(UserRequestDto dto) {
@@ -59,7 +62,7 @@ public class UserService {
             log.info("New user with id '{}' was added to database", user.getId());
             return userMapper.mapEntityToDto(userFromDb);
         } catch (DataIntegrityViolationException e) {
-            log.error("Data integrity violation when adding user with login '{}' to database", user.getLogin());
+            log.warn("Data integrity violation when adding user with login '{}' to database", user.getLogin());
             throw new DuplicateEntryException("Podany login lub e-mail istnieją już w naszym serwisie");
         }
     }
