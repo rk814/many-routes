@@ -75,10 +75,7 @@ public class User {
     }
 
     public Double[] getCoordinatesArray() {
-        if (coordinates==null) {
-            return null;
-        }
-        return new Double[]{coordinates.getLatitude(), coordinates.getLongitude()};
+        return (coordinates == null) ? null : new Double[]{coordinates.getLatitude(), coordinates.getLongitude()};
     }
 
     public void updateUser(UserRequestDto dto) {

@@ -58,4 +58,8 @@ public class Summit {
     @Version
     private Integer version;
 
+
+    public Double[] getCoordinatesArray() {
+        return (coordinates == null) ? null : new Double[]{coordinates.getLatitude(), coordinates.getLongitude()};
+    }
 }

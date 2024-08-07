@@ -13,11 +13,6 @@ public record UserChallengeDao (
         Integer score,
         List<UserSummitDto> userSummitList
 ) {
-    public record UserSummitDto(
-            UUID id,
-            LocalDateTime conqueredAt
-    ) {
-    }
 
     public record ChallengeDto(
             UUID id,
