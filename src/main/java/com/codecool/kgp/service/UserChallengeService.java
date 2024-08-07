@@ -55,7 +55,7 @@ public class UserChallengeService {
             userSummitService.saveUserSummit(userChallenge, summit);
         });
 
-        user.asignUserChallenge(userChallengeFromDb);
+        user.assignUserChallenge(userChallengeFromDb);
         userRepository.save(user);
 
         return userChallengeMapper.mapEntityToDto(userChallengeFromDb);

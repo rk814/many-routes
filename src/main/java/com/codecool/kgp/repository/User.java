@@ -93,7 +93,7 @@ public class User {
         }
     }
 
-    public void asignUserChallenge(UserChallenge userChallenge) {
+    public void assignUserChallenge(UserChallenge userChallenge) {
         this.userChallenges.add(userChallenge);
     }
 }
