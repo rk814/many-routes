@@ -2,6 +2,7 @@ package com.codecool.kgp.repository;
 
 import com.codecool.kgp.repository.geography.Coordinates;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -40,7 +41,7 @@ public class Summit {
     private String mountains;
 
     @NotBlank
-    @Size(min = 0, message = "Szczyt nie może być wartością ujemną")
+    @Min(value = 0, message = "Szczyt nie może być wartością ujemną")
     private int height;
 
     private String description;
