@@ -16,7 +16,7 @@ import static org.instancio.Select.field;
 
 class UserMapperTest {
 
-    private final UserMapper userMapper = new UserMapper();
+    private final UserMapper userMapper = new UserMapper(new UserChallengeMapper(new SummitMapper()));
 
     @Test
     void mapEntityToDto() {

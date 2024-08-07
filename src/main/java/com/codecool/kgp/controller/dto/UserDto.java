@@ -1,5 +1,6 @@
 package com.codecool.kgp.controller.dto;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record UserDto(
@@ -12,6 +13,7 @@ public record UserDto(
         Boolean newsletter,
         LocalDateTime createAt,
         LocalDateTime deletedAt,
-        String role
+        String role,
+        List<UserChallengeSimpleDao> userChallengeSimpleDtoList
 ) {
 }

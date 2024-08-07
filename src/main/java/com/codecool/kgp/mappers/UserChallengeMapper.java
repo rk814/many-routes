@@ -1,8 +1,6 @@
 package com.codecool.kgp.mappers;
 
-import com.codecool.kgp.controller.dto.SummitDto;
-import com.codecool.kgp.controller.dto.UserChallengeDao;
-import com.codecool.kgp.controller.dto.UserSummitDto;
+import com.codecool.kgp.controller.dto.*;
 import com.codecool.kgp.entity.UserChallenge;
 import com.codecool.kgp.entity.UserSummit;
 import org.springframework.stereotype.Component;
@@ -23,12 +21,23 @@ public class UserChallengeMapper {
         return new UserChallengeDao(
                 userChallenge.getId(),
                 userChallenge.getUser().getId(),
-                new UserChallengeDao.ChallengeDto(userChallenge.getChallenge().getId(),
+                new ChallengeDto(userChallenge.getChallenge().getId(),
                         userChallenge.getChallenge().getName()),
                 userChallenge.getStartedAt(),
                 userChallenge.getFinishedAt(),
                 userChallenge.getScore(),
                 getSummitListDto(userChallenge.getUserSummitList())
+        );
+    }
+
+    public UserChallengeSimpleDao mapEntityToSimpleDto(UserChallenge userChallenge) {
+        return new UserChallengeSimpleDao(
+                userChallenge.getId(),
+                userChallenge.getUser().getId(),
+                userChallenge.getChallenge().getName(),
+                userChallenge.getStartedAt(),
+                userChallenge.getFinishedAt(),
+                userChallenge.getScore()
         );
     }
 
@@ -55,4 +64,5 @@ public class UserChallengeMapper {
                 }
         ).toList();
     }
+
 }
