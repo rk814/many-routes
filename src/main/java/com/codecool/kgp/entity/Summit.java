@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ public class Summit {
     private final UUID id = UUID.randomUUID();
 
     @ManyToMany(mappedBy = "summitList")
-    private List<Challenge> challengeList;
+    private List<Challenge> challengeList = new ArrayList<>();
 
     @NotBlank
     private String name;

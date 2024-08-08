@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -92,6 +93,9 @@ public class User {
     }
 
     public void assignUserChallenge(UserChallenge userChallenge) {
+        if (this.userChallenges==null) {
+            this.userChallenges = new ArrayList<>();
+        }
         this.userChallenges.add(userChallenge);
     }
 }

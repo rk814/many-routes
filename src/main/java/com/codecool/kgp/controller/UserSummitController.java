@@ -23,13 +23,6 @@ public class UserSummitController {
         this.userChallengeService = userChallengeService;
     }
 
-    @PostMapping("/add-new/{summitId}")
-    public void addUserSummit(@PathVariable String login, @PathVariable UUID userChallengeId, @PathVariable UUID summitId) {
-        log.info("Received request to add user summit with summit id '{}', login '{}' and user challenge id '{}'",
-                summitId, login, userChallengeId);
-        userSummitService.saveUserSummit(userChallengeId, summitId);
-    }
-
     @PostMapping("/{id}/conquer/{score}")
     public void conquerUserSummit(@PathVariable String login, @PathVariable UUID userChallengeId,
                                   @PathVariable UUID id, @PathVariable int score) {

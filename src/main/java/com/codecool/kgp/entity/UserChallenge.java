@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,7 +38,7 @@ public class UserChallenge {
     private int score;
 
     @OneToMany(mappedBy = "id", orphanRemoval = true)
-    private List<UserSummit> userSummitList;
+    private List<UserSummit> userSummitList = new ArrayList<>();
 
 
     public UserChallenge() {

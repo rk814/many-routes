@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -176,14 +177,18 @@ class UserChallengeServiceTest {
         //given:
         Mockito.when(userRepository.findByLogin(login1)).thenReturn(Optional.ofNullable(user1));
 
-        Challenge challenge = Instancio.create(Challenge.class);
+        Challenge challenge = Instancio.of(Challenge.class)
+                .generate(field(Challenge::getSummitList), gen-> gen.collection().size(4))
+                .create();
         Mockito.when(challengeRepository.findById(challenge.getId())).thenReturn(Optional.of(challenge));
 
         UserChallenge userChallenge = Instancio.create(UserChallenge.class);
-        Mockito.when(userChallengeRepository.save(Mockito.any(UserChallenge.class))).thenReturn(userChallenge);
 
-        Mockito.doNothing().when(userSummitService)
-                .saveUserSummit(Mockito.any(UserChallenge.class), Mockito.any(Summit.class));
+        Summit summit = Instancio.create(Summit.class);
+        UserSummit userSummit = Instancio.create(UserSummit.class);
+        Mockito.when(userSummitService.saveUserSummit(userChallenge, summit)).thenReturn(userSummit);
+
+        Mockito.when(userChallengeRepository.save(Mockito.any(UserChallenge.class))).thenReturn(userChallenge);
 
         UserChallengeDto userChallengeDto = Instancio.create(UserChallengeDto.class);
         Mockito.when(userChallengeMapper.mapEntityToDto(userChallenge)).thenReturn(userChallengeDto);
@@ -191,19 +196,24 @@ class UserChallengeServiceTest {
         //when:
         UserChallengeDto actual = userChallengeService.saveUserChallenge(login1, challenge.getId());
 
+
         //then:
         Mockito.verify(userSummitService, Mockito.times(challenge.getSummitList().size()))
                 .saveUserSummit(Mockito.any(UserChallenge.class), Mockito.any(Summit.class));
+
+        Mockito.verify(userChallengeRepository).save(userChallengeCaptor.capture());
+        Assertions.assertThat(userChallengeCaptor.getValue().getUserSummitList().size())
+                .isEqualTo(challenge.getSummitList().size());
+
         Mockito.verify(userRepository).save(userCaptor.capture());
         Assertions.assertThat(userCaptor.getValue().getUserChallenges()).contains(userChallenge);
+
         Assertions.assertThat(actual).isEqualTo(userChallengeDto);
     }
 
     @Test
     void saveUserChallenge_shouldReturnResponseStatusException404() {
         //given:
-        Mockito.when(userRepository.findByLogin(login1)).thenReturn(Optional.ofNullable(user1));
-
         UUID invalidId = UUID.randomUUID();
         Mockito.when(challengeRepository.findById(invalidId)).thenReturn(Optional.empty());
 

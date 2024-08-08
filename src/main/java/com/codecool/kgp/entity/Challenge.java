@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ public class Challenge {
     private String name;
 
     @ManyToMany
-    private List<Summit> summitList;
+    private List<Summit> summitList = new ArrayList<>();
 
     @Version
     private Integer version;

@@ -18,13 +18,13 @@ public class UserSummitService {
 
     private final UserSummitRepository userSummitRepository;
     private final SummitRepository summitRepository;
-    private final UserChallengeService userChallengeService;
 
-    public UserSummitService(UserSummitRepository userSummitRepository, SummitRepository summitRepository,
-                             UserChallengeService userChallengeService) {
+
+    public UserSummitService(UserSummitRepository userSummitRepository, SummitRepository summitRepository
+                              ) {
         this.userSummitRepository = userSummitRepository;
         this.summitRepository = summitRepository;
-        this.userChallengeService = userChallengeService;
+//        this.userChallengeService = userChallengeService;
     }
 
     public void setConquered(UUID id, int score) {
@@ -35,19 +35,13 @@ public class UserSummitService {
         log.info("User summit with id '{}' was conquered with score value of {}", id, score);
     }
 
-    public void saveUserSummit(UUID userChallengeId, UUID summitId) {
-        Summit summit = getSummitById(summitId);
-        UserChallenge userChallenge = userChallengeService.getUserChallengeById(userChallengeId);
-
-        saveUserSummit(userChallenge, summit);
-    }
-
-    public void saveUserSummit(UserChallenge userChallenge, Summit summit) {
+    protected UserSummit saveUserSummit(UserChallenge userChallenge, Summit summit) {
         UserSummit userSummit = new UserSummit(userChallenge, summit);
         userSummitRepository.save(userSummit);
-        userChallenge.assignUserSummit(userSummit);
+
         log.info("User summit with id '{}' and with user challenge id '{}' was saved",
                 userSummit.getId(), userChallenge.getId());
+        return userSummit;
     }
 
     private Summit getSummitById(UUID id) {

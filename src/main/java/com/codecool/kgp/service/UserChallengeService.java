@@ -5,6 +5,7 @@ import com.codecool.kgp.controller.dto.UserChallengeDto;
 import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.User;
 import com.codecool.kgp.entity.UserChallenge;
+import com.codecool.kgp.entity.UserSummit;
 import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.mappers.UserChallengeMapper;
 import com.codecool.kgp.repository.*;
@@ -92,11 +93,11 @@ public class UserChallengeService {
 
         UserChallenge userChallenge = new UserChallenge(user, challenge);
 
-        UserChallenge userChallengeFromDb = userChallengeRepository.save(userChallenge);
-
         challenge.getSummitList().forEach(summit -> {
-            userSummitService.saveUserSummit(userChallenge, summit);
+            UserSummit userSummit = userSummitService.saveUserSummit(userChallenge, summit);
+            userChallenge.assignUserSummit(userSummit);
         });
+        UserChallenge userChallengeFromDb = userChallengeRepository.save(userChallenge);
 
         user.assignUserChallenge(userChallengeFromDb);
         userRepository.save(user);
