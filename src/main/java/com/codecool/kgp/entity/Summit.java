@@ -59,6 +59,18 @@ public class Summit {
     private Integer version;
 
 
+    public Summit(String name, Coordinates coordinates, String mountainRange, String mountains, int height, String description, String guideNotes, Integer score, Status status) {
+        this.name = name;
+        this.coordinates = coordinates;
+        this.mountainRange = mountainRange;
+        this.mountains = mountains;
+        this.height = height;
+        this.description = description;
+        this.guideNotes = guideNotes;
+        this.score = score;
+        this.status = status;
+    }
+
     public Double[] getCoordinatesArray() {
         return (coordinates == null) ? null : new Double[]{coordinates.getLatitude(), coordinates.getLongitude()};
     }
