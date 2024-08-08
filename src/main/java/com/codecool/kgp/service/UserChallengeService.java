@@ -11,6 +11,7 @@ import com.codecool.kgp.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
+@Transactional
 @Service
 public class UserChallengeService {
 
@@ -42,7 +44,7 @@ public class UserChallengeService {
 
     public List<UserChallengeDto> getUserChallenges(String login) {
         List<UserChallenge> userChallenges = getAllUserChallenges(login);
-        log.info("Found {} user challenges with login '{}", userChallenges.size(), login);
+        log.info("Found {} user challenges with login '{}'", userChallenges.size(), login);
         return userChallenges.stream().map(userChallengeMapper::mapEntityToDto).toList();
     }
 
@@ -57,7 +59,7 @@ public class UserChallengeService {
         List<UserChallengeDto> userChallengesDto = userChallenges.stream()
                 .filter(ch -> ch.getFinishedAt() != null)
                 .map(userChallengeMapper::mapEntityToDto).toList();
-        log.info("Found {} completed user challenges with login '{}", userChallengesDto.size(), login);
+        log.info("Found {} completed user challenges with login '{}'", userChallengesDto.size(), login);
         return userChallengesDto;
     }
 
@@ -66,7 +68,7 @@ public class UserChallengeService {
         List<UserChallengeDto> userChallengesDto = userChallenges.stream()
                 .filter(ch -> ch.getFinishedAt() == null)
                 .map(userChallengeMapper::mapEntityToDto).toList();
-        log.info("Found {} active user challenges with login '{}", userChallengesDto.size(), login);
+        log.info("Found {} active user challenges with login '{}'", userChallengesDto.size(), login);
         return userChallengesDto;
     }
 
@@ -85,9 +87,11 @@ public class UserChallengeService {
 
     public UserChallengeDto saveUserChallenge(String login, UUID challengeId) {
         User user = getUserByLogin(login);
+
         Challenge challenge = getChallengeById(challengeId);
 
         UserChallenge userChallenge = new UserChallenge(user, challenge);
+
         UserChallenge userChallengeFromDb = userChallengeRepository.save(userChallenge);
 
         challenge.getSummitList().forEach(summit -> {
@@ -120,7 +124,7 @@ public class UserChallengeService {
 
         userChallenge.setScore(score);
         userChallengeRepository.save(userChallenge);
-        log.info("Score in user challenge with id '{}' was update to new value of {}", id, score);
+        log.info("Score in user challenge with id '{}' was update to new value of {} points", id, score);
     }
 
     public void increaseUserChallengeScore(UUID id, Integer score) {
@@ -129,7 +133,7 @@ public class UserChallengeService {
 
         userChallenge.setScore(increasedScore);
         userChallengeRepository.save(userChallenge);
-        log.info("Score in user challenge with id '{}' was update to new value of {}", id, increasedScore);
+        log.info("Score in user challenge with id '{}' was update to new value of {} points", id, increasedScore);
     }
 
     public void deleteUserChallenge(UUID id) {
@@ -143,7 +147,9 @@ public class UserChallengeService {
     public void completeUserChallengeIfValid(UUID id) {
         if (checkIfAllUserSummitsAreConquered(id)) {
             setUserChallengeFinishedTime(id);
-            log.info("User challenge with id '{}' was completed", id);
+//            log.info("User challenge with id '{}' was completed", id);
+        } else {
+            log.info("Refused to complete user challenge with id '{}'", id);
         }
     }
 
