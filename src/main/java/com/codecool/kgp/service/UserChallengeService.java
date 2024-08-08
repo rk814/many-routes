@@ -86,17 +86,17 @@ public class UserChallengeService {
         return challengesDto;
     }
 
+    // TODO check if user already has that challenge active or any
     public UserChallengeDto saveUserChallenge(String login, UUID challengeId) {
         User user = getUserByLogin(login);
-
         Challenge challenge = getChallengeById(challengeId);
 
         UserChallenge userChallenge = new UserChallenge(user, challenge);
-
         challenge.getSummitList().forEach(summit -> {
             UserSummit userSummit = userSummitService.saveUserSummit(userChallenge, summit);
             userChallenge.assignUserSummit(userSummit);
         });
+
         UserChallenge userChallengeFromDb = userChallengeRepository.save(userChallenge);
 
         user.assignUserChallenge(userChallengeFromDb);
