@@ -25,14 +25,14 @@ public class SummitController {
 
 
     @GetMapping("/")
-    public List<SummitSimpleDto> getAllSummitsSimplified() {
-        //TODO
-        return null;
+    public List<SummitSimpleDto> getSummitsSimplified() {
+        log.info("Received request for all simplify summits");
+        return summitService.getAllSummitsSimplified();
     }
 
+    //TODO
     @GetMapping("/{id}")
     public SummitDto getSummit(@PathVariable UUID id) {
-        //TODO
         return null;
     }
 
@@ -42,14 +42,14 @@ public class SummitController {
         return summitService.addNewSummit(dto);
     }
 
+    //TODO
     @PutMapping("/{id}")
     public SummitDto updateSummit(@PathVariable UUID id) {
-        //TODO
-        return  null;
+        return null;
     }
 
+    //TODO
     @DeleteMapping("/{id}")
     public void deleteSummit(@PathVariable UUID id) {
-        //TODO
     }
 }

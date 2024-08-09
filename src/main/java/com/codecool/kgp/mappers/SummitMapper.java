@@ -2,6 +2,7 @@ package com.codecool.kgp.mappers;
 
 import com.codecool.kgp.controller.dto.SummitDto;
 import com.codecool.kgp.controller.dto.SummitRequestDto;
+import com.codecool.kgp.controller.dto.SummitSimpleDto;
 import com.codecool.kgp.entity.Summit;
 import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.entity.geography.Coordinates;
@@ -37,6 +38,17 @@ public class SummitMapper {
                 dto.guideNotes(),
                 dto.score(),
                 Status.valueOf(dto.status())
+        );
+    }
+
+    public SummitSimpleDto mapEntityToSimpleDto(Summit summit) {
+        return new SummitSimpleDto(
+                summit.getId(),
+                summit.getName(),
+                summit.getMountainRange(),
+                summit.getMountains(),
+                summit.getHeight(),
+                summit.getStatus().name()
         );
     }
 }
