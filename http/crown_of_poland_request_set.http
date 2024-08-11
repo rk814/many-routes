@@ -1,0 +1,20 @@
+### POST 1
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+  "name": "Rysy",
+  "latitude": 49.179306,
+  "longitude": 20.088444,
+  "mountainRange": "Tatry",
+  "mountains": "Karpaty",
+  "height": 2499,
+  "score": 28,
+  "status": "ACTIVE"
+}
+
+### GET ALL
+
+GET localhost:8888/got/v1/summits/
+
