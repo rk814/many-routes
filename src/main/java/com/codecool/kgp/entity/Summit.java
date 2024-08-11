@@ -31,6 +31,7 @@ public class Summit {
     private List<Challenge> challengeList = new ArrayList<>();
 
     @NotBlank
+    @Column(unique = true)
     private String name;
 
     @Embedded
@@ -40,7 +41,6 @@ public class Summit {
 
     private String mountains;
 
-    @NotBlank
     @Min(value = 0, message = "Szczyt nie może być wartością ujemną")
     private int height;
 
@@ -48,7 +48,7 @@ public class Summit {
 
     private String guideNotes;
 
-    @NotBlank
+    @NotNull
     private Integer score;
 
     @NotNull
