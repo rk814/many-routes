@@ -6,7 +6,9 @@ import com.codecool.kgp.controller.dto.SummitRequestDto;
 import com.codecool.kgp.service.SummitService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,7 +35,7 @@ public class SummitController {
     //TODO
     @GetMapping("/{id}")
     public SummitDto getSummit(@PathVariable UUID id) {
-        return null;
+        throw new ResponseStatusException(HttpStatusCode.valueOf(501), "Not implemented yet");
     }
 
     @PostMapping("/add-new")
@@ -45,11 +47,12 @@ public class SummitController {
     //TODO
     @PutMapping("/{id}")
     public SummitDto updateSummit(@PathVariable UUID id) {
-        return null;
+        throw new ResponseStatusException(HttpStatusCode.valueOf(501), "Not implemented yet");
     }
 
     //TODO
     @DeleteMapping("/{id}")
     public void deleteSummit(@PathVariable UUID id) {
+        throw new ResponseStatusException(HttpStatusCode.valueOf(501), "Not implemented yet");
     }
 }
