@@ -141,7 +141,7 @@ public class UserChallengeService {
 
         userChallenge.setScore(score);
         userChallengeRepository.save(userChallenge);
-        log.info("Score in user challenge with id '{}' was update to new value of {} points", id, score);
+        log.info("Score of user challenge with id '{}' was update to new value of {} points", id, score);
     }
 
 
@@ -166,7 +166,7 @@ public class UserChallengeService {
         return userRepository.findByLogin(login)
                 .orElseThrow(() -> {
                     log.warn("Login '{}' is invalid", login);
-                    return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Login jest  niewłaściwy");
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Login jest niewłaściwy");
                 });
     }
 
@@ -201,7 +201,6 @@ public class UserChallengeService {
     private void setUserChallengeFinishedTime(UserChallenge userChallenge) {
         if (userChallenge.getFinishedAt() == null) {
             userChallenge.setFinishedAt(LocalDateTime.now());
-            userChallengeRepository.save(userChallenge);
         } else {
             log.warn("User challenge with id '{}' was already completed", userChallenge.getId());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "To wyzwanie zostało już wcześniej zakończone");
