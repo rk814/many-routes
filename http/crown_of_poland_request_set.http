@@ -1,4 +1,4 @@
-### POST 1
+### POST
 
 POST localhost:8888/got/v1/summits/add-new
 Content-Type: application/json

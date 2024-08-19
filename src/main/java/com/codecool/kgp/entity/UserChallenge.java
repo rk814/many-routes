@@ -37,7 +37,7 @@ public class UserChallenge {
 
     private int score;
 
-    @OneToMany(mappedBy = "id", orphanRemoval = true)
+    @OneToMany(mappedBy = "id", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<UserSummit> userSummitList = new ArrayList<>();
 
 

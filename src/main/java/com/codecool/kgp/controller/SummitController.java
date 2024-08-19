@@ -39,7 +39,6 @@ public class SummitController {
     @PostMapping("/add-new")
     public SummitDto addSummit(@RequestBody @Valid SummitRequestDto dto) {
         log.info("Received request for new summit");
-        // TODO check name uniques
         return summitService.addNewSummit(dto);
     }
 

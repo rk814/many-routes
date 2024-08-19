@@ -6,6 +6,7 @@ import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.User;
 import com.codecool.kgp.entity.UserChallenge;
 import com.codecool.kgp.entity.UserSummit;
+import com.codecool.kgp.errorhandling.DuplicateEntryException;
 import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.mappers.UserChallengeMapper;
 import com.codecool.kgp.repository.*;
@@ -26,19 +27,16 @@ public class UserChallengeService {
 
     private final UserChallengeRepository userChallengeRepository;
     private final UserChallengeMapper userChallengeMapper;
-
     private final UserRepository userRepository;
     private final ChallengeRepository challengeRepository;
-    private final UserSummitService userSummitService;
     private final ChallengeMapper challengeMapper;
 
     public UserChallengeService(UserRepository userRepository, ChallengeRepository challengeRepository,
-                                UserChallengeRepository userChallengeRepository, UserSummitService userSummitService,
+                                UserChallengeRepository userChallengeRepository,
                                 UserChallengeMapper userChallengeMapper, ChallengeMapper challengeMapper) {
         this.userRepository = userRepository;
         this.challengeRepository = challengeRepository;
         this.userChallengeRepository = userChallengeRepository;
-        this.userSummitService = userSummitService;
         this.userChallengeMapper = userChallengeMapper;
         this.challengeMapper = challengeMapper;
     }
@@ -86,14 +84,18 @@ public class UserChallengeService {
         return challengesDto;
     }
 
-    // TODO check if user already has that challenge active or any
+    // TODO Test
     public UserChallengeDto saveUserChallenge(String login, UUID challengeId) {
         User user = getUserByLogin(login);
-        Challenge challenge = getChallengeById(challengeId);
+        if (hasThatChallengeActive(challengeId, user.getUserChallenges())) {
+            log.warn("User with login '{}' attempted to start the challenge with id '{}' already active", login, challengeId);
+            throw new DuplicateEntryException("Użytkownik już uczestniczy w tym wyzwaniu");
+        }
 
+        Challenge challenge = getChallengeById(challengeId);
         UserChallenge userChallenge = new UserChallenge(user, challenge);
         challenge.getSummitList().forEach(summit -> {
-            UserSummit userSummit = userSummitService.saveUserSummit(userChallenge, summit);
+            UserSummit userSummit = new UserSummit(userChallenge, summit);
             userChallenge.assignUserSummit(userSummit);
         });
 
@@ -191,6 +193,10 @@ public class UserChallengeService {
                     return new ResponseStatusException(HttpStatus.NOT_FOUND,
                             String.format("Wyzwanie o numerze id '%s' nie zostało znalezione", challengeId));
                 });
+    }
+
+    private boolean hasThatChallengeActive(UUID challengeId, List<UserChallenge> userChallenges) {
+        return userChallenges.stream().anyMatch(ch -> ch.getChallenge().getId() == challengeId && ch.getFinishedAt() == null);
     }
 
 }

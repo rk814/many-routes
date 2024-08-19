@@ -24,13 +24,13 @@ import java.util.UUID;
 public class Summit {
 
     @Id
-    @EqualsAndHashCode.Include
     private final UUID id = UUID.randomUUID();
 
     @ManyToMany(mappedBy = "summitList")
     private List<Challenge> challengeList = new ArrayList<>();
 
     @NotBlank
+    @EqualsAndHashCode.Include
     @Column(unique = true)
     private String name;
 

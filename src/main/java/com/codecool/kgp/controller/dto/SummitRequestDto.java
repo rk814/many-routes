@@ -1,5 +1,6 @@
 package com.codecool.kgp.controller.dto;
 
+import com.codecool.kgp.controller.validation.SummitUniqueName;
 import com.codecool.kgp.controller.validation.UserBasic;
 import jakarta.validation.constraints.*;
 
@@ -7,6 +8,7 @@ public record SummitRequestDto(
 
         @NotBlank(message = "Pole 'nazwa' jest obowiązkowe")
         @Size(max = 50, message = "Imię może mieć maksymalnie 50 znaków", groups = UserBasic.class)
+        @SummitUniqueName
         String name,
 
         @NotNull(message = "Pole 'latitude' jest obowiązkowe")
