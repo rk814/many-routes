@@ -42,47 +42,85 @@ class SummitControllerTest {
     @MockBean
     private SummitService summitService;
 
-    public static Stream<Arguments> SummitsStream() {
-        return Stream.of(
-                Arguments.of(List.of(), 0),
-                Arguments.of(List.of(
-                        new SummitSimpleDto(
-                                UUID.randomUUID(),
-                                "rysy",
-                                "karpaty",
-                                "tatry",
-                                1234,
-                                "ACTIVE"
-                        )
-                ), 1)
-        );
-    }
+//    public static Stream<Arguments> SummitsStream() {
+//        return Stream.of(
+//                Arguments.of(List.of(), 0),
+//                Arguments.of(List.of(
+//                        new SummitSimpleDto(
+//                                UUID.randomUUID(),
+//                                "rysy",
+//                                "karpaty",
+//                                "tatry",
+//                                1234,
+//                                "ACTIVE"
+//                        )
+//                ), 1)
+//        );
+//    }
+//
+//
+//    @ParameterizedTest
+//    @MethodSource("SummitsStream")
+//    void shouldReturnAllSummitsSimplified(List<SummitSimpleDto> input, int expected) throws Exception {
+//        //given:
+////        List<SummitSimpleDto> summitSimpleDtoList = Instancio.ofList(SummitSimpleDto.class).size(1).create();
+//        Mockito.when(summitService.getAllSummitsSimplified())
+//                .thenReturn(input);
+//
+//        //when:
+//        var response = mockMvc.perform(get("/got/v1/summits/"));
+//
+//        //then:
+//        response.andExpect(status().isOk())
+//                .andExpect(jsonPath("$.size()").value(expected));
+//
+//        // no if!!!!
+//        if (expected > 0) {
+//            response.andExpect(jsonPath("$[0].id").value(input.get(0).id().toString()))
+//                    .andExpect(jsonPath("$[0].name").value(input.get(0).name()))
+//                    .andExpect(jsonPath("$[0].mountainRange").value(input.get(0).mountainRange()))
+//                    .andExpect(jsonPath("$[0].mountains").value(input.get(0).mountains()))
+//                    .andExpect(jsonPath("$[0].height").value(input.get(0).height()))
+//                    .andExpect(jsonPath("$[0].status").value(input.get(0).status()));
+//        }
+//    }
 
 
-    @ParameterizedTest
-    @MethodSource("SummitsStream")
-    void shouldReturnAllSummitsSimplified(List<SummitSimpleDto> input, int expected) throws Exception {
+    @Test
+    void shouldReturnAllSummitsSimplified() throws Exception {
         //given:
-//        List<SummitSimpleDto> summitSimpleDtoList = Instancio.ofList(SummitSimpleDto.class).size(1).create();
+        List<SummitSimpleDto> summitSimpleDtoList = Instancio.ofList(SummitSimpleDto.class).size(1).create();
         Mockito.when(summitService.getAllSummitsSimplified())
-                .thenReturn(input);
+                .thenReturn(summitSimpleDtoList);
 
         //when:
         var response = mockMvc.perform(get("/got/v1/summits/"));
 
         //then:
         response.andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(expected));
+                .andExpect(jsonPath("$.size()").value(summitSimpleDtoList.size()))
+                .andExpect(jsonPath("$[0].id").value(summitSimpleDtoList.get(0).id().toString()))
+                .andExpect(jsonPath("$[0].name").value(summitSimpleDtoList.get(0).name()))
+                .andExpect(jsonPath("$[0].mountainRange").value(summitSimpleDtoList.get(0).mountainRange()))
+                .andExpect(jsonPath("$[0].mountains").value(summitSimpleDtoList.get(0).mountains()))
+                .andExpect(jsonPath("$[0].height").value(summitSimpleDtoList.get(0).height()))
+                .andExpect(jsonPath("$[0].status").value(summitSimpleDtoList.get(0).status()));
+    }
 
-        // no if!!!!
-        if (expected > 0) {
-            response.andExpect(jsonPath("$[0].id").value(input.get(0).id().toString()))
-                    .andExpect(jsonPath("$[0].name").value(input.get(0).name()))
-                    .andExpect(jsonPath("$[0].mountainRange").value(input.get(0).mountainRange()))
-                    .andExpect(jsonPath("$[0].mountains").value(input.get(0).mountains()))
-                    .andExpect(jsonPath("$[0].height").value(input.get(0).height()))
-                    .andExpect(jsonPath("$[0].status").value(input.get(0).status()));
-        }
+
+    @Test
+    void shouldReturnEmptyList() throws Exception {
+        //given:
+        List<SummitSimpleDto> summitSimpleDtoList = Instancio.ofList(SummitSimpleDto.class).size(0).create();
+        Mockito.when(summitService.getAllSummitsSimplified())
+                .thenReturn(summitSimpleDtoList);
+
+        //when:
+        var response = mockMvc.perform(get("/got/v1/summits/"));
+
+        //then:
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(0));
     }
 
 
@@ -123,8 +161,8 @@ class SummitControllerTest {
                         }
                         """));
         //then:
-        response.andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isOk())
+//        response.andDo(MockMvcResultHandlers.print())
+        response.andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(dto.id().toString()));
     }
 }
