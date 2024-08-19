@@ -59,16 +59,15 @@ public class UserChallengeController {
         return userChallengeService.saveUserChallenge(login, challengeId);
     }
 
-    @PostMapping("/{id}/finish")
-    public void completeUserChallenge(@PathVariable String login, @PathVariable UUID id) {
-        log.info("Received request to complete user challenge with id '{}' for user with login '{}'", id, login);
-        userChallengeService.setUserChallengeFinishedTime(id);
-    }
-
-    @PostMapping("/{id}/finish-with-validation")
-    public void completeUserChallengeWithValidation(@PathVariable String login, @PathVariable UUID id) {
-        log.info("Received request to complete user challenge with validation with id '{}' for user with login '{}'", id, login);
-        userChallengeService.completeUserChallengeIfValid(id);
+    @PostMapping("/{id}/user-summits/{summitId}/conquer/{score}")
+    public UserChallengeDto conquerSummit(@PathVariable String login, @PathVariable UUID id,
+                              @PathVariable UUID summitId, @PathVariable int score) {
+        log.info("Received request to conquer user summit with id '{}' and login '{}'", id, login);
+        if (score < 0) {
+            log.warn("Request for conquer of user summit with id '{}' has invalid score value of {}", id, score);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Punkty (score) nie mogą być ujemne");
+        }
+        return userChallengeService.setSummitConquered(id, summitId,  score);
     }
 
     @PatchMapping("/{id}/update-score/{score}")
@@ -79,16 +78,6 @@ public class UserChallengeController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Score can be only positive value or zero");
         }
         userChallengeService.setUserChallengeScore(id, score);
-    }
-
-    @PatchMapping("/{id}/add-score/{score}")
-    public void increaseUserChallengeScore(@PathVariable String login, @PathVariable UUID id, @PathVariable Integer score) {
-        log.info("Received request to update score of user challenge with id '{}' for user with login '{}'", id, login);
-        if (score < 0) {
-            log.warn("Request to update user score of user challenge with id '{}' had wrong value of '{}' ", id, score);
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Punkty (score) nie mogą być ujemne");
-        }
-        userChallengeService.increaseUserChallengeScore(id, score);
     }
 
     @DeleteMapping("/{id}")

@@ -84,7 +84,6 @@ public class UserChallengeService {
         return challengesDto;
     }
 
-    // TODO Test
     public UserChallengeDto saveUserChallenge(String login, UUID challengeId) {
         User user = getUserByLogin(login);
         if (hasThatChallengeActive(challengeId, user.getUserChallenges())) {
@@ -110,16 +109,31 @@ public class UserChallengeService {
         return userChallengeMapper.mapEntityToDto(userChallengeFromDb);
     }
 
-    public void setUserChallengeFinishedTime(UUID id) {
-        UserChallenge userChallenge = getUserChallengeById(id);
-        if (userChallenge.getFinishedAt() == null) {
-            userChallenge.setFinishedAt(LocalDateTime.now());
-            userChallengeRepository.save(userChallenge);
-            log.info("User challenge with id '{}' was completed", id);
+    public UserChallengeDto setSummitConquered(UUID userChallengeId, UUID userSummitId, int score) {
+        UserChallenge userChallenge = getUserChallengeById(userChallengeId);
+        UserSummit userSummit = userChallenge.getUserSummitList().stream().filter(sl -> sl.getId() == userSummitId).findFirst()
+                .orElseThrow(() -> {
+                    log.warn("User Challenge with id '{}' does not contain User Summit with id '{}'", userChallengeId, userSummitId);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            String.format("Szczyt o numerze id '%s' nie został znaleziony", userSummitId)
+                    );
+                });
+
+        userSummit.setConqueredAt(LocalDateTime.now());
+        userSummit.setScore(score);
+        log.info("User summit with id '{}' was conquered with score value of {}", userSummitId, score);
+
+        increaseUserChallengeScore(userChallenge, score);
+
+        if (areAllUserSummitsConquered(userChallenge)) {
+            setUserChallengeFinishedTime(userChallenge);
+            log.info("User challenge with id '{}' was completed", userChallenge.getId());
         } else {
-            log.warn("User challenge with id '{}' was already completed", id);
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "To wyzwanie zostało już wcześniej zakończone");
+            log.info("User challenge with id '{}' is not completed jet", userChallenge.getId());
         }
+
+        UserChallenge userChallengeFromDb = userChallengeRepository.save(userChallenge);
+        return userChallengeMapper.mapEntityToDto(userChallengeFromDb);
     }
 
     public void setUserChallengeScore(UUID id, Integer score) {
@@ -130,14 +144,6 @@ public class UserChallengeService {
         log.info("Score in user challenge with id '{}' was update to new value of {} points", id, score);
     }
 
-    public void increaseUserChallengeScore(UUID id, Integer score) {
-        UserChallenge userChallenge = getUserChallengeById(id);
-        int increasedScore = userChallenge.getScore() + score;
-
-        userChallenge.setScore(increasedScore);
-        userChallengeRepository.save(userChallenge);
-        log.info("Score in user challenge with id '{}' was update to new value of {} points", id, increasedScore);
-    }
 
     public void deleteUserChallenge(UUID id) {
         UserChallenge userChallenge = getUserChallengeById(id);
@@ -145,15 +151,6 @@ public class UserChallengeService {
         userChallengeRepository.delete(userChallenge);
         log.info("User challenge with id '{}' was successfully deleted", id);
         // TODO soft delete
-    }
-
-    public void completeUserChallengeIfValid(UUID id) {
-        if (checkIfAllUserSummitsAreConquered(id)) {
-            setUserChallengeFinishedTime(id);
-//            log.info("User challenge with id '{}' was completed", id);
-        } else {
-            log.info("Refused to complete user challenge with id '{}'", id);
-        }
     }
 
     protected UserChallenge getUserChallengeById(UUID id) {
@@ -171,14 +168,6 @@ public class UserChallengeService {
                     log.warn("Login '{}' is invalid", login);
                     return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Login jest  niewłaściwy");
                 });
-    }
-
-    private boolean checkIfAllUserSummitsAreConquered(UUID id) {
-        UserChallenge userChallenge = getUserChallengeById(id);
-        boolean areAllConquered = userChallenge.getUserSummitList().stream().allMatch(s -> s.getConqueredAt() != null);
-        log.info(areAllConquered ? "All summits from user challenge with id '{}' are conquered" :
-                "Not all summits from user challenge with id '{}' are conquered", id);
-        return areAllConquered;
     }
 
     private List<UserChallenge> getAllUserChallenges(String login) {
@@ -199,4 +188,23 @@ public class UserChallengeService {
         return userChallenges.stream().anyMatch(ch -> ch.getChallenge().getId() == challengeId && ch.getFinishedAt() == null);
     }
 
+    private void increaseUserChallengeScore(UserChallenge userChallenge, Integer score) {
+        int increasedScore = userChallenge.getScore() + score;
+        userChallenge.setScore(increasedScore);
+        log.info("Score in user challenge with id '{}' was updated to new value of {} points", userChallenge.getId(), increasedScore);
+    }
+
+    private boolean areAllUserSummitsConquered(UserChallenge userChallenge) {
+        return userChallenge.getUserSummitList().stream().allMatch(s -> s.getConqueredAt() != null);
+    }
+
+    private void setUserChallengeFinishedTime(UserChallenge userChallenge) {
+        if (userChallenge.getFinishedAt() == null) {
+            userChallenge.setFinishedAt(LocalDateTime.now());
+            userChallengeRepository.save(userChallenge);
+        } else {
+            log.warn("User challenge with id '{}' was already completed", userChallenge.getId());
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "To wyzwanie zostało już wcześniej zakończone");
+        }
+    }
 }
