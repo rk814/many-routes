@@ -1,4 +1,4 @@
-### POST
+### POST 1
 
 POST localhost:8888/got/v1/summits/add-new
 Content-Type: application/json
@@ -12,6 +12,438 @@ Content-Type: application/json
   "height": 2499,
   "score": 28,
   "status": "ACTIVE"
+}
+
+### POST 2
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+  "name": "Babia Góra",
+  "latitude": 49.573333,
+  "longitude": 19.529444,
+  "mountainRange": "Beskid Żywiecki",
+  "mountains": "Karpaty",
+  "height": 1725,
+  "score": 27,
+  "status": "ACTIVE"
+}
+
+### POST 3
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Śnieżka",
+"latitude": 50.736028,
+"longitude": 15.739611,
+"mountainRange": "Karkonosze",
+"mountains": "Sudety",
+"height": 1603,
+"score": 26,
+"status": "ACTIVE"
+}
+
+### POST 4
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Śnieżnik",
+"latitude": 50.207004,
+"longitude": 16.849226,
+"mountainRange": "Masyw Śnieżnika",
+"mountains": "Sudety",
+"height": 1423,
+"score": 25,
+"status": "ACTIVE"
+}
+
+### POST 5
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Tarnica",
+"latitude": 49.074778,
+"longitude": 22.72675,
+"mountainRange": "Bieszczady Zachodnie",
+"mountains": "Karpaty",
+"height": 1346,
+"score": 24,
+"status": "ACTIVE"
+}
+
+### POST 6
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Turbacz",
+"latitude": 49.542944,
+"longitude": 20.111556,
+"mountainRange": "Gorce",
+"mountains": "Karpaty",
+"height": 1310,
+"score": 23,
+"status": "ACTIVE"
+}
+
+### POST 7
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Radziejowa",
+"latitude": 49.449444,
+"longitude": 20.604444,
+"mountainRange": "Beskid Sądecki",
+"mountains": "Karpaty",
+"height": 1266,
+"score": 22,
+"status": "ACTIVE"
+}
+
+### POST 8
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Skrzyczne",
+"latitude": 49.684444,
+"longitude": 19.030278,
+"mountainRange": "Beskid Śląski",
+"mountains": "Karpaty",
+"height": 1257,
+"score": 21,
+"status": "ACTIVE"
+}
+
+### POST 9
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Mogielica",
+"latitude": 49.655194,
+"longitude": 20.276694,
+"mountainRange": "Beskid Wyspowy",
+"mountains": "Karpaty",
+"height": 1171,
+"score": 20,
+"status": "ACTIVE"
+}
+
+### POST 10
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Wysoka Kopa",
+"latitude": 50.850278,
+"longitude": 15.42,
+"mountainRange": "Góry Izerskie",
+"mountains": "Sudety",
+"height": 1126,
+"score": 19,
+"status": "ACTIVE"
+}
+
+### POST 11
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Rudawiec",
+"latitude": 50.244056,
+"longitude": 16.975889,
+"mountainRange": "Góry Bialskie",
+"mountains": "Sudety",
+"height": 1106,
+"score": 18,
+"status": "ACTIVE"
+}
+
+### POST 12
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Orlica",
+"latitude": 50.353186,
+"longitude": 16.360719,
+"mountainRange": "Góry Orlickie",
+"mountains": "Sudety",
+"height": 1084,
+"score": 17,
+"status": "ACTIVE"
+}
+
+### POST 13
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Wysoka",
+"latitude": 49.380278,
+"longitude": 20.555556,
+"mountainRange": "Pieniny",
+"mountains": "Karpaty",
+"height": 1050,
+"score": 16,
+"status": "ACTIVE"
+}
+
+### POST 14
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Wielka Sowa",
+"latitude": 50.680158,
+"longitude": 16.485497,
+"mountainRange": "Góry Sowie",
+"mountains": "Sudety",
+"height": 1015,
+"score": 15,
+"status": "ACTIVE"
+}
+
+### POST 15
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Lackowa",
+"latitude": 49.428333,
+"longitude": 21.096111,
+"mountainRange": "Beskid Niski",
+"mountains": "Karpaty",
+"height": 997,
+"score": 14,
+"status": "ACTIVE"
+}
+
+### POST 16
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Kowadło",
+"latitude": 50.264433,
+"longitude": 17.013219,
+"mountainRange": "Góry Złote",
+"mountains": "Sudety",
+"height": 989,
+"score": 13,
+"status": "ACTIVE"
+}
+
+### POST 17
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Jagodna",
+"latitude": 50.252472,
+"longitude": 16.564722,
+"mountainRange": "Góry Bystrzyckie",
+"mountains": "Sudety",
+"height": 977,
+"score": 12,
+"status": "ACTIVE"
+}
+
+### POST 18
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Skalnik",
+"latitude": 50.8085,
+"longitude": 15.90025,
+"mountainRange": "Rudawy Janowickie",
+"mountains": "Sudety",
+"height": 945,
+"score": 11,
+"status": "ACTIVE"
+}
+
+### POST 19
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Waligóra",
+"latitude": 50.680833,
+"longitude": 16.278056,
+"mountainRange": "Góry Kamienne",
+"mountains": "Sudety",
+"height": 936,
+"score": 10,
+"status": "ACTIVE"
+}
+
+### POST 20
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Czupel",
+"latitude": 49.767944,
+"longitude": 19.160639,
+"mountainRange": "Beskid Mały",
+"mountains": "Karpaty",
+"height": 931,
+"score": 9,
+"status": "ACTIVE"
+}
+
+### POST 21
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Szczeliniec Wielki",
+"latitude": 50.485833,
+"longitude": 16.339167,
+"mountainRange": "Góry Stołowe",
+"mountains": "Sudety",
+"height": 919,
+"score": 8,
+"status": "ACTIVE"
+}
+
+### POST 22
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Lubomir",
+"latitude": 49.766944,
+"longitude": 20.059722,
+"mountainRange": "Beskid Makowski",
+"mountains": "Karpaty",
+"height": 904,
+"score": 7,
+"status": "ACTIVE"
+}
+
+### POST 23
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Biskupia Kopa",
+"latitude": 50.256667,
+"longitude": 17.428611,
+"mountainRange": "Góry Opawskie",
+"mountains": "Sudety",
+"height": 889,
+"score": 6,
+"status": "ACTIVE"
+}
+
+### POST 24
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Chełmiec",
+"latitude": 50.779167,
+"longitude": 16.210278,
+"mountainRange": "Góry Wałbrzyskie",
+"mountains": "Sudety",
+"height": 850,
+"score": 5,
+"status": "ACTIVE"
+}
+
+### POST 25
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Kłodzka Góra",
+"latitude": 50.451653,
+"longitude": 16.753211,
+"mountainRange": "Góry Bardzkie",
+"mountains": "Sudety",
+"height": 765,
+"score": 4,
+"status": "ACTIVE"
+}
+
+### POST 26
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Skopiec",
+"latitude": 50.943972,
+"longitude": 15.884667,
+"mountainRange": "Góry Kaczawskie",
+"mountains": "Sudety",
+"height": 724,
+"score": 3,
+"status": "ACTIVE"
+}
+
+### POST 27
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Ślęża",
+"latitude": 50.865,
+"longitude": 16.708611,
+"mountainRange": "Masyw Ślęży",
+"mountains": "Sudety",
+"height": 718,
+"score": 2,
+"status": "ACTIVE"
+}
+
+### POST 28
+
+POST localhost:8888/got/v1/summits/add-new
+Content-Type: application/json
+
+{
+"name": "Łysica",
+"latitude": 50.890833,
+"longitude": 20.900833,
+"mountainRange": "Góry Świętokrzyskie",
+"mountains": "Góry Świętokrzyskie",
+"height": 614,
+"score": 1,
+"status": "ACTIVE"
 }
 
 ### GET ALL
