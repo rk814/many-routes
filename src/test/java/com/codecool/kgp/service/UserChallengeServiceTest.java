@@ -83,14 +83,14 @@ class UserChallengeServiceTest {
     }
 
     @Test
-    public void getUserChallenges_shouldReturnResponseStatusException() {
+    public void getUserChallenges_shouldReturn404() {
         //given:
         Mockito.when(userRepository.findByLogin(login1)).thenReturn(Optional.empty());
 
         //when and then:
         Assertions.assertThatThrownBy(() -> userChallengeService.getUserChallenges(login1))
                 .isInstanceOf(ResponseStatusException.class)
-                .hasFieldOrPropertyWithValue("status", HttpStatus.BAD_REQUEST);
+                .hasFieldOrPropertyWithValue("status", HttpStatus.NOT_FOUND);
     }
 
     @Test

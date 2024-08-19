@@ -48,10 +48,6 @@ class SummitServiceTest {
 
         Mockito.when(summitRepository.findAll()).thenReturn(summitList);
 
-        SummitSimpleDto summitSimpleDto = Instancio.create(SummitSimpleDto.class);
-        Mockito.when(summitMapper.mapEntityToSimpleDto(summitList.get(0)))
-                .thenReturn(summitSimpleDto);
-
         //when:
         List<SummitSimpleDto> actual = summitService.getAllSummitsSimplified();
 

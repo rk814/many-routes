@@ -3,6 +3,7 @@ package com.codecool.kgp.controller;
 import com.codecool.kgp.controller.dto.SummitDto;
 import com.codecool.kgp.controller.dto.SummitRequestDto;
 import com.codecool.kgp.controller.dto.SummitSimpleDto;
+import com.codecool.kgp.controller.validation.SummitUniqueNameValidator;
 import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.mappers.SummitMapper;
 import com.codecool.kgp.repository.SummitRepository;
@@ -17,10 +18,13 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +45,9 @@ class SummitControllerTest {
 
     @MockBean
     private SummitService summitService;
+
+    @MockBean
+    private SummitRepository summitRepository;
 
 //    public static Stream<Arguments> SummitsStream() {
 //        return Stream.of(
@@ -161,8 +168,8 @@ class SummitControllerTest {
                         }
                         """));
         //then:
-//        response.andDo(MockMvcResultHandlers.print())
-        response.andExpect(status().isOk())
+        response.andDo(MockMvcResultHandlers.print())
+        .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(dto.id().toString()));
     }
 }

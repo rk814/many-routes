@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.instancio.Select.field;
@@ -32,6 +33,7 @@ class UserMapperTest {
                 .set(field(User::getCoordinates),coordinates)
                 .set(field(User::getPhone), "+48 123456789")
                 .set(field(User::getNewsletter), true)
+                .setBlank(field(User::getUserChallenges))
                 .generate(field(User::getCreatedAt), gen->gen.temporal().localDateTime().past())
                 .generate(field(User::getDeletedAt), gen->gen.temporal().localDateTime())
                 .set(field(User::getRole), Role.USER)

@@ -62,7 +62,7 @@ public class User {
     private Role role;
 
     @OneToMany(mappedBy = "id", orphanRemoval = true)
-    private List<UserChallenge> userChallenges;
+    private List<UserChallenge> userChallenges = new ArrayList<>();
 
     @Version
     private Integer version;
