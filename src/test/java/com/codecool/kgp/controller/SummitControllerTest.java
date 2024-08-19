@@ -20,6 +20,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,22 +89,42 @@ class SummitControllerTest {
     @Test
     void shouldAddSummit() throws Exception {
         //given:
-        SummitRequestDto requestDto = Instancio.create(SummitRequestDto.class);
+        SummitRequestDto requestDto = new SummitRequestDto(
+                "test",
+                1.23,
+                4.56,
+                "test range",
+                "test mountains",
+                1234,
+                "test description",
+                "test notes",
+                11,
+                "ACTIVE"
+        );
         SummitDto dto = Instancio.create(SummitDto.class);
         Mockito.when(summitService.addNewSummit(requestDto))
                 .thenReturn(dto);
 
         //when:
-        // TODO
         var response = mockMvc.perform(post("/got/v1/summits/add-new")
                 .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                
-                                }
-                                """));
+                .content("""
+                        {
+                        "name": "test",
+                        "latitude" : 1.23,
+                        "longitude": 4.56,
+                        "mountainRange": "test range",
+                        "mountains": "test mountains",
+                        "height": 1234,
+                        "description": "test description",
+                        "guideNotes": "test notes",
+                        "score": 11,
+                        "status": "ACTIVE"
+                        }
+                        """));
         //then:
-        response.andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(dto.id()));
+        response.andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(dto.id().toString()));
     }
 }
