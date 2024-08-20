@@ -38,6 +38,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @OpenAPIDefinition(security = {@SecurityRequirement(name = "jwtauth")})
 public class SpringSecurityConfig {
 
+    public static final String USER = "USER";
+    public static final String ADMIN = "ADMIN";
+
     private final String[] URL_WHITELIST = {
             "/got/v1/auth/login",
             "got/v1/auth/register",
@@ -64,11 +67,11 @@ public class SpringSecurityConfig {
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
         UserDetails user = User.withUsername("user")
                 .password(passwordEncoder.encode("password"))
-                .roles("USER")
+                .roles(USER)
                 .build();
         UserDetails admin = User.withUsername("admin")
                 .password(passwordEncoder.encode("admin"))
-                .roles("ADMIN")
+                .roles(ADMIN)
                 .build();
 
         return new InMemoryUserDetailsManager(user, admin);

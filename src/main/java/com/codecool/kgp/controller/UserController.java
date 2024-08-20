@@ -7,11 +7,15 @@ import com.codecool.kgp.controller.validation.UserLogin;
 import com.codecool.kgp.controller.validation.UserRegister;
 import com.codecool.kgp.controller.validation.UserUpdate;
 import com.codecool.kgp.service.UserService;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.codecool.kgp.auth.config.SpringSecurityConfig.ADMIN;
+import static com.codecool.kgp.auth.config.SpringSecurityConfig.USER;
 
 @Slf4j
 @RestController
@@ -26,18 +30,21 @@ public class UserController {
     }
 
     @GetMapping
+    @RolesAllowed({ADMIN})
     public List<UserDto> getUsers() {
         log.info("Received request for all users");
         return userService.getUsers();
     }
 
     @GetMapping("/{login}") // in use
+    @RolesAllowed({USER, ADMIN})
     public UserDto getUser(@PathVariable String login) {
         log.info("Received request for user with login '{}'", login);
         return userService.getUser(login);
     }
 
     @GetMapping("/{login}/score") // in use
+    @RolesAllowed({USER, ADMIN})
     public int getUserScore(@PathVariable String login) {
         log.info("Received request for user score with login '{}'", login);
         return userService.getUserScore(login);
@@ -56,22 +63,25 @@ public class UserController {
     }
 
     @PutMapping("/{login}") // in use
+    @RolesAllowed({USER, ADMIN})
     public UserDto updateUser(@PathVariable String login, @Validated({UserUpdate.class, UserBasic.class}) @RequestBody UserRequestDto dto) {
         log.info("Received request for user update with login '{}'", login);
         return userService.updateUser(login, dto);
     }
 
+    @RolesAllowed({ADMIN})
     @DeleteMapping("/{login}/hard")
     public void deleteUser(@PathVariable String login) {
         log.info("Received request to delete user with login '{}'", login);
         userService.deleteUser(login);
     }
 
+    @RolesAllowed({USER, ADMIN})
     @DeleteMapping("/{login}")
     public void softDeleteUser(@PathVariable String login) {
         log.info("Received request to soft delete user with login '{}'", login);
         userService.softDeleteUser(login);
     }
 
-    // TODO user lists endpoints
+    // ??? validate if user requests only for self content?
 }
