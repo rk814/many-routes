@@ -1,5 +1,6 @@
 package com.codecool.kgp.controller;
 
+import com.codecool.kgp.auth.config.SpringSecurityConfig;
 import com.codecool.kgp.controller.dto.SummitDto;
 import com.codecool.kgp.controller.dto.SummitRequestDto;
 import com.codecool.kgp.controller.dto.SummitSimpleDto;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -31,12 +33,15 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import static com.codecool.kgp.auth.config.SpringSecurityConfig.ADMIN;
+import static com.codecool.kgp.auth.config.SpringSecurityConfig.USER;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Import(SpringSecurityConfig.class)
 @WebMvcTest(controllers = SummitController.class)
 class SummitControllerTest {
 
@@ -94,6 +99,7 @@ class SummitControllerTest {
 
 
     @Test
+    @WithMockUser(roles = ADMIN)
     void shouldReturnAllSummitsSimplified() throws Exception {
         //given:
         List<SummitSimpleDto> summitSimpleDtoList = Instancio.ofList(SummitSimpleDto.class).size(1).create();
@@ -116,6 +122,7 @@ class SummitControllerTest {
 
 
     @Test
+    @WithMockUser(roles = ADMIN)
     void shouldReturnEmptyList() throws Exception {
         //given:
         List<SummitSimpleDto> summitSimpleDtoList = Instancio.ofList(SummitSimpleDto.class).size(0).create();
@@ -132,6 +139,7 @@ class SummitControllerTest {
 
 
     @Test
+    @WithMockUser(roles = ADMIN)
     void shouldAddSummit() throws Exception {
         //given:
         SummitRequestDto requestDto = new SummitRequestDto(
@@ -171,5 +179,24 @@ class SummitControllerTest {
         response.andDo(MockMvcResultHandlers.print())
         .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(dto.id().toString()));
+    }
+
+    @Test
+    void getSummitsSimplified_shouldReturn401WhenNotAuthorized() throws Exception {
+        // when:
+        var response =  mockMvc.perform(get("/got/v1/summits/"));
+
+        // then:
+        response.andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(roles = USER)
+    void getSummitsSimplified_shouldReturn403WhenNotAdminRole() throws Exception {
+        // when:
+        var response =  mockMvc.perform(get("/got/v1/summits/"));
+
+        // then:
+        response.andExpect(status().isForbidden());
     }
 }
