@@ -6,8 +6,12 @@ import com.codecool.kgp.service.UserService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 import static com.codecool.kgp.config.SpringSecurityConfig.ADMIN;
@@ -34,8 +38,10 @@ public class UserController {
 
     @GetMapping("/{login}") // in use
     @RolesAllowed({USER, ADMIN})
-    public UserDto getUser(@PathVariable String login) {
+    public UserDto getUser(@AuthenticationPrincipal UserDetails userDetails, @PathVariable String login) {
         log.info("Received request for user with login '{}'", login);
+        System.out.println(userDetails.getUsername());
+        System.out.println(userDetails.getAuthorities());
         return userService.getUser(login);
     }
 
