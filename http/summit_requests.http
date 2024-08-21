@@ -1,0 +1,35 @@
+### LOGIN AS ADMIN
+
+POST localhost:8888/got/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+> {%
+    client.global.set("auth-token", response.body.token);
+%}
+
+### GET ALL SIMPLIFIED
+
+GET localhost:8888/got/v1/summits/
+Authorization: Bearer {{auth-token}}
+
+### ADD SUMMIT
+
+POST localhost:8888/got/v1/summits/add-new
+Authorization: Bearer {{auth-token}}
+Content-Type: application/json
+
+{
+  "name": "Mount Everest",
+  "latitude": 28.002461232257982,
+  "longitude": 86.92324835369804,
+  "mountainRange": "Himalaje",
+  "mountains": "Himalaje Wysokie",
+  "height": 8848,
+  "score": 1000,
+  "status": "ACTIVE"
+}

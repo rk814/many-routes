@@ -1,21 +1,32 @@
-### REGISTER USER
+### REGISTER USER 1
 
 POST localhost:8888/got/v1/auth/register
 Content-Type: application/json
 
 {
-  "login": "user",
+  "login": "user1",
   "password": "password",
-  "email": "user@email.com"
+  "email": "user1@email.com"
 }
 
-### LOGIN AS USER
+### REGISTER USER 2
+
+POST localhost:8888/got/v1/auth/register
+Content-Type: application/json
+
+{
+  "login": "user2",
+  "password": "password",
+  "email": "user2@email.com"
+}
+
+### LOGIN AS USER 1
 
 POST localhost:8888/got/v1/auth/login
 Content-Type: application/json
 
 {
-"username": "user",
+"username": "user1",
 "password": "password"
 }
 

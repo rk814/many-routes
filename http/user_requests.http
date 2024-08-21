@@ -1,11 +1,14 @@
+@login = user1
+@password = password
+
 ### LOGIN AS USER
 
 POST localhost:8888/got/v1/auth/login
 Content-Type: application/json
 
 {
-  "username": "user",
-  "password": "password"
+  "username": "{{login}}",
+  "password": "{{password}}"
 }
 
 > {% client.global.set("auth-token", response.body.token); %}
@@ -29,48 +32,30 @@ Authorization: Bearer {{auth-token}}
 
 ### GET ONE
 
-GET localhost:8888/got/v1/users/user
+GET localhost:8888/got/v1/users/{{login}}
 Authorization: Bearer {{auth-token}}
-
-### NEW USER
-
-POST localhost:8888/got/v1/users
-Content-Type: application/json
-
-{
-  "login": "furczak",
-  "password": "test123",
-  "email": "furczak31@gmail.com"
-}
-
-### LOGIN
-
-POST localhost:8888/got/v1/users/furczak
-Content-Type: application/json
-
-{
-  "login": "furczak",
-  "password": "test123"
-}
 
 ### UPDATE
 
-PUT localhost:8888/got/v1/users/furczak
+PUT localhost:8888/got/v1/users/{{login}}
+Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
 {
-  "name": "furczak",
-  "email": "xxx@gmail.com",
-  "latitude": null,
-  "longitude": null,
-  "phone": null,
+  "name": "bogdan",
+  "email": "bogdan@gmail.com",
+  "latitude": 12.1,
+  "longitude": 21.2,
+  "phone": "+48123456789",
   "newsletter": true
 }
 
 ### HARD DELETE
 
-DELETE localhost:8888/got/v1/users/furczak/hard
+DELETE localhost:8888/got/v1/users/{{login}}/hard
+Authorization: Bearer {{auth-token}}
 
 ### SOFT DELETE
 
-DELETE localhost:8888/got/v1/users/furczak
+DELETE localhost:8888/got/v1/users/{{login}}
+Authorization: Bearer {{auth-token}}

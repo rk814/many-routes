@@ -8,15 +8,16 @@ import jakarta.validation.constraints.*;
 
 public record UserRequestDto(
 
-        @NotBlank(message = "Login nie może być pusty")
-        @Size(max = 50, message = "Login może mieć maksymalnie 50 znaków", groups = UserBasic.class)
-        String login,
+        // ???
+//        @NotBlank(message = "Login nie może być pusty")
+//        @Size(max = 50, message = "Login może mieć maksymalnie 50 znaków", groups = UserBasic.class)
+//        String login,
 
-        @NotBlank(message = "Hasło nie może być puste")
-        @Size(max = 50, message = "Login może mieć maksymalnie 50 znaków", groups = UserBasic.class)
-        String password,
+//        @NotBlank(message = "Hasło nie może być puste")
+//        @Size(max = 50, message = "Login może mieć maksymalnie 50 znaków", groups = UserBasic.class)
+//        String password,
 
-        @NotBlank(message = "E-mail nie może być puste")
+        @NotBlank(message = "E-mail nie może być pusty")
         @Email(groups = UserBasic.class)
         @Size(max = 100, message = "E-mail może mieć maksymalnie 100 znaków", groups = UserBasic.class)
         String email,
