@@ -2,6 +2,7 @@ package com.codecool.kgp.auth.config;
 
 import com.codecool.kgp.auth.jwt.JwtTokenFilter;
 import com.codecool.kgp.auth.jwt.JwtTokenService;
+import com.codecool.kgp.repository.UserRepository;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -15,19 +16,22 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.Collection;
+import java.util.List;
+
 @Configuration
-@EnableConfigurationProperties({AuthConfigProperties. class})
+@EnableConfigurationProperties({AuthConfigProperties.class})
 @EnableMethodSecurity(jsr250Enabled = true)
 @SecurityScheme(
         name = "jwtauth",
@@ -56,25 +60,48 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests(autz ->
                         autz.requestMatchers(URL_WHITELIST).permitAll()
                                 .anyRequest().authenticated())
-                .sessionManagement(sm->sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(eh->eh.authenticationEntryPoint(authenticationEntryPoint))
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(eh -> eh.authenticationEntryPoint(authenticationEntryPoint))
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+    //
+//    @Bean
+//    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+//        UserDetails user = User.withUsername("user")
+//                .password(passwordEncoder.encode("password"))
+//                .roles(USER)
+//                .build();
+//        UserDetails admin = User.withUsername("admin")
+//                .password(passwordEncoder.encode("admin"))
+//                .roles(ADMIN)
+//                .build();
+//
+//        return new InMemoryUserDetailsManager(user, admin);
+//    }
+//
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user = User.withUsername("user")
-                .password(passwordEncoder.encode("password"))
-                .roles(USER)
-                .build();
-        UserDetails admin = User.withUsername("admin")
-                .password(passwordEncoder.encode("admin"))
-                .roles(ADMIN)
-                .build();
+    public UserDetailsService userDetailsService(UserRepository userRepository) {
+        return username -> userRepository.findByLogin(username)
+                .map(u -> new UserDetails() {
+                    @Override
+                    public Collection<? extends GrantedAuthority> getAuthorities() {
+                        return List.of(new SimpleGrantedAuthority("ROLE_" + u.getRole()));
+                    }
 
-        return new InMemoryUserDetailsManager(user, admin);
+                    @Override
+                    public String getPassword() {
+                        return u.getHashPassword();
+                    }
+
+                    @Override
+                    public String getUsername() {
+                        return u.getLogin();
+                    }
+                })
+                .orElseThrow(() -> new RuntimeException("Unexpected exception when building UserDetails"));
     }
 
     @Bean

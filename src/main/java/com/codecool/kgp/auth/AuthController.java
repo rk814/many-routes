@@ -2,6 +2,7 @@ package com.codecool.kgp.auth;
 
 import com.codecool.kgp.auth.jwt.JwtTokenService;
 import com.codecool.kgp.auth.dto.*;
+import com.codecool.kgp.auth.registration.AuthService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,10 +19,12 @@ public class AuthController {
 
     private final JwtTokenService jwtTokenService;
     private final AuthenticationManager authenticationManager;
+    private final AuthService authService;
 
-    public AuthController(JwtTokenService jwtTokenService, AuthenticationManager authenticationManager) {
+    public AuthController(JwtTokenService jwtTokenService, AuthenticationManager authenticationManager, AuthService authService) {
         this.jwtTokenService = jwtTokenService;
         this.authenticationManager = authenticationManager;
+        this.authService = authService;
     }
 
     @PostMapping("/login")
@@ -31,5 +34,10 @@ public class AuthController {
         var userToken = new UsernamePasswordAuthenticationToken(dto.username(), dto.password());
         authenticationManager.authenticate(userToken);
         return new JwtTokenResponseDto(jwtTokenService.generateJwtToken(dto.username()));
+    }
+
+    @PostMapping("/register")
+    public RegisterUserDataDto registerUser(@Valid @RequestBody NewUserRegistrationDto dto) {
+        return authService.registerNewUser(dto);
     }
 }
