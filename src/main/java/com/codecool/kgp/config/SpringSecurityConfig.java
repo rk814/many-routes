@@ -20,6 +20,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -47,7 +48,7 @@ public class SpringSecurityConfig {
 
     private final String[] URL_WHITELIST = {
             "/got/v1/auth/login",
-            "got/v1/auth/register",
+            "/got/v1/auth/register",
             "/error",
             "/v3/api-docs/**",
             "/swagger-ui/**"
@@ -101,7 +102,7 @@ public class SpringSecurityConfig {
                         return u.getLogin();
                     }
                 })
-                .orElseThrow(() -> new RuntimeException("Unexpected exception when building UserDetails"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     @Bean

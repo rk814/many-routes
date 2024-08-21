@@ -1,6 +1,7 @@
 package com.codecool.kgp.errorhandling;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -25,5 +26,11 @@ public class ErrorHandler {
     public ErrorResponseDto handleDbConflict(DuplicateEntryException e) {
         return new ErrorResponseDto(e.getMessage());
     }
+
+//    @ExceptionHandler(UsernameNotFoundException.class)
+//    @ResponseStatus(HttpStatus.NOT_FOUND)
+//    public ErrorResponseDto handleUsernameNotFound(UsernameNotFoundException e) {
+//        return new ErrorResponseDto(e.getMessage());
+//    }
 
 }

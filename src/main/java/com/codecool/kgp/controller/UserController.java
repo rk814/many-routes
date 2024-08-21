@@ -4,6 +4,8 @@ import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.controller.dto.UserRequestDto;
 import com.codecool.kgp.service.UserService;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
