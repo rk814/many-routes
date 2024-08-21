@@ -1,4 +1,4 @@
-package com.codecool.kgp.auth.registration;
+package com.codecool.kgp.controller.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

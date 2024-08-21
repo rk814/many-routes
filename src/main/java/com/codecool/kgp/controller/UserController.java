@@ -2,20 +2,16 @@ package com.codecool.kgp.controller;
 
 import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.controller.dto.UserRequestDto;
-import com.codecool.kgp.controller.validation.UserBasic;
-import com.codecool.kgp.controller.validation.UserLogin;
-import com.codecool.kgp.controller.validation.UserRegister;
-import com.codecool.kgp.controller.validation.UserUpdate;
 import com.codecool.kgp.service.UserService;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.codecool.kgp.auth.config.SpringSecurityConfig.ADMIN;
-import static com.codecool.kgp.auth.config.SpringSecurityConfig.USER;
+import static com.codecool.kgp.config.SpringSecurityConfig.ADMIN;
+import static com.codecool.kgp.config.SpringSecurityConfig.USER;
 
 @Slf4j
 @RestController
@@ -50,21 +46,21 @@ public class UserController {
         return userService.getUserScore(login);
     }
 
-    @PostMapping // in use
-    public UserDto registerUser(@Validated({UserRegister.class, UserBasic.class}) @RequestBody UserRequestDto dto) {
-        log.info("Received request for user registration with login '{}'", dto.login());
-        return userService.setUser(dto);
-    }
-
-    @PostMapping("/{login}") // in use
-    public UserDto loginUser(@PathVariable String login, @Validated({UserLogin.class, UserBasic.class}) @RequestBody UserRequestDto dto) {
-        log.info("Received request for user sign in with login '{}'", login);
-        return userService.logInUser(login, dto);
-    }
+//    @PostMapping // in use
+//    public UserDto registerUser(@Validated({UserRegister.class, UserBasic.class}) @RequestBody UserRequestDto dto) {
+//        log.info("Received request for user registration with login '{}'", dto.login());
+//        return userService.setUser(dto);
+//    }
+//
+//    @PostMapping("/{login}") // in use
+//    public UserDto loginUser(@PathVariable String login, @Validated({UserLogin.class, UserBasic.class}) @RequestBody UserRequestDto dto) {
+//        log.info("Received request for user sign in with login '{}'", login);
+//        return userService.logInUser(login, dto);
+//    }
 
     @PutMapping("/{login}") // in use
     @RolesAllowed({USER, ADMIN})
-    public UserDto updateUser(@PathVariable String login, @Validated({UserUpdate.class, UserBasic.class}) @RequestBody UserRequestDto dto) {
+    public UserDto updateUser(@PathVariable String login, @Valid @RequestBody UserRequestDto dto) {
         log.info("Received request for user update with login '{}'", login);
         return userService.updateUser(login, dto);
     }

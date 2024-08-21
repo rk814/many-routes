@@ -1,4 +1,4 @@
-package com.codecool.kgp.auth.jwt;
+package com.codecool.kgp.auth;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;

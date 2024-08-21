@@ -1,4 +1,4 @@
-package com.codecool.kgp.auth.dto;
+package com.codecool.kgp.controller.dto.jwt;
 
 public record JwtTokenResponseDto(
         String token

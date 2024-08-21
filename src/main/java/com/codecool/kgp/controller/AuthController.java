@@ -1,9 +1,10 @@
-package com.codecool.kgp.auth;
+package com.codecool.kgp.controller;
 
-import com.codecool.kgp.auth.jwt.JwtTokenService;
-import com.codecool.kgp.auth.dto.*;
-import com.codecool.kgp.auth.registration.AuthService;
-import com.codecool.kgp.auth.registration.RegistrationRequestDto;
+import com.codecool.kgp.auth.JwtTokenService;
+import com.codecool.kgp.controller.dto.jwt.JwtTokenRequestDto;
+import com.codecool.kgp.controller.dto.jwt.JwtTokenResponseDto;
+import com.codecool.kgp.service.AuthService;
+import com.codecool.kgp.controller.dto.RegistrationRequestDto;
 import com.codecool.kgp.controller.dto.UserDto;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;

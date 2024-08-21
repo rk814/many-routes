@@ -1,6 +1,6 @@
-package com.codecool.kgp.auth.jwt;
+package com.codecool.kgp.auth;
 
-import com.codecool.kgp.auth.config.AuthConfigProperties;
+import com.codecool.kgp.config.AuthConfigProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

@@ -1,4 +1,4 @@
-package com.codecool.kgp.auth.config;
+package com.codecool.kgp.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

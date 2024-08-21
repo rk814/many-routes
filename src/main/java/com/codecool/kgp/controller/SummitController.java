@@ -14,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.UUID;
 
-import static com.codecool.kgp.auth.config.SpringSecurityConfig.ADMIN;
+import static com.codecool.kgp.config.SpringSecurityConfig.ADMIN;
 
 @Slf4j
 @RestController

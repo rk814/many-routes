@@ -1,5 +1,6 @@
-package com.codecool.kgp.auth.registration;
+package com.codecool.kgp.service;
 
+import com.codecool.kgp.controller.dto.RegistrationRequestDto;
 import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.entity.User;
 import com.codecool.kgp.entity.enums.Role;

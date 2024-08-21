@@ -1,20 +1,13 @@
 package com.codecool.kgp.controller;
 
-import com.codecool.kgp.auth.config.SpringSecurityConfig;
+import com.codecool.kgp.config.SpringSecurityConfig;
 import com.codecool.kgp.controller.dto.SummitDto;
 import com.codecool.kgp.controller.dto.SummitRequestDto;
 import com.codecool.kgp.controller.dto.SummitSimpleDto;
-import com.codecool.kgp.controller.validation.SummitUniqueNameValidator;
-import com.codecool.kgp.entity.enums.Status;
-import com.codecool.kgp.mappers.SummitMapper;
 import com.codecool.kgp.repository.SummitRepository;
 import com.codecool.kgp.service.SummitService;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,20 +15,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Stream;
 
-import static com.codecool.kgp.auth.config.SpringSecurityConfig.ADMIN;
-import static com.codecool.kgp.auth.config.SpringSecurityConfig.USER;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.codecool.kgp.config.SpringSecurityConfig.ADMIN;
+import static com.codecool.kgp.config.SpringSecurityConfig.USER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;

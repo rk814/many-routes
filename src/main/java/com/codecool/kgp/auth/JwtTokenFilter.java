@@ -1,4 +1,4 @@
-package com.codecool.kgp.auth.jwt;
+package com.codecool.kgp.auth;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;

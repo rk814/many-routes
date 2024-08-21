@@ -35,14 +35,14 @@ public class UserMapper {
         );
     }
 
-    public User mapRequestDtoToEntity(UserRequestDto dto) {
-        return new User(
-                dto.login(),
-                dto.password(), // TODO hash
-                dto.email(),
-                Role.USER
-        );
-    }
+//    public User mapRequestDtoToEntity(UserRequestDto dto) {
+//        return new User(
+//                dto.login(),
+//                dto.password(), // TODO hash
+//                dto.email(),
+//                Role.USER
+//        );
+//    }
 
     private List<UserChallengeSimpleDto> getUserChallengeDtoList(List<UserChallenge> userChallenges) {
         return userChallenges.stream().map(userChallengeMapper::mapEntityToSimpleDto).toList();

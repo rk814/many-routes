@@ -1,7 +1,7 @@
-package com.codecool.kgp.auth.config;
+package com.codecool.kgp.config;
 
-import com.codecool.kgp.auth.jwt.JwtTokenFilter;
-import com.codecool.kgp.auth.jwt.JwtTokenService;
+import com.codecool.kgp.auth.JwtTokenFilter;
+import com.codecool.kgp.auth.JwtTokenService;
 import com.codecool.kgp.repository.UserRepository;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
