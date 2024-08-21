@@ -1,25 +1,47 @@
 package com.codecool.kgp.auth.registration;
 
+import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.entity.User;
+import com.codecool.kgp.entity.enums.Role;
+import com.codecool.kgp.errorhandling.DuplicateEntryException;
+import com.codecool.kgp.mappers.UserMapper;
 import com.codecool.kgp.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
 @Service
+@Slf4j
 public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public AuthService(PasswordEncoder passwordEncoder, UserRepository userRepository) {
+    public AuthService(PasswordEncoder passwordEncoder, UserRepository userRepository, UserMapper userMapper) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
-    public RegisterUserDataDto registerNewUser(NewUserRegistrationDto dto) {
-        User user = new User(dto.username(), passwordEncoder.encode(dto.password()));
-        User userFromDB = userRepository.save(user);
+    public UserDto registerNewUser(RegistrationRequestDto dto) {
+        User user = new User(
+                dto.login(),
+                passwordEncoder.encode(dto.password()),
+                dto.email(),
+                Role.USER
+        );
 
-        return new RegisterUserDataDto(userFromDB.getId(), userFromDB.getLogin());
+        try {
+            User savedUser = userRepository.save(user);
+            log.info("New user with id '{}' was added to database", user.getId());
+            return userMapper.mapEntityToDto(savedUser);
+        } catch (DataIntegrityViolationException e) {
+            log.warn("Data integrity violation when adding user with login '{}' to database", user.getLogin());
+            throw new DuplicateEntryException("Podany login lub e-mail istnieją już w naszym serwisie");
+        }
+
     }
 }

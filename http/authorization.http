@@ -1,3 +1,14 @@
+### REGISTER USER
+
+POST localhost:8888/got/v1/auth/register
+Content-Type: application/json
+
+{
+  "login": "user",
+  "password": "password",
+  "email": "user@email.com"
+}
+
 ### LOGIN AS USER
 
 POST localhost:8888/got/v1/auth/login

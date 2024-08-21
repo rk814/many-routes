@@ -3,6 +3,8 @@ package com.codecool.kgp.auth;
 import com.codecool.kgp.auth.jwt.JwtTokenService;
 import com.codecool.kgp.auth.dto.*;
 import com.codecool.kgp.auth.registration.AuthService;
+import com.codecool.kgp.auth.registration.RegistrationRequestDto;
+import com.codecool.kgp.controller.dto.UserDto;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,7 +39,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public RegisterUserDataDto registerUser(@Valid @RequestBody NewUserRegistrationDto dto) {
+    public UserDto registerUser(@Valid @RequestBody RegistrationRequestDto dto) {
+        log.info("Received request for user registration with login '{}'", dto.login());
         return authService.registerNewUser(dto);
     }
 }
