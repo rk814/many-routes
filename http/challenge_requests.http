@@ -1,0 +1,40 @@
+### LOGIN AS ADMIN
+
+POST localhost:8888/got/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+> {% client.global.set("auth-token", response.body.token); %}
+
+### GET ALL
+
+GET localhost:8888/got/v1/challenges
+Authorization: Bearer {{auth-token}}
+
+### GET ALL SIMPLE
+
+GET localhost:8888/got/v1/challenges/simplified
+Authorization: Bearer {{auth-token}}
+
+### ADD NEW
+
+POST localhost:8888/got/v1/challenges/add-new
+Authorization: Bearer {{auth-token}}
+Content-Type: application/json
+
+{
+  "name": "Super Hard Challenge",
+  "description": "",
+  "status": "ACTIVE"
+}
+
+> {% client.global.set("challenge-id", response.body.id); %}
+
+### GET ONE
+
+GET localhost:8888/got/v1/challenges/{{challenge-id}}
+Authorization: Bearer {{auth-token}}
