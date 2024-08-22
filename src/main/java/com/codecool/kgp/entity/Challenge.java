@@ -39,5 +39,10 @@ public class Challenge {
     }
 
     @ManyToMany
-    private List<Summit> summitList = new ArrayList<>();
+    private List<Summit> summitList = new ArrayList<>(); // TODO change it to set
+
+
+    public void addSummit(Summit summit) {
+        summitList.add(summit);
+    }
 }

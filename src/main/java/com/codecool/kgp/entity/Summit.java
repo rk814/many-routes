@@ -26,9 +26,6 @@ public class Summit {
     @Id
     private final UUID id = UUID.randomUUID();
 
-    @ManyToMany(mappedBy = "summitList")
-    private List<Challenge> challengeList = new ArrayList<>();
-
     @NotBlank
     @EqualsAndHashCode.Include
     @Column(unique = true)
@@ -71,8 +68,15 @@ public class Summit {
         this.status = status;
     }
 
+    @ManyToMany(mappedBy = "summitList")
+    private List<Challenge> challengeList = new ArrayList<>(); //TODO change to set
+
 
     public Double[] getCoordinatesArray() {
         return (coordinates == null) ? null : new Double[]{coordinates.getLatitude(), coordinates.getLongitude()};
+    }
+
+    public void addChallenge(Challenge challenge) {
+        challengeList.add(challenge);
     }
 }

@@ -4,9 +4,11 @@ import com.codecool.kgp.controller.dto.ChallengeDto;
 import com.codecool.kgp.controller.dto.ChallengeRequestDto;
 import com.codecool.kgp.controller.dto.ChallengeSimpleDto;
 import com.codecool.kgp.entity.Challenge;
+import com.codecool.kgp.entity.Summit;
 import com.codecool.kgp.errorhandling.DuplicateEntryException;
 import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.repository.ChallengeRepository;
+import com.codecool.kgp.repository.SummitRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -23,10 +25,12 @@ import java.util.UUID;
 public class ChallengeService {
 
     private final ChallengeRepository challengeRepository;
+    private final SummitRepository summitRepository;
     private final ChallengeMapper challengeMapper;
 
-    public ChallengeService(ChallengeRepository challengeRepository, ChallengeMapper challengeMapper) {
+    public ChallengeService(ChallengeRepository challengeRepository, SummitRepository summitRepository, ChallengeMapper challengeMapper) {
         this.challengeRepository = challengeRepository;
+        this.summitRepository = summitRepository;
         this.challengeMapper = challengeMapper;
     }
 
@@ -63,4 +67,20 @@ public class ChallengeService {
         }
     }
 
+    public ChallengeDto attachSummitToChallenge(UUID summitId, UUID id) {
+        Challenge challenge = challengeRepository.findById(id)
+                .orElseThrow(()-> {
+                    log.warn("Challenge with id '{}' was not found", id);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge was not found");
+                });
+        Summit summit = summitRepository.findById(summitId)
+                .orElseThrow(()-> {
+                    log.warn("Summit with id '{}' was not found", summitId);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Summit was not found");
+                });
+        challenge.addSummit(summit);
+        summit.addChallenge(challenge);
+
+        return challengeMapper.mapEntityToDto(challenge);
+    }
 }

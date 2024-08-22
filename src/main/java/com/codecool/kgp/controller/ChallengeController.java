@@ -6,7 +6,9 @@ import com.codecool.kgp.controller.dto.ChallengeSimpleDto;
 import com.codecool.kgp.service.ChallengeService;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -54,17 +56,24 @@ public class ChallengeController {
         return challengeService.addNewChallenge(dto);
     }
 
+    @PostMapping("/{id}/attach-summit/{summitId}")
+    @RolesAllowed({ADMIN})
+    public ChallengeDto attachSummit(@PathVariable UUID id, @PathVariable UUID summitId) {
+        log.info("Received request for attach summit with id '{}' to challenge with id '{}'", summitId, id);
+        return challengeService.attachSummitToChallenge(summitId, id);
+    }
+
+    //TODO
     @PutMapping("/{id}")
     @RolesAllowed({ADMIN})
     public ChallengeDto updateChallenge() {
-        return null;
-        //TODO
+        throw new ResponseStatusException(HttpStatusCode.valueOf(501), "Not implemented yet");
     }
 
+    //TODO
     @DeleteMapping("/{id}")
     @RolesAllowed({ADMIN})
     public ChallengeDto deleteChallenge() {
-        return null;
-        //TODO
+        throw new ResponseStatusException(HttpStatusCode.valueOf(501), "Not implemented yet");
     }
 }

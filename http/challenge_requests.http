@@ -38,3 +38,8 @@ Content-Type: application/json
 
 GET localhost:8888/got/v1/challenges/{{challenge-id}}
 Authorization: Bearer {{auth-token}}
+
+### ATTACH SUMMIT
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/726e3999-038e-4437-b10e-2cc48a21bf71
+Authorization: Bearer {{auth-token}}
