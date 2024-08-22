@@ -31,6 +31,13 @@ public class SummitController {
 
     @GetMapping("/")
     @RolesAllowed(ADMIN)
+    public List<SummitDto> getSummits() {
+        log.info("Received request for all summits");
+        return summitService.getAllSummits();
+    }
+
+    @GetMapping("/simplified")
+    @RolesAllowed(ADMIN)
     public List<SummitSimpleDto> getSummitsSimplified() {
         log.info("Received request for all simplify summits");
         return summitService.getAllSummitsSimplified();

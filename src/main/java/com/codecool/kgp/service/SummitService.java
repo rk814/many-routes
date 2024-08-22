@@ -27,6 +27,12 @@ public class SummitService {
     }
 
 
+    public List<SummitDto> getAllSummits() {
+        List<Summit> summits = summitRepository.findAll();
+        log.info("{} summits were found", summits.size());
+        return summits.stream().map(summitMapper::mapEntityToDto).toList();
+    }
+
     public List<SummitSimpleDto> getAllSummitsSimplified() {
         List<Summit> summits = summitRepository.findAll();
         log.info("{} summits were found", summits.size());
@@ -39,5 +45,4 @@ public class SummitService {
         log.info("New summit with id '{}' was saved", summit.getId());
         return summitMapper.mapEntityToDto(summitFromDb);
     }
-
 }

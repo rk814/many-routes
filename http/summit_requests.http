@@ -12,7 +12,7 @@ Content-Type: application/json
     client.global.set("auth-token", response.body.token);
 %}
 
-### GET ALL SIMPLIFIED
+### GET ALL
 
 GET localhost:8888/got/v1/summits/
 Authorization: Bearer {{auth-token}}

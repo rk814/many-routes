@@ -13,7 +13,7 @@ public record UserSummitDto(
         LocalDateTime conqueredAt,
 
         // merge data form Summit
-        List<Challenge> challangeList,
+        List<ChallengeSimpleDto> challangeList,
         String name,
         Double[] coordinates,
         String mountainRange,
