@@ -21,8 +21,13 @@ public class UserChallengeMapper {
         return new UserChallengeDto(
                 userChallenge.getId(),
                 userChallenge.getUser().getId(),
-                new ChallengeDto(userChallenge.getChallenge().getId(),
-                        userChallenge.getChallenge().getName()),
+                new ChallengeDto(
+                        userChallenge.getChallenge().getId(),
+                        userChallenge.getChallenge().getDescription(),
+                        userChallenge.getChallenge().getName(),
+                        userChallenge.getChallenge().getStatus(),
+                        userChallenge.getChallenge().getSummitList().stream().map(summitMapper::mapEntityToSimpleDto).toList()
+                ),
                 userChallenge.getStartedAt(),
                 userChallenge.getFinishedAt(),
                 userChallenge.getScore(),

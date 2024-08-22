@@ -1,14 +1,34 @@
 package com.codecool.kgp.mappers;
 
 import com.codecool.kgp.controller.dto.ChallengeDto;
+import com.codecool.kgp.controller.dto.ChallengeRequestDto;
 import com.codecool.kgp.entity.Challenge;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ChallengeMapper {
 
+    private final SummitMapper summitMapper;
+
+    public ChallengeMapper(SummitMapper summitMapper) {
+        this.summitMapper = summitMapper;
+    }
+
     public ChallengeDto mapEntityToDto(Challenge challenge) {
-        return null;
-        // TODO
+        return new ChallengeDto(
+                challenge.getId(),
+                challenge.getName(),
+                challenge.getDescription(),
+                challenge.getStatus(),
+                challenge.getSummitList().stream().map(summitMapper::mapEntityToSimpleDto).toList()
+        );
+    }
+
+    public Challenge mapRequestDtoToEntity(ChallengeRequestDto dto) {
+        return new Challenge(
+                dto.name(),
+                dto.description(),
+                dto.status()
+        );
     }
 }

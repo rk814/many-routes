@@ -1,13 +1,9 @@
 package com.codecool.kgp.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Version;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.codecool.kgp.entity.enums.Status;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,14 +17,26 @@ import java.util.UUID;
 public class Challenge {
 
     @Id
-    @EqualsAndHashCode.Include
     private final UUID id = UUID.randomUUID();
 
+    @NotBlank
+    @EqualsAndHashCode.Include
+    @Column(unique = true)
     private String name;
+
+    private String description;
+
+    private Status status;
+
+    @Version
+    private Integer version = 0;
+
+    public Challenge(String name,String description, Status status) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+    }
 
     @ManyToMany
     private List<Summit> summitList = new ArrayList<>();
-
-    @Version
-    private Integer version;
 }
