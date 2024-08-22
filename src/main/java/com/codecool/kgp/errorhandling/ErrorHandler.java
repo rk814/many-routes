@@ -27,10 +27,10 @@ public class ErrorHandler {
         return new ErrorResponseDto(e.getMessage());
     }
 
-//    @ExceptionHandler(UsernameNotFoundException.class)
-//    @ResponseStatus(HttpStatus.NOT_FOUND)
-//    public ErrorResponseDto handleUsernameNotFound(UsernameNotFoundException e) {
-//        return new ErrorResponseDto(e.getMessage());
-//    }
+    @ExceptionHandler(UsernameNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponseDto handleUsernameNotFound(UsernameNotFoundException e) {
+        return new ErrorResponseDto(e.getMessage());
+    }
 
 }

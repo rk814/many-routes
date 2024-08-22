@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +32,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.util.Collection;
 import java.util.List;
 
+@Slf4j
 @Configuration
 @EnableConfigurationProperties({AuthConfigProperties.class})
 @EnableMethodSecurity(jsr250Enabled = true)
@@ -83,27 +85,31 @@ public class SpringSecurityConfig {
 //        return new InMemoryUserDetailsManager(user, admin);
 //    }
 //
-    @Bean
-    public UserDetailsService userDetailsService(UserRepository userRepository) {
-        return username -> userRepository.findByLogin(username)
-                .map(u -> new UserDetails() {
-                    @Override
-                    public Collection<? extends GrantedAuthority> getAuthorities() {
-                        return List.of(new SimpleGrantedAuthority("ROLE_" + u.getRole()));
-                    }
-
-                    @Override
-                    public String getPassword() {
-                        return u.getHashPassword();
-                    }
-
-                    @Override
-                    public String getUsername() {
-                        return u.getLogin();
-                    }
-                })
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    }
+//    @Bean
+//    public UserDetailsService userDetailsService(UserRepository userRepository) throws UsernameNotFoundException {
+//        log.debug("Entering in findByLogin from userRepository");
+//        return username -> userRepository.findByLogin(username)
+//                .map(u -> new UserDetails() {
+//                    @Override
+//                    public Collection<? extends GrantedAuthority> getAuthorities() {
+//                        return List.of(new SimpleGrantedAuthority("ROLE_" + u.getRole()));
+//                    }
+//
+//                    @Override
+//                    public String getPassword() {
+//                        return u.getHashPassword();
+//                    }
+//
+//                    @Override
+//                    public String getUsername() {
+//                        return u.getLogin();
+//                    }
+//                })
+//                .orElseThrow(() -> {
+//                    log.error("User with login '{}' not found", username);
+//                    return new UsernameNotFoundException("User not found");
+//                });
+//    }
 
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
