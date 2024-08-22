@@ -9,7 +9,22 @@ Content-Type: application/json
 }
 
 > {% client.global.set("auth-token", response.body.token); %}
-### POST 1
+
+### CHALLENGE
+
+POST localhost:8888/got/v1/challenges/add-new
+Authorization: Bearer {{auth-token}}
+Content-Type: application/json
+
+{
+  "name": "Korona Gór Polski",
+  "description": "Korona Gór Polski obejmuje zdobycie najwyższych szczytów 28 pasm górskich w Polsce. Każdy z tych szczytów, takich jak Rysy w Tatrach czy Śnieżka w Karkonoszach, ma swoje unikalne wyzwania i widoki. Zdobycie Korony Gór Polski nie wymaga spcjalnych umiejętności wspinaczkowych, ale przede wszystkim determinacji.",
+  "status": "ACTIVE"
+}
+
+> {% client.global.set("challenge-id", response.body.id); %}
+
+### SUMMIT 1
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -26,7 +41,14 @@ Content-Type: application/json
   "status": "ACTIVE"
 }
 
-### POST 2
+> {% client.global.set("summit1-id", response.body.id); %}
+
+### ADD SUMMIT 1
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit1-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 2
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -43,7 +65,14 @@ Content-Type: application/json
   "status": "ACTIVE"
 }
 
-### POST 3
+> {% client.global.set("summit2-id", response.body.id); %}
+
+### ADD SUMMIT 2
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit2-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 3
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -60,7 +89,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 4
+> {% client.global.set("summit3-id", response.body.id); %}
+
+### ADD SUMMIT 3
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit3-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 4
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -77,7 +113,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 5
+> {% client.global.set("summit4-id", response.body.id); %}
+
+### ADD SUMMIT 4
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit4-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 5
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -94,7 +137,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 6
+> {% client.global.set("summit5-id", response.body.id); %}
+
+### ADD SUMMIT 5
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit5-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 6
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -111,7 +161,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 7
+> {% client.global.set("summit6-id", response.body.id); %}
+
+### ADD SUMMIT 6
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit6-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 7
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -128,7 +185,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 8
+> {% client.global.set("summit7-id", response.body.id); %}
+
+### ADD SUMMIT 7
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit7-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 8
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -145,7 +209,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 9
+> {% client.global.set("summit8-id", response.body.id); %}
+
+### ADD SUMMIT 8
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit8-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 9
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -162,7 +233,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 10
+> {% client.global.set("summit9-id", response.body.id); %}
+
+### ADD SUMMIT 9
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit9-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 10
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -179,7 +257,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 11
+> {% client.global.set("summit10-id", response.body.id); %}
+
+### ADD SUMMIT 10
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit10-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 11
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -196,7 +281,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 12
+> {% client.global.set("summit11-id", response.body.id); %}
+
+### ADD SUMMIT 11
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit11-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 12
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -213,7 +305,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 13
+> {% client.global.set("summit12-id", response.body.id); %}
+
+### ADD SUMMIT 12
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit12-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 13
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -230,7 +329,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 14
+> {% client.global.set("summit13-id", response.body.id); %}
+
+### ADD SUMMIT 13
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit13-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 14
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -247,7 +353,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 15
+> {% client.global.set("summit14-id", response.body.id); %}
+
+### ADD SUMMIT 14
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit14-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 15
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -264,7 +377,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 16
+> {% client.global.set("summit15-id", response.body.id); %}
+
+### ADD SUMMIT 15
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit15-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 16
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -281,7 +401,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 17
+> {% client.global.set("summit16-id", response.body.id); %}
+
+### ADD SUMMIT 16
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit16-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 17
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -298,7 +425,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 18
+> {% client.global.set("summit17-id", response.body.id); %}
+
+### ADD SUMMIT 17
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit17-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 18
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -315,7 +449,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 19
+> {% client.global.set("summit18-id", response.body.id); %}
+
+### ADD SUMMIT 18
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit18-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 19
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -332,7 +473,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 20
+> {% client.global.set("summit19-id", response.body.id); %}
+
+### ADD SUMMIT 19
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit19-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 20
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -349,7 +497,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 21
+> {% client.global.set("summit20-id", response.body.id); %}
+
+### ADD SUMMIT 20
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit20-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 21
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -366,7 +521,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 22
+> {% client.global.set("summit21-id", response.body.id); %}
+
+### ADD SUMMIT 21
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit21-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 22
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -383,7 +545,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 23
+> {% client.global.set("summit22-id", response.body.id); %}
+
+### ADD SUMMIT 22
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit22-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 23
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -400,7 +569,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 24
+> {% client.global.set("summit23-id", response.body.id); %}
+
+### ADD SUMMIT 23
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit23-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 24
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -417,7 +593,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 25
+> {% client.global.set("summit24-id", response.body.id); %}
+
+### ADD SUMMIT 24
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit24-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 25
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -434,7 +617,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 26
+> {% client.global.set("summit25-id", response.body.id); %}
+
+### ADD SUMMIT 25
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit25-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 26
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -451,7 +641,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 27
+> {% client.global.set("summit26-id", response.body.id); %}
+
+### ADD SUMMIT 26
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit26-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 27
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -468,7 +665,14 @@ Content-Type: application/json
 "status": "ACTIVE"
 }
 
-### POST 28
+> {% client.global.set("summit27-id", response.body.id); %}
+
+### ADD SUMMIT 27
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit27-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 28
 
 POST localhost:8888/got/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
@@ -484,6 +688,13 @@ Content-Type: application/json
 "score": 1,
 "status": "ACTIVE"
 }
+
+> {% client.global.set("summit28-id", response.body.id); %}
+
+### ADD SUMMIT 28
+
+POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit28-id}}
+Authorization: Bearer {{auth-token}}
 
 ### GET ALL
 
