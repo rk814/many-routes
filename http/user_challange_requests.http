@@ -1,63 +1,57 @@
-@login = user1
-@password = password
-
-### LOGIN AS USER 1
-
-POST localhost:8888/got/v1/auth/login
-Content-Type: application/json
-
-{
-  "username": "{{login}}",
-  "password": "{{password}}"
-}
-
-> {% client.global.set("auth-token", response.body.token); %}
-
 ### GET ALL
 
 GET localhost:8888/got/v1/users/{{login}}/user-challenges/
 Authorization: Bearer {{auth-token}}
 
-### ADD NEW - TODO
-
-POST localhost:8888/got/v1/users/{{login}}/user-challenges/{{$uuid}}
-Authorization: Bearer {{auth-token}}
-
-### CONQUER - TODO
-
-< {% request.variables.set("score", "11") %}
-
-POST localhost:8888/got/v1/users/{{login}}/user-challenges/{{$uuid}}/user-summits/{{$uuid}}/conquer/{{score}}
-Authorization: Bearer {{auth-token}}
-
-### UPDATE SCORE - TODO
-
-< {% request.variables.set("score", "123") %}
-
-PATCH localhost:8888/got/v1/users/{{login}}/user-challenges/{{$uuid}}/update-score/{{score}}
-Authorization: Bearer {{auth-token}}
-
-### DELETE - TODO
-
-DELETE localhost:8888/got/v1/users/{{login}}/user-challenges/{{$uuid}}
-Authorization: Bearer {{auth-token}}
-
-### GET ONE
-
-GET localhost:8888/got/v1/users/{{login}}/user-challenges/{{$uuid}}
-Authorization: Bearer {{auth-token}}
 
 ### GET COMPLETED
 
 GET localhost:8888/got/v1/users/{{login}}/user-challenges/completed
 Authorization: Bearer {{auth-token}}
 
+
 ### GET ACTIVE
 
 GET localhost:8888/got/v1/users/{{login}}/user-challenges/active
 Authorization: Bearer {{auth-token}}
 
+
 ### GET GOALS
 
 GET localhost:8888/got/v1/users/{{login}}/user-challenges/goals
 Authorization: Bearer {{auth-token}}
+
+
+### ADD NEW
+
+POST localhost:8888/got/v1/users/{{login}}/user-challenges/add-new/{{kgp-challenge-id}}
+Authorization: Bearer {{auth-token}}
+
+
+### GET ONE
+
+GET localhost:8888/got/v1/users/{{login}}/user-challenges/{{kgp-challenge-id}}
+Authorization: Bearer {{auth-token}}
+
+
+### CONQUER
+
+< {% request.variables.set("score", "11") %}
+
+POST localhost:8888/got/v1/users/{{login}}/user-challenges/{{kgp-challenge-id}}/user-summits/{{summit8-id}}/conquer/{{score}}
+Authorization: Bearer {{auth-token}}
+
+
+### UPDATE SCORE
+
+< {% request.variables.set("score", "123") %}
+
+PATCH localhost:8888/got/v1/users/{{login}}/user-challenges/{{kgp-challenge-id}}/update-score/{{score}}
+Authorization: Bearer {{auth-token}}
+
+
+### DELETE
+
+DELETE localhost:8888/got/v1/users/{{login}}/user-challenges/{{kgp-challenge-id}}
+Authorization: Bearer {{auth-token}}
+

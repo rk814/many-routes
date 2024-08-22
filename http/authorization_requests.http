@@ -9,6 +9,7 @@ Content-Type: application/json
   "email": "user1@email.com"
 }
 
+
 ### REGISTER USER 2
 
 POST localhost:8888/got/v1/auth/register
@@ -19,6 +20,7 @@ Content-Type: application/json
   "password": "password",
   "email": "user2@email.com"
 }
+
 
 ### LOGIN AS USER 1
 
@@ -31,6 +33,7 @@ Content-Type: application/json
 }
 
 > {% client.global.set("auth-token", response.body.token); %}
+
 
 ### LOGIN AS ADMIN
 
