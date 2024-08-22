@@ -3,6 +3,7 @@ package com.codecool.kgp.entity;
 import com.codecool.kgp.entity.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class Challenge {
     @Column(unique = true)
     private String name;
 
+    @Size(max=4000, message = "Opis nie może przekroczyć 4000 znaków") // default 256
     private String description;
 
     private Status status;

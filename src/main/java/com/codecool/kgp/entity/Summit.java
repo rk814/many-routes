@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,8 +42,10 @@ public class Summit {
     @Min(value = 0, message = "Szczyt nie może być wartością ujemną")
     private int height;
 
+    @Size(max=4000, message = "Opis nie może przekroczyć 4000 znaków") // default 256
     private String description;
 
+    @Size(max=4000, message = "Opis nie może przekroczyć 4000 znaków") // default 256
     private String guideNotes;
 
     @NotNull
