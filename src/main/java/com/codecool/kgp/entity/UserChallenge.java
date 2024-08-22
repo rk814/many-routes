@@ -21,14 +21,6 @@ public class UserChallenge {
     @EqualsAndHashCode.Include
     private UUID id = UUID.randomUUID();
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id", referencedColumnName = "id")
-    private User user;
-
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name="challenge_id", referencedColumnName = "id")
-    private Challenge challenge;
-
     @Column(updatable = false)
     private LocalDateTime startedAt;
 
@@ -37,8 +29,8 @@ public class UserChallenge {
 
     private int score;
 
-    @OneToMany(mappedBy = "id", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<UserSummit> userSummitList = new ArrayList<>();
+    @Version
+    private Integer version = 0;
 
 
     public UserChallenge() {
@@ -52,6 +44,18 @@ public class UserChallenge {
         this.startedAt = LocalDateTime.now();
         this.score = 0;
     }
+
+    @OneToMany(mappedBy = "id", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<UserSummit> userSummitList = new ArrayList<>();
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id", referencedColumnName = "id")
+    private User user;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name="challenge_id", referencedColumnName = "id")
+    private Challenge challenge;
+
 
     public void assignUserSummit(UserSummit userSummit) {
         userSummitList.add(userSummit);

@@ -61,11 +61,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "id", orphanRemoval = true)
-    private List<UserChallenge> userChallenges = new ArrayList<>();
-
     @Version
-    private Integer version;
+    private Integer version = 0;
 
 
     public User(String login, String hashPassword, String email, Role role) {
@@ -75,6 +72,10 @@ public class User {
         this.role = role;
         this.createdAt = LocalDateTime.now();
     }
+
+    @OneToMany(mappedBy = "id", orphanRemoval = true)
+    private List<UserChallenge> userChallenges = new ArrayList<>();
+
 
     public Double[] getCoordinatesArray() {
         return (coordinates == null) ? null : new Double[]{coordinates.getLatitude(), coordinates.getLongitude()};

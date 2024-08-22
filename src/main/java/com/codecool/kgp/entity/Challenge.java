@@ -31,6 +31,7 @@ public class Challenge {
     @Version
     private Integer version = 0;
 
+
     public Challenge(String name,String description, Status status) {
         this.name = name;
         this.description = description;

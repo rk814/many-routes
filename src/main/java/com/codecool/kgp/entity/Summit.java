@@ -56,7 +56,7 @@ public class Summit {
     private Status status;
 
     @Version
-    private Integer version;
+    private Integer version = 0;
 
 
     public Summit(String name, Coordinates coordinates, String mountainRange, String mountains, int height, String description, String guideNotes, Integer score, Status status) {
@@ -70,6 +70,7 @@ public class Summit {
         this.score = score;
         this.status = status;
     }
+
 
     public Double[] getCoordinatesArray() {
         return (coordinates == null) ? null : new Double[]{coordinates.getLatitude(), coordinates.getLongitude()};

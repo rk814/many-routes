@@ -23,17 +23,12 @@ public class UserSummit {
     @EqualsAndHashCode.Include
     private UUID id = UUID.randomUUID();
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name="user_challenge_id", referencedColumnName = "id")
-    private UserChallenge userChallenge;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name="summit_id", referencedColumnName = "id")
-    private Summit summit;
-
     private LocalDateTime conqueredAt;
 
     private Integer score;
+
+    @Version
+    private Integer version = 0;
 
 
     public UserSummit(UserChallenge userChallenge,Summit summit) {
@@ -41,4 +36,12 @@ public class UserSummit {
         this.summit = summit;
         this.score = 0;
     }
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="user_challenge_id", referencedColumnName = "id")
+    private UserChallenge userChallenge;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="summit_id", referencedColumnName = "id")
+    private Summit summit;
 }
