@@ -28,6 +28,7 @@ public class Challenge {
     @Size(max=4000, message = "Opis nie może przekroczyć 4000 znaków") // default 256
     private String description;
 
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     @Version
