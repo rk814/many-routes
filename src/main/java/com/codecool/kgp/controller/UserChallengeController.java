@@ -69,16 +69,16 @@ public class UserChallengeController {
         return userChallengeService.saveUserChallenge(login, challengeId);
     }
 
-    @PostMapping("/{id}/user-summits/{summitId}/conquer/{score}")
+    @PostMapping("/{userChallengeId}/user-summits/{userSummitId}/conquer/{score}")
     @RolesAllowed({USER, ADMIN})
-    public UserChallengeDto conquerSummit(@PathVariable String login, @PathVariable UUID id,
-                              @PathVariable UUID summitId, @PathVariable int score) {
-        log.info("Received request to conquer user summit with id '{}' and login '{}'", id, login);
+    public UserChallengeDto conquerSummit(@PathVariable String login, @PathVariable UUID userChallengeId,
+                                          @PathVariable UUID userSummitId, @PathVariable int score) {
+        log.info("Received request to conquer user summit with id '{}' and login '{}'", userSummitId, login);
         if (score < 0) {
-            log.warn("Request for conquer of user summit with id '{}' has invalid score value of {}", id, score);
+            log.warn("Request for conquer of user summit with id '{}' has invalid score value of {}", userSummitId, score);
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Punkty (score) nie mogą być ujemne");
         }
-        return userChallengeService.setSummitConquered(id, summitId,  score);
+        return userChallengeService.setSummitConquered(userChallengeId, userSummitId, score);
     }
 
     @PatchMapping("/{id}/update-score/{score}")

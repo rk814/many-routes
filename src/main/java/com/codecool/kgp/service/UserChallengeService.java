@@ -111,7 +111,7 @@ public class UserChallengeService {
 
     public UserChallengeDto setSummitConquered(UUID userChallengeId, UUID userSummitId, int score) {
         UserChallenge userChallenge = getUserChallengeById(userChallengeId);
-        UserSummit userSummit = userChallenge.getUserSummitList().stream().filter(sl -> sl.getId() == userSummitId).findFirst()
+        UserSummit userSummit = userChallenge.getUserSummitList().stream().filter(us -> us.getId().equals(userSummitId)).findFirst()
                 .orElseThrow(() -> {
                     log.warn("User Challenge with id '{}' does not contain User Summit with id '{}'", userChallengeId, userSummitId);
                     return new ResponseStatusException(HttpStatus.NOT_FOUND,
