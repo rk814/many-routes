@@ -45,7 +45,7 @@ public class UserChallenge {
         this.score = 0;
     }
 
-    @OneToMany(mappedBy = "id", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userChallenge", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<UserSummit> userSummitList = new ArrayList<>();
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

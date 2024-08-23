@@ -9,7 +9,7 @@ import java.util.UUID;
 public record UserSummitDto(
         UUID id,
         UUID summitId,
-        UUID challengeId,
+        UUID userChallengeId,
         LocalDateTime conqueredAt,
 
         // merge data form Summit

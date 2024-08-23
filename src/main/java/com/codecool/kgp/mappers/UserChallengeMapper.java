@@ -1,6 +1,7 @@
 package com.codecool.kgp.mappers;
 
 import com.codecool.kgp.controller.dto.*;
+import com.codecool.kgp.entity.Summit;
 import com.codecool.kgp.entity.UserChallenge;
 import com.codecool.kgp.entity.UserSummit;
 import org.springframework.stereotype.Component;
@@ -10,24 +11,16 @@ import java.util.List;
 @Component
 public class UserChallengeMapper {
 
-    private final SummitMapper summitMapper;
-
-    public UserChallengeMapper(SummitMapper summitMapper) {
-
-        this.summitMapper = summitMapper;
-    }
-
     public UserChallengeDto mapEntityToDto(UserChallenge userChallenge) {
         return new UserChallengeDto(
                 userChallenge.getId(),
                 userChallenge.getUser().getId(),
-                new ChallengeDto(
-                        userChallenge.getChallenge().getId(),
-                        userChallenge.getChallenge().getDescription(),
-                        userChallenge.getChallenge().getName(),
-                        userChallenge.getChallenge().getStatus(),
-                        userChallenge.getChallenge().getSummitList().stream().map(summitMapper::mapEntityToSimpleDto).toList()
-                ),
+
+                userChallenge.getChallenge().getId(),
+                userChallenge.getChallenge().getDescription(),
+                userChallenge.getChallenge().getName(),
+                userChallenge.getChallenge().getStatus(),
+
                 userChallenge.getStartedAt(),
                 userChallenge.getFinishedAt(),
                 userChallenge.getScore(),
@@ -47,24 +40,28 @@ public class UserChallengeMapper {
     }
 
     private List<UserSummitDto> getSummitListDto(List<UserSummit> userSummitList) {
-        return userSummitList.stream().map(map -> {
-                    SummitDto summitDto = summitMapper.mapEntityToDto(map.getSummit());
+        return userSummitList.stream().map(s -> {
+                    Summit summit = s.getSummit();
                     return new UserSummitDto(
-                            map.getId(),
-                            map.getSummit().getId(),
-                            map.getUserChallenge().getId(),
-                            map.getConqueredAt(),
+                            s.getId(),
+                            s.getSummit().getId(),
+                            s.getUserChallenge().getId(),
+                            s.getConqueredAt(),
 
-                            summitDto.challangeList(),
-                            summitDto.name(),
-                            summitDto.coordinates(),
-                            summitDto.mountainRange(),
-                            summitDto.mountains(),
-                            summitDto.height(),
-                            summitDto.description(),
-                            summitDto.guideNotes(),
-                            summitDto.score(),
-                            summitDto.status()
+                            summit.getChallengeList().stream().map(ch -> new ChallengeSimpleDto(
+                                    ch.getId(),
+                                    ch.getName(),
+                                    ch.getStatus()
+                            )).toList(),
+                            summit.getName(),
+                            summit.getCoordinatesArray(),
+                            summit.getMountainRange(),
+                            summit.getMountains(),
+                            summit.getHeight(),
+                            summit.getDescription(),
+                            summit.getGuideNotes(),
+                            summit.getScore(),
+                            summit.getStatus().name()
                     );
                 }
         ).toList();
