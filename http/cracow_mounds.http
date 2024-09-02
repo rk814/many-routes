@@ -1,0 +1,109 @@
+### CHALLENGE
+
+POST localhost:8888/got/v1/challenges/add-new
+Authorization: Bearer {{auth-token}}
+Content-Type: application/json
+
+{
+  "name": "Krakowskie Kopce",
+  "description": "Kraków jest miastem słynącym z czterech kopców, które pełnią zarówno funkcje historyczne, jak i symboliczne. Najstarszy z nich to Kopiec Krakusa, legendarny grób założyciela miasta, sięgający czasów przedchrześcijańskich. Kopiec Wandy upamiętnia mityczną córkę Krakusa, która według legendy popełniła samobójstwo, by uniknąć małżeństwa z niechcianym mężem. Dwa pozostałe kopce, Kościuszki i Piłsudskiego, zostały usypane na cześć wielkich polskich bohaterów narodowych, Tadeusza Kościuszki i Józefa Piłsudskiego, stanowiąc wyraz patriotyzmu i hołd dla ich dokonań.",
+  "status": "ACTIVE"
+}
+
+> {% client.global.set("kgp-challenge-id", response.body.id); %}
+
+### SUMMIT 1
+
+POST localhost:8888/got/v1/summits/add-new
+Authorization: Bearer {{auth-token}}
+Content-Type: application/json
+
+{
+  "name": "Kopiec Kościuszki",
+  "latitude": 50.054922,
+  "longitude": 19.893358,
+  "mountainRange": "",
+  "mountains": "",
+  "height": 330,
+  "score": 1,
+  "status": "ACTIVE"
+}
+
+> {% client.global.set("summit1-id", response.body.id); %}
+
+### ADD SUMMIT 1
+
+POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit1-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 2
+
+POST localhost:8888/got/v1/summits/add-new
+Authorization: Bearer {{auth-token}}
+Content-Type: application/json
+
+{
+  "name": "Kopiec Krakusa",
+  "latitude": 50.038056,
+  "longitude": 19.958333,
+  "mountainRange": "",
+  "mountains": "",
+  "height": 271,
+  "score": 2,
+  "status": "ACTIVE"
+}
+
+> {% client.global.set("summit2-id", response.body.id); %}
+
+### ADD SUMMIT 2
+
+POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit2-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 3
+
+POST localhost:8888/got/v1/summits/add-new
+Authorization: Bearer {{auth-token}}
+Content-Type: application/json
+
+{
+  "name": "Kopiec Piłsudskiego",
+  "latitude": 50.06,
+  "longitude": 19.847222,
+  "mountainRange": "",
+  "mountains": "",
+  "height": 393,
+  "score": 3,
+  "status": "ACTIVE"
+}
+
+> {% client.global.set("summit3-id", response.body.id); %}
+
+### ADD SUMMIT 3
+
+POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit3-id}}
+Authorization: Bearer {{auth-token}}
+
+### SUMMIT 4
+
+POST localhost:8888/got/v1/summits/add-new
+Authorization: Bearer {{auth-token}}
+Content-Type: application/json
+
+{
+  "name": "Kopiec Wandy",
+  "latitude": 50.070278,
+  "longitude": 20.068056,
+  "mountainRange": "",
+  "mountains": "",
+  "height": 238,
+  "score": 4,
+  "status": "ACTIVE"
+}
+
+> {% client.global.set("summit4-id", response.body.id); %}
+
+### ADD SUMMIT 4
+
+POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit4-id}}
+Authorization: Bearer {{auth-token}}
