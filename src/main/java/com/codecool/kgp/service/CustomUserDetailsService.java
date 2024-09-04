@@ -43,7 +43,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                             return u.getLogin();
                         }
                     };
-                    log.info("User details loaded successfully for username '{}'",username);
+                    log.info("User details loaded successfully for login '{}'",username);
                     return userDetails;
                 })
                 .orElseThrow(() -> {

@@ -1,8 +1,8 @@
 package com.codecool.kgp.config;
 
 import com.codecool.kgp.auth.JwtTokenFilter;
-import com.codecool.kgp.auth.JwtTokenService;
-import com.codecool.kgp.repository.UserRepository;
+import com.codecool.kgp.service.JwtTokenService;
+import com.codecool.kgp.service.UserService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -17,20 +17,13 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import java.util.Collection;
-import java.util.List;
 
 @Slf4j
 @Configuration
@@ -88,7 +81,7 @@ public class SpringSecurityConfig {
 //    @Bean
 //    public UserDetailsService userDetailsService(UserRepository userRepository) throws UsernameNotFoundException {
 //        log.debug("Entering in findByLogin from userRepository");
-//        return username -> userRepository.findByLogin(username)
+//        return login -> userRepository.findByLogin(login)
 //                .map(u -> new UserDetails() {
 //                    @Override
 //                    public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -106,7 +99,7 @@ public class SpringSecurityConfig {
 //                    }
 //                })
 //                .orElseThrow(() -> {
-//                    log.error("User with login '{}' not found", username);
+//                    log.error("User with login '{}' not found", login);
 //                    return new UsernameNotFoundException("User not found");
 //                });
 //    }
@@ -132,7 +125,7 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public JwtTokenService jwtTokenService(AuthConfigProperties authConfigProperties) {
-        return new JwtTokenService(authConfigProperties);
+    public JwtTokenService jwtTokenService(AuthConfigProperties authConfigProperties, UserService userService) {
+        return new JwtTokenService(authConfigProperties, userService);
     }
 }

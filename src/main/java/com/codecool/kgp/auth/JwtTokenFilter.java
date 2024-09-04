@@ -1,5 +1,6 @@
 package com.codecool.kgp.auth;
 
+import com.codecool.kgp.service.JwtTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

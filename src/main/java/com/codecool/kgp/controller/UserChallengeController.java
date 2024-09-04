@@ -14,6 +14,8 @@ import java.util.UUID;
 import static com.codecool.kgp.config.SpringSecurityConfig.ADMIN;
 import static com.codecool.kgp.config.SpringSecurityConfig.USER;
 
+// TODO validate if user is fetching only data belonging to him
+
 @Slf4j
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
