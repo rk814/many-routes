@@ -78,9 +78,9 @@ public class UserChallengeService {
         List<ChallengeDto> challengesDto = challenges.stream()
                 .filter(ch ->
                         userChallenges.stream()
-                                .anyMatch(uCh -> ch.getId() == uCh.getChallenge().getId()))
+                                .noneMatch(uCh -> ch.getId() == uCh.getChallenge().getId()))
                 .map(challengeMapper::mapEntityToDto).toList();
-        log.info("Found {} available user challenges with login '{}", challengesDto.size(), login);
+        log.info("Found {} available user challenges with login '{}'", challengesDto.size(), login);
         return challengesDto;
     }
 

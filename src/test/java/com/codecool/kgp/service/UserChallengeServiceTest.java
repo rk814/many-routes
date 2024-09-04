@@ -1,5 +1,6 @@
 package com.codecool.kgp.service;
 
+import com.codecool.kgp.controller.dto.ChallengeDto;
 import com.codecool.kgp.controller.dto.UserChallengeDto;
 import com.codecool.kgp.entity.*;
 import com.codecool.kgp.mappers.ChallengeMapper;
@@ -134,7 +135,7 @@ class UserChallengeServiceTest {
     }
 
     @Test
-    public void getActiveUserChallenges_shouldAllCompletedUserChallenges() {
+    public void getActiveUserChallenges_shouldReturnAllCompletedUserChallenges() {
         //given:
         Mockito.when(userRepository.findByLogin(login1)).thenReturn(Optional.of(user1));
 
@@ -155,6 +156,33 @@ class UserChallengeServiceTest {
 
         //then:
         Assertions.assertThat(actual).containsExactly(challenge1dto);
+    }
+
+    @Test
+    public void getAvailableChallenges_shouldReturnAllNotStartedChallengesByUser() {
+        //given:
+        List<Challenge> challenges = Instancio.ofList(Challenge.class).size(2).create();
+        Mockito.when(challengeRepository.findAll()).thenReturn(challenges);
+
+        Mockito.when(userRepository.findByLogin(login1)).thenReturn(Optional.of(user1));
+
+        UserChallenge userChallenge = Instancio.of(UserChallenge.class)
+                .set(field(UserChallenge::getChallenge), challenges.get(0))
+                .create();
+
+        Mockito.when(userChallengeRepository.findAllByUserId(user1.getId())).thenReturn(List.of(userChallenge));
+
+        ChallengeDto challenge1dto = Instancio.create(ChallengeDto.class);
+        ChallengeDto challenge2dto = Instancio.create(ChallengeDto.class);
+
+        Mockito.when(challengeMapper.mapEntityToDto(challenges.get(0))).thenReturn(challenge1dto);
+        Mockito.when(challengeMapper.mapEntityToDto(challenges.get(1))).thenReturn(challenge2dto);
+
+        //when:
+        List<ChallengeDto> actual = userChallengeService.getAvailableChallenges(login1);
+
+        //then:
+        Assertions.assertThat(actual).containsExactly(challenge2dto);
     }
 
     @Test

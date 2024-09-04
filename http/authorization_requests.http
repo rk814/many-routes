@@ -28,8 +28,8 @@ POST localhost:8888/got/v1/auth/login
 Content-Type: application/json
 
 {
-"username": "user1",
-"password": "password"
+  "login": "user1",
+  "password": "password"
 }
 
 > {% client.global.set("auth-token", response.body.token); %}
@@ -41,7 +41,7 @@ POST localhost:8888/got/v1/auth/login
 Content-Type: application/json
 
 {
-"username": "admin",
+"login": "admin",
 "password": "admin"
 }
 

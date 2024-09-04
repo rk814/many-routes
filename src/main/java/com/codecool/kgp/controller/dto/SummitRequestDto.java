@@ -23,11 +23,9 @@ public record SummitRequestDto(
         @Digits(integer = 3, fraction = 8, message = "Współrzędne muszą posiadać maksymalnie 8 cyfr po przecinku", groups = UserBasic.class)
         Double longitude,
 
-        @NotBlank(message = "Pole 'pasmo' jest obowiązkowe")
         @Size(max = 50, message = "Imię może mieć maksymalnie 50 znaków", groups = UserBasic.class)
         String mountainRange,
 
-        @NotBlank(message = "Pole 'łańcuch górski' jest obowiązkowe")
         @Size(max = 50, message = "Imię może mieć maksymalnie 50 znaków", groups = UserBasic.class)
         String mountains,
 

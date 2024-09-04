@@ -22,8 +22,6 @@ Content-Type: application/json
   "name": "Kopiec Kościuszki",
   "latitude": 50.054922,
   "longitude": 19.893358,
-  "mountainRange": "",
-  "mountains": "",
   "height": 330,
   "score": 1,
   "status": "ACTIVE"
@@ -46,8 +44,6 @@ Content-Type: application/json
   "name": "Kopiec Krakusa",
   "latitude": 50.038056,
   "longitude": 19.958333,
-  "mountainRange": "",
-  "mountains": "",
   "height": 271,
   "score": 2,
   "status": "ACTIVE"
@@ -70,8 +66,6 @@ Content-Type: application/json
   "name": "Kopiec Piłsudskiego",
   "latitude": 50.06,
   "longitude": 19.847222,
-  "mountainRange": "",
-  "mountains": "",
   "height": 393,
   "score": 3,
   "status": "ACTIVE"
@@ -94,8 +88,6 @@ Content-Type: application/json
   "name": "Kopiec Wandy",
   "latitude": 50.070278,
   "longitude": 20.068056,
-  "mountainRange": "",
-  "mountains": "",
   "height": 238,
   "score": 4,
   "status": "ACTIVE"
