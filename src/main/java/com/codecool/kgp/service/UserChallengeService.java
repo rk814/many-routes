@@ -71,14 +71,13 @@ public class UserChallengeService {
         return userChallengesDto;
     }
 
-    // TODO move to ChallengeService
     public List<ChallengeDto> getAvailableChallenges(String login) {
         List<Challenge> challenges = challengeRepository.findAll();
         List<UserChallenge> userChallenges = getAllUserChallenges(login);
         List<ChallengeDto> challengesDto = challenges.stream()
-                .filter(ch ->
+                .filter(challenge ->
                         userChallenges.stream()
-                                .noneMatch(uCh -> ch.getId() == uCh.getChallenge().getId()))
+                                .noneMatch(userChallenge -> challenge.getId().equals(userChallenge.getChallenge().getId())))
                 .map(challengeMapper::mapEntityToDto).toList();
         log.info("Found {} available user challenges with login '{}'", challengesDto.size(), login);
         return challengesDto;
