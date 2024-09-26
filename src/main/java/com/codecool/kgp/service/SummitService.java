@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Transactional
@@ -26,6 +29,16 @@ public class SummitService {
         this.summitMapper = summitMapper;
     }
 
+
+    public SummitDto getSummit(UUID id) {
+        Summit summit = summitRepository.findById(id)
+                .orElseThrow(()-> {
+                    log.error("Summit with id '{}' not found", id);
+                    return new NoSuchElementException("Summit not found");
+                });
+        log.info("Summit with id '{}' was found", id);
+        return summitMapper.mapEntityToDto(summit);
+    }
 
     public List<SummitDto> getAllSummits() {
         List<Summit> summits = summitRepository.findAll();

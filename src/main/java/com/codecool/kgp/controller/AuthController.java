@@ -30,7 +30,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public JwtTokenResponseDto login(@Valid @RequestBody JwtTokenRequestDto dto) {
-        log.info("Received request for login with login '{}'", dto.login());
+        log.info("Received request for sign in with login '{}'", dto.login());
 
         var userToken = new UsernamePasswordAuthenticationToken(dto.login(), dto.password());
         authenticationManager.authenticate(userToken);

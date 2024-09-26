@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.codecool.kgp.config.SpringSecurityConfig.ADMIN;
+import static com.codecool.kgp.config.SpringSecurityConfig.USER;
 
 @Slf4j
 @RestController
@@ -43,11 +44,11 @@ public class SummitController {
         return summitService.getAllSummitsSimplified();
     }
 
-    //TODO
     @GetMapping("/{id}")
-    @RolesAllowed(ADMIN)
+    @RolesAllowed({ADMIN, USER})
     public SummitDto getSummit(@PathVariable UUID id) {
-        throw new ResponseStatusException(HttpStatusCode.valueOf(501), "Not implemented yet");
+        log.info("Received request for summit with id '{}'", id);
+        return summitService.getSummit(id);
     }
 
     @PostMapping("/add-new")

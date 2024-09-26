@@ -49,6 +49,7 @@ public class UserController {
         return userService.getUser(login);
     }
 
+    // TODO change to getChallenge with filter
     @GetMapping("/{login}/score") // in use
     @RolesAllowed({USER, ADMIN})
     public int getUserScore(@PathVariable String login) {

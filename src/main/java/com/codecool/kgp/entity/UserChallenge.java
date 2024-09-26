@@ -24,7 +24,6 @@ public class UserChallenge {
     @Column(updatable = false)
     private LocalDateTime startedAt;
 
-    @Column(updatable = false)
     private LocalDateTime finishedAt;
 
     private int score;
@@ -49,15 +48,23 @@ public class UserChallenge {
     private List<UserSummit> userSummitList = new ArrayList<>();
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name="challenge_id", referencedColumnName = "id")
+    @JoinColumn(name = "challenge_id", referencedColumnName = "id")
     private Challenge challenge;
 
 
     public void assignUserSummit(UserSummit userSummit) {
         userSummitList.add(userSummit);
+    }
+
+    public void setFinishedAt(LocalDateTime finishedAt) {
+        if (this.finishedAt == null) {
+            this.finishedAt = finishedAt;
+        } else {
+            throw new IllegalStateException("This value cannot be changed");
+        }
     }
 }

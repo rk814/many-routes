@@ -198,9 +198,9 @@ public class UserChallengeService {
     }
 
     private void setUserChallengeFinishedTime(UserChallenge userChallenge) {
-        if (userChallenge.getFinishedAt() == null) {
+        try {
             userChallenge.setFinishedAt(LocalDateTime.now());
-        } else {
+        } catch (IllegalStateException e){
             log.warn("User challenge with id '{}' was already completed", userChallenge.getId());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "To wyzwanie zostało już wcześniej zakończone");
         }

@@ -30,9 +30,25 @@ public class UserChallengeController {
 
     @GetMapping("/")
     @RolesAllowed({USER, ADMIN})
-    public List<UserChallengeDto> getUserChallenges(@PathVariable String login) {
+    public List<UserChallengeDto> getAllUserChallenges(@PathVariable String login) {
         log.info("Received request for all user challenges of the user with login '{}'", login);
         return userChallengeService.getUserChallenges(login);
+    }
+
+    // TODO filter
+    @GetMapping("/completed")
+    @RolesAllowed({USER, ADMIN})
+    public List<UserChallengeDto> getCompletedUserChallenges(@PathVariable String login) {
+        log.info("Received request for all completed user challenges of the user with login '{}'", login);
+        return userChallengeService.getCompletedUserChallenges(login);
+    }
+
+    // TODO filter
+    @GetMapping("/active")
+    @RolesAllowed({USER, ADMIN})
+    public List<UserChallengeDto> getActiveUserChallenges(@PathVariable String login) {
+        log.info("Received request for all active user challenges of the user with login '{}'", login);
+        return userChallengeService.getActiveUserChallenges(login);
     }
 
     @GetMapping("/{id}")
@@ -42,21 +58,7 @@ public class UserChallengeController {
         return userChallengeService.getUserChallenge(id);
     }
 
-    @GetMapping("/completed")
-    @RolesAllowed({USER, ADMIN})
-    public List<UserChallengeDto> getCompletedUserChallenges(@PathVariable String login) {
-        log.info("Received request for all completed user challenges of the user with login '{}'", login);
-        return userChallengeService.getCompletedUserChallenges(login);
-    }
-
-    @GetMapping("/active")
-    @RolesAllowed({USER, ADMIN})
-    public List<UserChallengeDto> getActiveUserChallenges(@PathVariable String login) {
-        log.info("Received request for all active user challenges of the user with login '{}'", login);
-        return userChallengeService.getActiveUserChallenges(login);
-    }
-
-    // TODO move to ChallengeService
+    // TODO filter
     @GetMapping("/goals")
     @RolesAllowed({USER, ADMIN})
     public List<ChallengeDto> getGoals(@PathVariable String login) {
@@ -71,7 +73,7 @@ public class UserChallengeController {
         return userChallengeService.saveUserChallenge(login, challengeId);
     }
 
-    @PostMapping("/{userChallengeId}/user-summits/{userSummitId}/conquer/{score}")
+    @PostMapping(value="/{userChallengeId}/user-summits/{userSummitId}/conquer/{score}")
     @RolesAllowed({USER, ADMIN})
     public UserChallengeDto conquerSummit(@PathVariable String login, @PathVariable UUID userChallengeId,
                                           @PathVariable UUID userSummitId, @PathVariable int score) {

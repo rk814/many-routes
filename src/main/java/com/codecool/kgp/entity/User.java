@@ -73,7 +73,7 @@ public class User {
         this.createdAt = LocalDateTime.now();
     }
 
-    @OneToMany(mappedBy = "id", orphanRemoval = true)
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
     private List<UserChallenge> userChallenges = new ArrayList<>();
 
 

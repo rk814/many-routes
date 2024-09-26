@@ -50,6 +50,7 @@ public class UserService {
 
     public int getUserScore(String login) {
         User user = getUserByLogin(login);
+        List<UserChallenge> userChallenges = user.getUserChallenges();
         int score = user.getUserChallenges().stream().mapToInt(UserChallenge::getScore).sum();
         log.info("User with id '{}' has score of value {}", user.getId(), score);
         return score;

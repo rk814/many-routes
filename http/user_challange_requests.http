@@ -29,7 +29,7 @@ Authorization: Bearer {{auth-token}}
 
 > {%
     client.global.set("user-challenge-id", response.body.id);
-    client.global.set("user-summit8-id", response.body.userSummitList[7].id);
+    client.global.set("user-summit4-id", response.body.userSummitList[3].id);
 %}
 
 ### GET ONE
@@ -44,7 +44,7 @@ Authorization: Bearer {{auth-token}}
     request.variables.set("score", "11")
 %}
 
-POST localhost:8888/got/v1/users/{{login}}/user-challenges/{{user-challenge-id}}/user-summits/{{user-summit8-id}}/conquer/{{score}}
+POST localhost:8888/got/v1/users/{{login}}/user-challenges/{{user-challenge-id}}/user-summits/{{user-summit4-id}}/conquer/{{score}}
 Authorization: Bearer {{auth-token}}
 
 
