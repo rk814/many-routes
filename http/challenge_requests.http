@@ -6,7 +6,7 @@ Authorization: Bearer {{auth-token}}
 
 ### GET ALL SIMPLE
 
-GET localhost:8888/got/v1/challenges/simplified
+GET localhost:8888/got/v1/challenges?fields=id,name,status
 Authorization: Bearer {{auth-token}}
 
 

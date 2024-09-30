@@ -5,6 +5,8 @@ import com.codecool.kgp.controller.dto.ChallengeRequestDto;
 import com.codecool.kgp.entity.Challenge;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class ChallengeMapper {
 
@@ -21,6 +23,16 @@ public class ChallengeMapper {
                 challenge.getDescription(),
                 challenge.getStatus(),
                 challenge.getSummitList().stream().map(summitMapper::mapEntityToSimpleDto).toList()
+        );
+    }
+
+    public ChallengeDto mapEntityToDto(Challenge challenge, List<String> fields) {
+        return new ChallengeDto(
+                fields.contains("id") ? challenge.getId() : null,
+                fields.contains("name") ? challenge.getName() : null,
+                fields.contains("description") ? challenge.getDescription() : null,
+                fields.contains("status") ? challenge.getStatus() : null,
+                fields.contains("summits") ? challenge.getSummitList().stream().map(summitMapper::mapEntityToSimpleDto).toList() : null
         );
     }
 

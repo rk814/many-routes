@@ -3,6 +3,8 @@ package com.codecool.kgp.controller;
 import com.codecool.kgp.controller.dto.ChallengeDto;
 import com.codecool.kgp.controller.dto.ChallengeRequestDto;
 import com.codecool.kgp.controller.dto.ChallengeSimpleDto;
+import com.codecool.kgp.entity.Challenge;
+import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.service.ChallengeService;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.codecool.kgp.config.SpringSecurityConfig.ADMIN;
@@ -23,24 +27,28 @@ import static com.codecool.kgp.config.SpringSecurityConfig.USER;
 public class ChallengeController {
 
     private final ChallengeService challengeService;
+    private final ChallengeMapper challengeMapper;
 
-    public ChallengeController(ChallengeService challengeService) {
+    public ChallengeController(ChallengeService challengeService, ChallengeMapper challengeMapper) {
         this.challengeService = challengeService;
+        this.challengeMapper = challengeMapper;
     }
 
-    @GetMapping
+    @GetMapping()
     @RolesAllowed({ADMIN, USER})
-    public List<ChallengeDto> getChallenges() {
+    public List<ChallengeDto> getChallenges(@RequestParam(required = false) List<String> fields) {
+        System.out.println(fields.contains("id"));
         log.info("Received request for all challenges");
-        return challengeService.getAllChallenges();
+        List<Challenge> challenges = challengeService.getAllChallenges();
+        return challenges.stream().map(challenge->challengeMapper.mapEntityToDto(challenge, fields)).toList();
     }
 
-    @GetMapping("/simplified")
-    @RolesAllowed({ADMIN, USER})
-    public List<ChallengeSimpleDto> getChallengesSimplified() {
-        log.info("Received request for all challenges simplified");
-        return challengeService.getAllChallengesSimplified();
-    }
+//    @GetMapping("/simplified")
+//    @RolesAllowed({ADMIN, USER})
+//    public List<ChallengeSimpleDto> getChallengesSimplified() {
+//        log.info("Received request for all challenges simplified");
+//        return challengeService.getAllChallengesSimplified();
+//    }
 
     @GetMapping("/{id}")
     @RolesAllowed({ADMIN, USER})
