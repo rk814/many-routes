@@ -1,6 +1,6 @@
 ### GET ALL
 
-GET localhost:8888/got/v1/challenges
+GET localhost:8888/got/v1/challenges?status=g
 Authorization: Bearer {{auth-token}}
 
 

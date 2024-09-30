@@ -4,12 +4,21 @@ import com.codecool.kgp.controller.dto.ChallengeDto;
 import com.codecool.kgp.controller.dto.ChallengeRequestDto;
 import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.enums.Status;
+import com.codecool.kgp.errorhandling.ErrorResponseDto;
 import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.service.ChallengeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -30,10 +39,19 @@ public class ChallengeController {
         this.challengeService = challengeService;
     }
 
-    @GetMapping()
+    @Operation(summary = "Get list of challenges (default ACTIVE)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of Challenges found"),
+            @ApiResponse(responseCode = "400", description = "Invalid status supplied",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping(produces = "application/json")
     @RolesAllowed({ADMIN, USER})
-    public List<ChallengeDto> getChallenges(@RequestParam(required = false, defaultValue = "ACTIVE") Status status,
-                                            @RequestParam(required = false) List<String> fields) {
+    public List<ChallengeDto> getChallenges(
+            @Parameter(description = "Challenge status")
+            @RequestParam(required = false, defaultValue = "ACTIVE") Status status,
+            @Parameter(description = " A comma-separated list of field names to customize the fields returned in the ChallengeDto response", example = "name,id")
+            @RequestParam(required = false) List<String> fields) {
         log.info("Received request for all challenges");
         return challengeService.getAllChallenges(status, fields);
     }
