@@ -35,18 +35,16 @@ public class UserChallengeController {
         return userChallengeService.getUserChallenges(login);
     }
 
-    // TODO filter
-    @GetMapping("/completed")
+    @GetMapping("/isFinished")
     @RolesAllowed({USER, ADMIN})
-    public List<UserChallengeDto> getCompletedUserChallenges(@PathVariable String login) {
+    public List<UserChallengeDto> getFinishedUserChallenges(@PathVariable String login) {
         log.info("Received request for all completed user challenges of the user with login '{}'", login);
         return userChallengeService.getCompletedUserChallenges(login);
     }
 
-    // TODO filter
-    @GetMapping("/active")
+    @GetMapping("/isUnfinished")
     @RolesAllowed({USER, ADMIN})
-    public List<UserChallengeDto> getActiveUserChallenges(@PathVariable String login) {
+    public List<UserChallengeDto> getUnfinishedUserChallenges(@PathVariable String login) {
         log.info("Received request for all active user challenges of the user with login '{}'", login);
         return userChallengeService.getActiveUserChallenges(login);
     }
@@ -58,8 +56,7 @@ public class UserChallengeController {
         return userChallengeService.getUserChallenge(id);
     }
 
-    // TODO filter
-    @GetMapping("/goals")
+    @GetMapping("/isUnstarted")
     @RolesAllowed({USER, ADMIN})
     public List<ChallengeDto> getGoals(@PathVariable String login) {
         log.info("Received request for all goals of the user with login '{}'", login);
@@ -73,7 +70,7 @@ public class UserChallengeController {
         return userChallengeService.saveUserChallenge(login, challengeId);
     }
 
-    @PostMapping(value="/{userChallengeId}/user-summits/{userSummitId}/conquer/{score}")
+    @PostMapping(value = "/{userChallengeId}/user-summits/{userSummitId}/conquer/{score}")
     @RolesAllowed({USER, ADMIN})
     public UserChallengeDto conquerSummit(@PathVariable String login, @PathVariable UUID userChallengeId,
                                           @PathVariable UUID userSummitId, @PathVariable int score) {

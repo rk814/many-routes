@@ -6,19 +6,19 @@ Authorization: Bearer {{auth-token}}
 
 ### GET COMPLETED
 
-GET localhost:8888/got/v1/users/{{login}}/user-challenges/completed
+GET localhost:8888/got/v1/users/{{login}}/user-challenges/isFinished
 Authorization: Bearer {{auth-token}}
 
 
 ### GET ACTIVE
 
-GET localhost:8888/got/v1/users/{{login}}/user-challenges/active
+GET localhost:8888/got/v1/users/{{login}}/user-challenges/isUnfinished
 Authorization: Bearer {{auth-token}}
 
 
 ### GET GOALS
 
-GET localhost:8888/got/v1/users/{{login}}/user-challenges/goals
+GET localhost:8888/got/v1/users/{{login}}/user-challenges/isUnstarted
 Authorization: Bearer {{auth-token}}
 
 
