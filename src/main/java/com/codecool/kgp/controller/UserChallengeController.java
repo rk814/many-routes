@@ -4,6 +4,8 @@ import com.codecool.kgp.service.UserChallengeService;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import com.codecool.kgp.controller.dto.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -30,7 +32,9 @@ public class UserChallengeController {
 
     @GetMapping("/")
     @RolesAllowed({USER, ADMIN})
-    public List<UserChallengeDto> getAllUserChallenges(@PathVariable String login) {
+    public List<UserChallengeDto> getAllUserChallenges(@PathVariable String login, @AuthenticationPrincipal UserDetails userDetails) {
+        System.out.println(userDetails);
+        System.out.println(userDetails.getUsername());
         log.info("Received request for all user challenges of the user with login '{}'", login);
         return userChallengeService.getUserChallenges(login);
     }
