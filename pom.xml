@@ -85,7 +85,7 @@
         <!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui -->
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId> <!--swagger-->
             <version>2.6.0</version>
         </dependency>
         <dependency>

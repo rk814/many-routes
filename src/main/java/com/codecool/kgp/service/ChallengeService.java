@@ -5,6 +5,7 @@ import com.codecool.kgp.controller.dto.ChallengeRequestDto;
 import com.codecool.kgp.controller.dto.ChallengeSimpleDto;
 import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.Summit;
+import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.errorhandling.DuplicateEntryException;
 import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.repository.ChallengeRepository;
@@ -34,10 +35,12 @@ public class ChallengeService {
         this.challengeMapper = challengeMapper;
     }
 
-    public List<Challenge> getAllChallenges() {
-        List<Challenge> challenges = challengeRepository.findAll();
+    public List<ChallengeDto> getAllChallenges(Status status, List<String> fields) {
+        List<Challenge> challenges = challengeRepository.findAllByStatus(status);
         log.info("{} challenges were found", challenges.size());
-        return challenges;
+        return challenges.stream().map(challenge ->
+                (fields != null) ? challengeMapper.mapEntityToDto(challenge, fields) : challengeMapper.mapEntityToDto(challenge)
+        ).toList();
     }
 
     public List<ChallengeSimpleDto> getAllChallengesSimplified() {
@@ -69,12 +72,12 @@ public class ChallengeService {
 
     public ChallengeDto attachSummitToChallenge(UUID summitId, UUID id) {
         Challenge challenge = challengeRepository.findById(id)
-                .orElseThrow(()-> {
+                .orElseThrow(() -> {
                     log.warn("Challenge with id '{}' was not found", id);
                     return new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge was not found");
                 });
         Summit summit = summitRepository.findById(summitId)
-                .orElseThrow(()-> {
+                .orElseThrow(() -> {
                     log.warn("Summit with id '{}' was not found", summitId);
                     return new ResponseStatusException(HttpStatus.NOT_FOUND, "Summit was not found");
                 });

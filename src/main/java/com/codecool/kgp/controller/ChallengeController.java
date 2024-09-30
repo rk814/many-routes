@@ -2,8 +2,8 @@ package com.codecool.kgp.controller;
 
 import com.codecool.kgp.controller.dto.ChallengeDto;
 import com.codecool.kgp.controller.dto.ChallengeRequestDto;
-import com.codecool.kgp.controller.dto.ChallengeSimpleDto;
 import com.codecool.kgp.entity.Challenge;
+import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.service.ChallengeService;
 import jakarta.annotation.security.RolesAllowed;
@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import static com.codecool.kgp.config.SpringSecurityConfig.ADMIN;
@@ -27,20 +25,17 @@ import static com.codecool.kgp.config.SpringSecurityConfig.USER;
 public class ChallengeController {
 
     private final ChallengeService challengeService;
-    private final ChallengeMapper challengeMapper;
 
     public ChallengeController(ChallengeService challengeService, ChallengeMapper challengeMapper) {
         this.challengeService = challengeService;
-        this.challengeMapper = challengeMapper;
     }
 
     @GetMapping()
     @RolesAllowed({ADMIN, USER})
-    public List<ChallengeDto> getChallenges(@RequestParam(required = false) List<String> fields) {
-        System.out.println(fields.contains("id"));
+    public List<ChallengeDto> getChallenges(@RequestParam(required = false, defaultValue = "ACTIVE") Status status,
+                                            @RequestParam(required = false) List<String> fields) {
         log.info("Received request for all challenges");
-        List<Challenge> challenges = challengeService.getAllChallenges();
-        return challenges.stream().map(challenge->challengeMapper.mapEntityToDto(challenge, fields)).toList();
+        return challengeService.getAllChallenges(status, fields);
     }
 
 //    @GetMapping("/simplified")
