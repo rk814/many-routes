@@ -1,5 +1,6 @@
 package com.codecool.kgp.service;
 
+import com.codecool.kgp.entity.CustomUserDetails;
 import com.codecool.kgp.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,22 +28,28 @@ public class CustomUserDetailsService implements UserDetailsService {
         log.debug("Entering in findByLogin from userRepository");
         return userRepository.findByLogin(username)
                 .map(u -> {
-                    UserDetails userDetails = new UserDetails() {
-                        @Override
-                        public Collection<? extends GrantedAuthority> getAuthorities() {
-                            return List.of(new SimpleGrantedAuthority("ROLE_" + u.getRole()));
-                        }
-
-                        @Override
-                        public String getPassword() {
-                            return u.getHashPassword();
-                        }
-
-                        @Override
-                        public String getUsername() {
-                            return u.getLogin();
-                        }
-                    };
+                    CustomUserDetails userDetails = new CustomUserDetails(
+                            u.getId(),
+                            u.getLogin(),
+                            u.getHashPassword(),
+                            List.of(new SimpleGrantedAuthority("ROLE_" + u.getRole()))
+                    );
+//                    UserDetails userDetails = new UserDetails() {
+//                        @Override
+//                        public Collection<? extends GrantedAuthority> getAuthorities() {
+//                            return List.of(new SimpleGrantedAuthority("ROLE_" + u.getRole()));
+//                        }
+//
+//                        @Override
+//                        public String getPassword() {
+//                            return u.getHashPassword();
+//                        }
+//
+//                        @Override
+//                        public String getUsername() {
+//                            return u.getLogin();
+//                        }
+//                    };
                     log.info("User details loaded successfully for login '{}'",username);
                     return userDetails;
                 })

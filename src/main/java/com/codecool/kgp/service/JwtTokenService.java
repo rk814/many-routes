@@ -14,6 +14,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 public class JwtTokenService {
@@ -38,8 +41,10 @@ public class JwtTokenService {
 
     public JwtTokenResponseDto generateJwtTokenDto(String login) {
         UserDto user = userService.getUser(login);
+        Map<String, Object> claims = new HashMap<>();
+//        claims.put("userId", user.id());
         return new JwtTokenResponseDto(
-                generateJwtToken(login),
+                generateJwtToken(user.login(), claims),
                 user.id(),
                 user.login(),
                 user.name(),
@@ -47,16 +52,21 @@ public class JwtTokenService {
         );
     }
 
-    private String generateJwtToken(String login) {
+    private String generateJwtToken(String subject, Map<String, Object> claims) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expiration = now.plus(authConfigProperties.validity());
 
         return Jwts.builder()
-                .subject(login)
+                .subject(subject)
+                .claims(claims)
                 .issuedAt(new LdtToDateAdapter(now))
                 .expiration(new LdtToDateAdapter(expiration))
                 .signWith(getKey())
                 .compact();
+    }
+
+    public UUID getUserIdFromToken(String jwtToken) {
+        return (UUID) extractClaims(jwtToken).get("user-id");
     }
 
     private Date getExpirationDateFromToken(String jwtToken) {

@@ -1,15 +1,21 @@
 package com.codecool.kgp.controller;
 
+import com.codecool.kgp.entity.CustomUserDetails;
+import com.codecool.kgp.service.JwtTokenService;
 import com.codecool.kgp.service.UserChallengeService;
+import io.jsonwebtoken.Jwt;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import com.codecool.kgp.controller.dto.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,15 +32,14 @@ public class UserChallengeController {
 
     private final UserChallengeService userChallengeService;
 
-    public UserChallengeController(UserChallengeService userChallengeService) {
+    public UserChallengeController(UserChallengeService userChallengeService, JwtTokenService jwtTokenService) {
         this.userChallengeService = userChallengeService;
     }
 
     @GetMapping("/")
     @RolesAllowed({USER, ADMIN})
-    public List<UserChallengeDto> getAllUserChallenges(@PathVariable String login, @AuthenticationPrincipal UserDetails userDetails) {
-        System.out.println(userDetails);
-        System.out.println(userDetails.getUsername());
+    public List<UserChallengeDto> getAllUserChallenges(@PathVariable String login, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        System.out.println(userDetails.getUserId());
         log.info("Received request for all user challenges of the user with login '{}'", login);
         return userChallengeService.getUserChallenges(login);
     }
