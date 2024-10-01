@@ -39,7 +39,6 @@ public class ChallengeController {
         this.challengeService = challengeService;
     }
 
-    // TODO N+1
 
     @Operation(summary = "Get list of challenges (default ACTIVE)")
     @ApiResponses(value = {
@@ -54,6 +53,9 @@ public class ChallengeController {
             @Parameter(description = " A comma-separated list of field names to customize the fields returned in the ChallengeDto response", example = "name,id")
             @RequestParam(required = false) List<String> fields) {
         log.info("Received request for all challenges");
+        if (fields!=null && !fields.contains("summits")) {
+            return challengeService.getAllChallengesWithoutSummitLists(status);
+        }
         return challengeService.getAllChallenges(status, fields);
     }
 
