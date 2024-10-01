@@ -56,18 +56,6 @@ public class UserService {
         return score;
     }
 
-//    public UserDto setUser(UserRequestDto dto) {
-//        User user = userMapper.mapRequestDtoToEntity(dto);
-//        try {
-//            User userFromDb = userRepository.saveAndFlush(user);
-//            log.info("New user with id '{}' was added to database", user.getId());
-//            return userMapper.mapEntityToDto(userFromDb);
-//        } catch (DataIntegrityViolationException e) {
-//            log.warn("Data integrity violation when adding user with login '{}' to database", user.getLogin());
-//            throw new DuplicateEntryException("Podany login lub e-mail istnieją już w naszym serwisie");
-//        }
-//    }
-
     public UserDto updateUser(String login, UserRequestDto dto) {
         User user = userRepository.findByLogin(login)
                 .orElseThrow(() -> {
@@ -81,22 +69,6 @@ public class UserService {
         log.info("User with id '{}' was updated",userFromDb.getId());
         return userMapper.mapEntityToDto(userFromDb);
     }
-
-//    public UserDto logInUser(String login, UserRequestDto dto) {
-//        User user = userRepository.findByLogin(login)
-//                .orElseThrow(() -> {
-//                    log.info("User attempted to sign in, but provided non existing login '{}'", login);
-//                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje");
-//                });
-//        // TODO password hash
-//        if (user.getHashPassword().equals(dto.password())) {
-//            log.info("User with id '{}' sign in", user.getId());
-//            return userMapper.mapEntityToDto(user);
-//        } else {
-//            log.info("User with id '{}' typed wrong password", user.getId());
-//            throw new ResponseStatusException(HttpStatus.valueOf(401), "Błąd logowania");
-//        }
-//    }
 
     public void deleteUser(String login) {
         User user = userRepository.findByLogin(login)

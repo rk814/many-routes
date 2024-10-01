@@ -8,7 +8,7 @@ import jakarta.validation.constraints.*;
 
 public record UserRequestDto(
 
-        // ???
+        // TODO login as email + password change
 //        @NotBlank(message = "Login nie może być pusty")
 //        @Size(max = 50, message = "Login może mieć maksymalnie 50 znaków", groups = UserBasic.class)
 //        String login,

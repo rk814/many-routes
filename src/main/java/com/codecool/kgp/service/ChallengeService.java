@@ -54,7 +54,7 @@ public class ChallengeService {
             log.warn("Challenge with id '{}' was not found", id);
             return new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge was not found");
         });
-        return challengeMapper.mapEntityToDto(challenge, null); // TODO
+        return challengeMapper.mapEntityToDto(challenge);
     }
 
     public ChallengeDto addNewChallenge(ChallengeRequestDto dto) {
@@ -63,7 +63,7 @@ public class ChallengeService {
         try {
             Challenge savedChallenge = challengeRepository.save(challenge);
             log.info("New challenge with id '{}' was saved", challenge.getId());
-            return challengeMapper.mapEntityToDto(savedChallenge, null); //TODO
+            return challengeMapper.mapEntityToDto(savedChallenge);
         } catch (DataIntegrityViolationException e) {
             log.warn("Challenge with name '{}' already exists", challenge.getName());
             throw new DuplicateEntryException("Challenge name must be unique");
@@ -84,6 +84,6 @@ public class ChallengeService {
         challenge.addSummit(summit);
         summit.addChallenge(challenge);
 
-        return challengeMapper.mapEntityToDto(challenge, null); //TODO
+        return challengeMapper.mapEntityToDto(challenge);
     }
 }

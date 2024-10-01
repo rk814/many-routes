@@ -57,18 +57,6 @@ public class UserController {
         return userService.getUserScore(login);
     }
 
-//    @PostMapping // in use
-//    public UserDto registerUser(@Validated({UserRegister.class, UserBasic.class}) @RequestBody UserRequestDto dto) {
-//        log.info("Received request for user registration with login '{}'", dto.login());
-//        return userService.setUser(dto);
-//    }
-//
-//    @PostMapping("/{login}") // in use
-//    public UserDto loginUser(@PathVariable String login, @Validated({UserLogin.class, UserBasic.class}) @RequestBody UserRequestDto dto) {
-//        log.info("Received request for user sign in with login '{}'", login);
-//        return userService.logInUser(login, dto);
-//    }
-
     @PutMapping("/{login}") // in use
     @RolesAllowed({USER, ADMIN})
     public UserDto updateUser(@PathVariable String login, @Valid @RequestBody UserRequestDto dto) {

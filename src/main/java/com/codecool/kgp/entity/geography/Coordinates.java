@@ -20,7 +20,6 @@ import lombok.Setter;
 @AttributeOverride(name="longitude", column=@Column(name="coords_longitude"))
 public class Coordinates {
 
-    // TODO better digits with fraction exactly 5 (not max)
     @Min(value = -180, message = "Szrokość geograficzna musi być większa lub równa 180")
     @Max(value = 180, message = "Szrokość geograficzna musi być mniejsza lub równa 180")
     @Digits(integer = 3, fraction = 8, message = "Współrzędne muszą posiadać maksymalnie 8 cyfr po przecinku")
