@@ -5,6 +5,8 @@ import com.codecool.kgp.controller.dto.SummitDto;
 import com.codecool.kgp.controller.dto.SummitRequestDto;
 import com.codecool.kgp.controller.dto.SummitSimpleDto;
 import com.codecool.kgp.repository.SummitRepository;
+import com.codecool.kgp.repository.UserRepository;
+import com.codecool.kgp.service.CustomUserDetailsService;
 import com.codecool.kgp.service.SummitService;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
@@ -39,6 +42,9 @@ class SummitControllerTest {
 
     @MockBean
     private SummitRepository summitRepository;
+
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
 
 //    public static Stream<Arguments> SummitsStream() {
 //        return Stream.of(
@@ -93,7 +99,7 @@ class SummitControllerTest {
                 .thenReturn(summitSimpleDtoList);
 
         //when:
-        var response = mockMvc.perform(get("/got/v1/summits/"));
+        var response = mockMvc.perform(get("/got/v1/summits/simplified"));
 
         //then:
         response.andExpect(status().isOk())
@@ -180,7 +186,7 @@ class SummitControllerTest {
     @WithMockUser(roles = USER)
     void getSummitsSimplified_shouldReturn403WhenNotAdminRole() throws Exception {
         // when:
-        var response =  mockMvc.perform(get("/got/v1/summits/"));
+        var response =  mockMvc.perform(get("/got/v1/summits/simplified"));
 
         // then:
         response.andExpect(status().isForbidden());

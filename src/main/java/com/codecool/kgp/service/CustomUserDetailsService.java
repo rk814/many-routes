@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
@@ -28,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         log.debug("Entering in findByLogin from userRepository");
         return userRepository.findByLogin(username)
                 .map(u -> {
-                    CustomUserDetails userDetails = new CustomUserDetails(
+                    UserDetails userDetails = new CustomUserDetails(
                             u.getId(),
                             u.getLogin(),
                             u.getHashPassword(),

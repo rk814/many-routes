@@ -2,7 +2,6 @@ package com.codecool.kgp.config;
 
 import com.codecool.kgp.auth.JwtTokenFilter;
 import com.codecool.kgp.service.JwtTokenService;
-import com.codecool.kgp.service.UserService;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -125,7 +124,8 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public JwtTokenService jwtTokenService(AuthConfigProperties authConfigProperties, UserService userService) {
-        return new JwtTokenService(authConfigProperties, userService);
+    public JwtTokenService jwtTokenService(AuthConfigProperties authConfigProperties) {
+        return new JwtTokenService(authConfigProperties);
     }
+
 }

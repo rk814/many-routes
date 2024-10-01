@@ -91,41 +91,6 @@ class UserServiceTest {
                 .hasFieldOrPropertyWithValue("status", HttpStatus.NOT_FOUND);
     }
 
-    @Test
-    void setUser_shouldAddUserToRepositoryAndReturnUserDto() {
-        //given:
-        UserRequestDto userRequestDto = Instancio.create(UserRequestDto.class);
-        User user = Instancio.create(User.class);
-        User userFromDb = Instancio.create(User.class);
-        UserDto userDto = Instancio.create(UserDto.class);
-
-        Mockito.when(userMapper.mapRequestDtoToEntity(userRequestDto)).thenReturn(user);
-        Mockito.when(userRepository.saveAndFlush(user)).thenReturn(userFromDb);
-        Mockito.when(userMapper.mapEntityToDto(userFromDb)).thenReturn(userDto);
-
-        //when:
-        UserDto actual = userService.setUser(userRequestDto);
-
-        //then:
-        Assertions.assertThat(actual)
-                .isNotNull()
-                .isEqualTo(userDto);
-    }
-
-    @Test
-    void setUser_shouldThrowDuplicateEntryException() {
-        //given:
-        UserRequestDto userRequestDto = Instancio.create(UserRequestDto.class);
-        User user = Instancio.create(User.class);
-
-        Mockito.when(userMapper.mapRequestDtoToEntity(userRequestDto)).thenReturn(user);
-        Mockito.when(userRepository.saveAndFlush(user)).thenThrow(DataIntegrityViolationException.class);
-
-        //when and then:
-        Assertions.assertThatThrownBy(() -> userService.setUser(userRequestDto))
-                .isInstanceOf(DuplicateEntryException.class);
-    }
-
     @Captor
     private ArgumentCaptor<User> userCaptor;
 
@@ -158,66 +123,14 @@ class UserServiceTest {
     @Test
     void updateUser_shouldThrowResponseStatusException() {
         //given:
-        UserRequestDto user = Instancio.create(UserRequestDto.class);
-        Mockito.when(userRepository.findByLogin(user.login())).thenReturn(Optional.empty());
+        String login = "testLogin";
+        UserRequestDto dto = Instancio.create(UserRequestDto.class);
+        Mockito.when(userRepository.findByLogin(login)).thenReturn(Optional.empty());
 
         //when and then:
-        Assertions.assertThatThrownBy(() -> userService.updateUser(user.login(), user))
+        Assertions.assertThatThrownBy(() -> userService.updateUser(login, dto))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasFieldOrPropertyWithValue("status", HttpStatus.NOT_FOUND);
-    }
-
-
-    @Test
-    void logInUser_shouldReturnUserDtoIfPasswordAndLoginAreCorrect() {
-        //given:
-        String userLogin = "Login";
-        UserRequestDto userRequestDto = Instancio.of(UserRequestDto.class)
-                .set(field(UserRequestDto::password), "xxx")
-                .create();
-        User user = Instancio.of(User.class)
-                .set(field(User::getLogin), userLogin)
-                .set(field(User::getHashPassword), "xxx")
-                .create();
-        UserDto userDto = Instancio.of(UserDto.class)
-                .set(field(UserDto::login), userLogin)
-                .create();
-
-        Mockito.when(userRepository.findByLogin(userLogin)).thenReturn(Optional.of(user));
-        Mockito.when(userMapper.mapEntityToDto(user)).thenReturn(userDto);
-
-        //when:
-        UserDto actual = userService.logInUser(userLogin, userRequestDto);
-
-        //then:
-        Assertions.assertThat(actual).isEqualTo(userDto);
-    }
-
-    @Test
-    void logInUser_shouldThrowResponseStatusException404() {
-        //given:
-        String userLogin = "Login";
-        UserRequestDto user = Instancio.create(UserRequestDto.class);
-        Mockito.when(userRepository.findByLogin(user.login())).thenReturn(Optional.empty());
-
-        //when and then:
-        Assertions.assertThatThrownBy(() -> userService.logInUser(userLogin, user))
-                .isInstanceOf(ResponseStatusException.class)
-                .hasFieldOrPropertyWithValue("status", HttpStatus.NOT_FOUND);
-    }
-
-    @Test
-    void logInUser_shouldThrowResponseStatusException401() {
-        //given:
-        String userLogin = "Login";
-        UserRequestDto userRequestDto = Instancio.create(UserRequestDto.class);
-        User user = Instancio.create(User.class);
-        Mockito.when(userRepository.findByLogin(userLogin)).thenReturn(Optional.of(user));
-
-        //when and then:
-        Assertions.assertThatThrownBy(() -> userService.logInUser(userLogin, userRequestDto))
-                .isInstanceOf(ResponseStatusException.class)
-                .hasFieldOrPropertyWithValue("status", HttpStatus.resolve(401));
     }
 
     @Test

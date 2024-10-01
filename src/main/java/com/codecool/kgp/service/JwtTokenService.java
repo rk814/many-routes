@@ -22,16 +22,14 @@ import java.util.UUID;
 public class JwtTokenService {
 
     private final AuthConfigProperties authConfigProperties;
-    private final UserService userService;
 
-    public JwtTokenService(AuthConfigProperties authConfigProperties, UserService userService) {
+    public JwtTokenService(AuthConfigProperties authConfigProperties) {
         this.authConfigProperties = authConfigProperties;
-        this.userService = userService;
     }
 
 
     public String getUserNameFromToken(String jwtToken) {
-        return  extractClaims(jwtToken).getSubject();
+        return extractClaims(jwtToken).getSubject();
     }
 
     public boolean validateToken(String jwtToken, UserDetails userDetails) {
@@ -40,16 +38,9 @@ public class JwtTokenService {
     }
 
     public JwtTokenResponseDto generateJwtTokenDto(String login) {
-        UserDto user = userService.getUser(login);
         Map<String, Object> claims = new HashMap<>();
 //        claims.put("userId", user.id());
-        return new JwtTokenResponseDto(
-                generateJwtToken(user.login(), claims),
-                user.id(),
-                user.login(),
-                user.name(),
-                user.role()
-        );
+        return new JwtTokenResponseDto(generateJwtToken(login, claims));
     }
 
     private String generateJwtToken(String subject, Map<String, Object> claims) {
