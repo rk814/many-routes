@@ -72,7 +72,7 @@ class SummitControllerTest {
 //                .thenReturn(input);
 //
 //        //when:
-//        var response = mockMvc.perform(get("/got/v1/summits/"));
+//        var response = mockMvc.perform(get("/api/v1/summits/"));
 //
 //        //then:
 //        response.andExpect(status().isOk())
@@ -99,7 +99,7 @@ class SummitControllerTest {
                 .thenReturn(summitSimpleDtoList);
 
         //when:
-        var response = mockMvc.perform(get("/got/v1/summits/simplified"));
+        var response = mockMvc.perform(get("/api/v1/summits/simplified"));
 
         //then:
         response.andExpect(status().isOk())
@@ -122,7 +122,7 @@ class SummitControllerTest {
                 .thenReturn(summitSimpleDtoList);
 
         //when:
-        var response = mockMvc.perform(get("/got/v1/summits/"));
+        var response = mockMvc.perform(get("/api/v1/summits/"));
 
         //then:
         response.andExpect(status().isOk())
@@ -151,7 +151,7 @@ class SummitControllerTest {
                 .thenReturn(dto);
 
         //when:
-        var response = mockMvc.perform(post("/got/v1/summits/add-new")
+        var response = mockMvc.perform(post("/api/v1/summits/add-new")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
@@ -176,7 +176,7 @@ class SummitControllerTest {
     @Test
     void getSummitsSimplified_shouldReturn401WhenNotAuthorized() throws Exception {
         // when:
-        var response =  mockMvc.perform(get("/got/v1/summits/"));
+        var response =  mockMvc.perform(get("/api/v1/summits/"));
 
         // then:
         response.andExpect(status().isUnauthorized());
@@ -186,7 +186,7 @@ class SummitControllerTest {
     @WithMockUser(roles = USER)
     void getSummitsSimplified_shouldReturn403WhenNotAdminRole() throws Exception {
         // when:
-        var response =  mockMvc.perform(get("/got/v1/summits/simplified"));
+        var response =  mockMvc.perform(get("/api/v1/summits/simplified"));
 
         // then:
         response.andExpect(status().isForbidden());

@@ -20,8 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -102,7 +105,7 @@ class ChallengeControllerTest {
 
     @Test
     @WithMockUser(roles = ADMIN)
-    void getChallenge_shouldReturnAllActiveChallengesWithSpecifyFieldsOnly() throws Exception {
+    void getChallenges_shouldReturnAllActiveChallengesWithSpecifyFieldsOnly() throws Exception {
         //given:
         Status status = Status.ACTIVE;
         List<String> fields = List.of("id", "status");
@@ -140,7 +143,7 @@ class ChallengeControllerTest {
 
     @Test
     @WithMockUser(roles = ADMIN)
-    void getChallenge_shouldReturnAllRemovedChallenges() throws Exception {
+    void getChallenges_shouldReturnAllRemovedChallenges() throws Exception {
         //given:
         Status status = Status.REMOVED;
         List<String> fields = null;
@@ -166,7 +169,7 @@ class ChallengeControllerTest {
 
     @Test
     @WithMockUser(roles = ADMIN)
-    void getChallenge_shouldThrow404() throws Exception {
+    void getChallenges_shouldThrow404() throws Exception {
         //when:
         var response = mockMvc.perform(get("/api/v1/challenges?status=UNKNOWN"));
 
@@ -175,12 +178,44 @@ class ChallengeControllerTest {
     }
 
     @Test
-    void getChallenge_shouldThrow401() throws Exception {
+    void getChallenges_shouldThrow401() throws Exception {
         //when:
         var response = mockMvc.perform(get("/api/v1/challenges"));
 
         //then:
         response.andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(roles = USER)
+    void getChallenge_shouldReturnRequestedChallenge() throws Exception {
+       //given:
+        UUID id = UUID.randomUUID();
+        Challenge challenge = Instancio.create(Challenge.class);
+        ChallengeDto challengeDto = Instancio.create(ChallengeDto.class);
+        Mockito.when(challengeService.getChallenge(id)).thenReturn(challenge);
+        Mockito.when(challengeMapper.mapEntityToDto(challenge)).thenReturn(challengeDto);
+
+        //when:
+        var response = mockMvc.perform(get("/api/v1/challenges/" + id));
+
+        //then:
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(challengeDto.id().toString()));
+    }
+
+    @Test
+    @WithMockUser(roles = USER)
+    void getChallenge_shouldReturn404() throws Exception {
+       //given:
+        UUID id = UUID.randomUUID();
+        Mockito.when(challengeService.getChallenge(id)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        //when:
+        var response = mockMvc.perform(get("/api/v1/challenges/" + id));
+
+        //then:
+        response.andExpect(status().isNotFound());
     }
 
     @Test

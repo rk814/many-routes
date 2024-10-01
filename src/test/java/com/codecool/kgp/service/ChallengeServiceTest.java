@@ -2,6 +2,7 @@ package com.codecool.kgp.service;
 
 import com.codecool.kgp.controller.dto.ChallengeDto;
 import com.codecool.kgp.entity.Challenge;
+import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.repository.ChallengeRepository;
 import com.codecool.kgp.repository.SummitRepository;
@@ -12,6 +13,7 @@ import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,10 +29,38 @@ class ChallengeServiceTest {
             challengeRepository, summitRepository, challengeMapper
     );
 
+    @Test
+    void getAllChallenges_shouldReturnAllChallenges() {
+        //given:
+        Status status = Status.ACTIVE;
+        List<Challenge> challenges = Instancio.ofList(Challenge.class)
+                .set(field(Challenge::getStatus), Status.ACTIVE)
+                .create();
+        Mockito.when(challengeRepository.findAllByStatusWithSummits(status)).thenReturn(challenges);
+
+        //when:
+        List<Challenge> actual = challengeService.getAllChallenges(status);
+
+        //then:
+        Assertions.assertThat(actual).hasSize(challenges.size());
+        actual.forEach(a-> Assertions.assertThat(a.getStatus()).isEqualTo(Status.ACTIVE));
+    }
 
     @Test
-    void getAllChallenges() {
-        //TODO
+    void getAllChallengesWithoutSummitLists_shouldReturnAllChallenges() {
+        //given:
+        Status status = Status.ACTIVE;
+        List<Challenge> challenges = Instancio.ofList(Challenge.class)
+                .set(field(Challenge::getStatus), Status.ACTIVE)
+                .create();
+        Mockito.when(challengeRepository.findAllByStatus(status)).thenReturn(challenges);
+
+        //when:
+        List<Challenge> actual = challengeService.getAllChallengesWithoutSummitLists(status);
+
+        //then:
+        Assertions.assertThat(actual).hasSize(challenges.size());
+        actual.forEach(a-> Assertions.assertThat(a.getStatus()).isEqualTo(Status.ACTIVE));
     }
 
     @Test

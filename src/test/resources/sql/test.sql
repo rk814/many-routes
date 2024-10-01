@@ -1,4 +1,4 @@
-INSERT INTO actor(id,login,email, hash_password, name)
+INSERT INTO actor(id, login, email, hash_password, name)
 VALUES ('5c39c496-ff63-4c8a-bad4-47d6a97053e7',
         'adam',
         'adam@email.com',
@@ -16,3 +16,18 @@ VALUES ('6c39c496-ff63-4c8a-bad4-47d6a97053e7',
         TIMESTAMP '2004-10-19 10:23:54',
         TIMESTAMP '2014-03-11 08:23:54',
         30);
+
+
+INSERT INTO challenge(id, description, name, status)
+VALUES ('8b7935ab-5e22-485b-ae18-7e5ad88b005e', 'first challenge', 'test1-challenge', 'ACTIVE'),
+       (gen_random_uuid(), 'second challenge', 'test2-challenge', 'ACTIVE'),
+       (gen_random_uuid(), 'third challenge', 'test3-challenge', 'ACTIVE'),
+       (gen_random_uuid(), 'fourth challenge', 'test4-challenge', 'REMOVED');
+
+INSERT INTO summit(id, name, height, score, status)
+VALUES ('6a20c34e-7de5-4216-8238-2e0a1ef45fcc', 'summit1', 1, 11, 'ACTIVE'),
+       ('a4d928ab-d449-4064-904e-c64f19dd00d4', 'summit2', 2, 22, 'ACTIVE');
+
+INSERT INTO challenge_summit_list(challenge_list_id, summit_list_id)
+VALUES ('8b7935ab-5e22-485b-ae18-7e5ad88b005e', '6a20c34e-7de5-4216-8238-2e0a1ef45fcc'),
+       ('8b7935ab-5e22-485b-ae18-7e5ad88b005e', 'a4d928ab-d449-4064-904e-c64f19dd00d4');
