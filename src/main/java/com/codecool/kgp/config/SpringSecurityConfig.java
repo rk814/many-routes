@@ -41,8 +41,8 @@ public class SpringSecurityConfig {
     public static final String ADMIN = "ADMIN";
 
     private final String[] URL_WHITELIST = {
-            "/got/v1/auth/login",
-            "/got/v1/auth/register",
+            "/api/v1/auth/login",
+            "/api/v1/auth/register",
             "/error",
             "/v3/api-docs/**",
             "/swagger-ui/**"

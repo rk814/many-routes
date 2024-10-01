@@ -24,7 +24,7 @@ import static com.codecool.kgp.config.SpringSecurityConfig.USER;
 @Slf4j
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/got/v1/users")
+@RequestMapping("/api/v1/users")
 public class UserController {
 
     private final UserService userService;

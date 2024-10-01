@@ -1,6 +1,6 @@
 ### CHALLENGE
 
-POST localhost:8888/got/v1/challenges/add-new
+POST localhost:8888/api/v1/challenges/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -14,7 +14,7 @@ Content-Type: application/json
 
 ### SUMMIT 1
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -33,12 +33,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 1
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit1-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit1-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 2
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -57,12 +57,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 2
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit2-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit2-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 3
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -81,12 +81,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 3
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit3-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit3-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 4
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -105,12 +105,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 4
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit4-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit4-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 5
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -129,12 +129,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 5
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit5-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit5-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 6
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -153,12 +153,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 6
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit6-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit6-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 7
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -177,12 +177,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 7
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit7-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit7-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 8
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -201,12 +201,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 8
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit8-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit8-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 9
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -225,12 +225,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 9
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit9-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit9-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 10
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -249,12 +249,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 10
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit10-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit10-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 11
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -273,12 +273,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 11
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit11-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit11-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 12
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -297,12 +297,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 12
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit12-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit12-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 13
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -321,12 +321,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 13
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit13-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit13-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 14
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -345,12 +345,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 14
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit14-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit14-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 15
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -369,12 +369,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 15
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit15-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit15-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 16
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -393,12 +393,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 16
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit16-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit16-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 17
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -417,12 +417,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 17
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit17-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit17-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 18
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -441,12 +441,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 18
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit18-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit18-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 19
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -465,12 +465,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 19
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit19-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit19-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 20
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -489,12 +489,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 20
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit20-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit20-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 21
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -513,12 +513,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 21
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit21-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit21-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 22
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -537,12 +537,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 22
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit22-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit22-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 23
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -561,12 +561,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 23
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit23-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit23-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 24
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -585,12 +585,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 24
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit24-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit24-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 25
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -609,12 +609,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 25
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit25-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit25-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 26
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -633,12 +633,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 26
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit26-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit26-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 27
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -657,12 +657,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 27
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit27-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit27-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 28
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -681,5 +681,5 @@ Content-Type: application/json
 
 ### ADD SUMMIT 28
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit28-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit28-id}}
 Authorization: Bearer {{auth-token}}

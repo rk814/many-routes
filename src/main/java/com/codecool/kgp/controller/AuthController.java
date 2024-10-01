@@ -13,7 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/got/v1/auth")
+@RequestMapping("/api/v1/auth")
 @CrossOrigin(origins = "http://localhost:3000")
 @Slf4j
 public class AuthController {

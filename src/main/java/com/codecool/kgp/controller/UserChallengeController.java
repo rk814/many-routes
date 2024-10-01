@@ -27,7 +27,7 @@ import static com.codecool.kgp.config.SpringSecurityConfig.USER;
 @Slf4j
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/got/v1/users/{login}/user-challenges")
+@RequestMapping("/api/v1/users/{login}/user-challenges")
 public class UserChallengeController {
 
     private final UserChallengeService userChallengeService;

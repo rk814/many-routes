@@ -1,18 +1,18 @@
 ### GET ALL
 
-GET localhost:8888/got/v1/challenges
+GET localhost:8888/api/v1/challenges
 Authorization: Bearer {{auth-token}}
 
 
 ### GET ALL SIMPLE
 
-GET localhost:8888/got/v1/challenges?fields=id,name,status
+GET localhost:8888/api/v1/challenges?fields=id,name,status
 Authorization: Bearer {{auth-token}}
 
 
 ### ADD NEW
 
-POST localhost:8888/got/v1/challenges/add-new
+POST localhost:8888/api/v1/challenges/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -27,11 +27,11 @@ Content-Type: application/json
 
 ### GET ONE
 
-GET localhost:8888/got/v1/challenges/{{challenge-id}}
+GET localhost:8888/api/v1/challenges/{{challenge-id}}
 Authorization: Bearer {{auth-token}}
 
 
 ### ATTACH SUMMIT
 
-POST localhost:8888/got/v1/challenges/{{challenge-id}}/attach-summit/{{summit-id}}
+POST localhost:8888/api/v1/challenges/{{challenge-id}}/attach-summit/{{summit-id}}
 Authorization: Bearer {{auth-token}}

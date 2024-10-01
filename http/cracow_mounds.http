@@ -1,6 +1,6 @@
 ### CHALLENGE
 
-POST localhost:8888/got/v1/challenges/add-new
+POST localhost:8888/api/v1/challenges/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -14,7 +14,7 @@ Content-Type: application/json
 
 ### SUMMIT 1
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -31,12 +31,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 1
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit1-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit1-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 2
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -53,12 +53,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 2
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit2-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit2-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 3
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -75,12 +75,12 @@ Content-Type: application/json
 
 ### ADD SUMMIT 3
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit3-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit3-id}}
 Authorization: Bearer {{auth-token}}
 
 ### SUMMIT 4
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -97,5 +97,5 @@ Content-Type: application/json
 
 ### ADD SUMMIT 4
 
-POST localhost:8888/got/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit4-id}}
+POST localhost:8888/api/v1/challenges/{{kgp-challenge-id}}/attach-summit/{{summit4-id}}
 Authorization: Bearer {{auth-token}}

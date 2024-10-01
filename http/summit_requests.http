@@ -1,11 +1,11 @@
 ### GET ALL
 
-GET localhost:8888/got/v1/summits/
+GET localhost:8888/api/v1/summits/
 Authorization: Bearer {{auth-token}}
 
 ### ADD SUMMIT
 
-POST localhost:8888/got/v1/summits/add-new
+POST localhost:8888/api/v1/summits/add-new
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 

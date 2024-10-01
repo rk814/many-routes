@@ -20,7 +20,7 @@ import static com.codecool.kgp.config.SpringSecurityConfig.USER;
 @Slf4j
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/got/v1/summits")
+@RequestMapping("/api/v1/summits")
 public class SummitController {
 
     private final SummitService summitService;

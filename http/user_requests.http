@@ -3,7 +3,7 @@
 
 ### LOGIN AS USER
 
-POST localhost:8888/got/v1/auth/login
+POST localhost:8888/api/v1/auth/login
 Content-Type: application/json
 
 {
@@ -15,7 +15,7 @@ Content-Type: application/json
 
 ### LOGIN AS ADMIN
 
-POST localhost:8888/got/v1/auth/login
+POST localhost:8888/api/v1/auth/login
 Content-Type: application/json
 
 {
@@ -27,17 +27,17 @@ Content-Type: application/json
 
 ### GET ALL
 
-GET localhost:8888/got/v1/users
+GET localhost:8888/api/v1/users
 Authorization: Bearer {{auth-token}}
 
 ### GET ONE
 
-GET localhost:8888/got/v1/users/{{login}}
+GET localhost:8888/api/v1/users/{{login}}
 Authorization: Bearer {{auth-token}}
 
 ### UPDATE
 
-PUT localhost:8888/got/v1/users/{{login}}
+PUT localhost:8888/api/v1/users/{{login}}
 Authorization: Bearer {{auth-token}}
 Content-Type: application/json
 
@@ -52,10 +52,10 @@ Content-Type: application/json
 
 ### HARD DELETE
 
-DELETE localhost:8888/got/v1/users/{{login}}/hard
+DELETE localhost:8888/api/v1/users/{{login}}/hard
 Authorization: Bearer {{auth-token}}
 
 ### SOFT DELETE
 
-DELETE localhost:8888/got/v1/users/{{login}}
+DELETE localhost:8888/api/v1/users/{{login}}
 Authorization: Bearer {{auth-token}}
