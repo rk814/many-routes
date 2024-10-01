@@ -1,6 +1,5 @@
 package com.codecool.kgp.service;
 
-import com.codecool.kgp.controller.dto.ChallengeDto;
 import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.mappers.ChallengeMapper;
