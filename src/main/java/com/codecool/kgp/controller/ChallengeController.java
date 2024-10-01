@@ -35,15 +35,16 @@ public class ChallengeController {
 
     private final ChallengeService challengeService;
 
-    public ChallengeController(ChallengeService challengeService, ChallengeMapper challengeMapper) {
+    public ChallengeController(ChallengeService challengeService) {
         this.challengeService = challengeService;
     }
+
+    // TODO N+1
 
     @Operation(summary = "Get list of challenges (default ACTIVE)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of Challenges found"),
-            @ApiResponse(responseCode = "400", description = "Invalid status supplied",
-                    content = @Content(mediaType = "application/json"))
+            @ApiResponse(responseCode = "400", description = "Invalid status supplied")
     })
     @GetMapping(produces = "application/json")
     @RolesAllowed({ADMIN, USER})
