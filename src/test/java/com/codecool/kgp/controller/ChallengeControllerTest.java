@@ -7,6 +7,7 @@ import com.codecool.kgp.controller.dto.SummitSimpleDto;
 import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.Summit;
 import com.codecool.kgp.entity.enums.Status;
+import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.repository.ChallengeRepository;
 import com.codecool.kgp.repository.SummitRepository;
 import com.codecool.kgp.service.ChallengeService;
@@ -24,13 +25,17 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.codecool.kgp.config.SpringSecurityConfig.ADMIN;
 import static com.codecool.kgp.config.SpringSecurityConfig.USER;
 import static org.instancio.Select.field;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,19 +46,22 @@ class ChallengeControllerTest {
     private final Gson gson = new Gson();
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @MockBean
-    ChallengeService challengeService;
+    private ChallengeService challengeService;
+
+    @MockBean
+    private ChallengeMapper challengeMapper;
 
     @MockBean
     private CustomUserDetailsService customUserDetailsService;
 
     @MockBean
-    ChallengeRepository challengeRepository;
+    private ChallengeRepository challengeRepository;
 
     @MockBean
-    SummitRepository summitRepository;
+    private SummitRepository summitRepository;
 
 
     @Test
@@ -62,8 +70,17 @@ class ChallengeControllerTest {
         //given:
         Status status = Status.ACTIVE;
         List<String> fields = null;
-        List<ChallengeDto> challenges = Instancio.ofList(ChallengeDto.class).size(3).set(field(ChallengeDto::status), Status.ACTIVE).create();
-        Mockito.when(challengeService.getAllChallenges(status, fields)).thenReturn(challenges);
+        List<Challenge> challenges = Instancio.ofList(Challenge.class).size(3)
+                .set(field(Challenge::getStatus), Status.ACTIVE).create();
+        List<ChallengeDto> challengesDto = Instancio.ofList(ChallengeDto.class).size(3)
+                .set(field(ChallengeDto::status), Status.ACTIVE)
+                .create();
+        Mockito.when(challengeService.getAllChallenges(status)).thenReturn(challenges);
+
+        AtomicInteger counter = new AtomicInteger(0);
+        Mockito.when(challengeMapper.mapEntityToDto(any(Challenge.class))).thenAnswer(invocationOnMock ->
+                challengesDto.get(counter.getAndIncrement())
+        );
 
         //when:
         var response = mockMvc.perform(get("/api/v1/challenges"));
@@ -80,7 +97,7 @@ class ChallengeControllerTest {
                 .andExpect(jsonPath("$[0].description").exists())
                 .andExpect(jsonPath("$[0].summits").exists());
 
-        verify(challengeService).getAllChallenges(Status.ACTIVE, null);
+        verify(challengeService).getAllChallenges(Status.ACTIVE);
     }
 
     @Test
@@ -89,19 +106,27 @@ class ChallengeControllerTest {
         //given:
         Status status = Status.ACTIVE;
         List<String> fields = List.of("id", "status");
-        List<ChallengeDto> challenges = Instancio.ofList(ChallengeDto.class).size(1)
+        List<Challenge> challenges = Instancio.ofList(Challenge.class).size(1)
+                .set(field(Challenge::getStatus), Status.ACTIVE)
+                .ignore(field(Challenge::getSummitList))
+                .ignore(field(Challenge::getName))
+                .ignore(field(Challenge::getDescription))
+                .create();
+        ChallengeDto challengeDto = Instancio.of(ChallengeDto.class)
                 .set(field(ChallengeDto::status), Status.ACTIVE)
                 .ignore(field(ChallengeDto::summits))
                 .ignore(field(ChallengeDto::name))
                 .ignore(field(ChallengeDto::description))
                 .create();
-        Mockito.when(challengeService.getAllChallenges(status, fields)).thenReturn(challenges);
+        Mockito.when(challengeService.getAllChallengesWithoutSummitLists(status)).thenReturn(challenges);
+        Mockito.when(challengeMapper.mapEntityToDto(any(Challenge.class), eq(fields))).thenReturn(challengeDto);
 
         //when:
         var response = mockMvc.perform(get("/api/v1/challenges?fields=id,status"));
 
         //then:
         response.andExpect(status().isOk())
+                .andDo(print())
                 .andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].status").value("ACTIVE"))
                 .andExpect(jsonPath("$[0].id").exists())
@@ -110,7 +135,7 @@ class ChallengeControllerTest {
                 .andExpect(jsonPath("$[0].name").doesNotExist())
                 .andExpect(jsonPath("$[0].description").doesNotExist());
 
-        verify(challengeService).getAllChallenges(Status.ACTIVE, fields);
+        verify(challengeService).getAllChallengesWithoutSummitLists(Status.ACTIVE);
     }
 
     @Test
@@ -119,10 +144,14 @@ class ChallengeControllerTest {
         //given:
         Status status = Status.REMOVED;
         List<String> fields = null;
-        List<ChallengeDto> challenges = Instancio.ofList(ChallengeDto.class).size(1)
+        List<Challenge> challenges = Instancio.ofList(Challenge.class).size(1)
+                .set(field(Challenge::getStatus), Status.REMOVED)
+                .create();
+        ChallengeDto challengeDto = Instancio.of(ChallengeDto.class)
                 .set(field(ChallengeDto::status), Status.REMOVED)
                 .create();
-        Mockito.when(challengeService.getAllChallenges(status, fields)).thenReturn(challenges);
+        Mockito.when(challengeService.getAllChallenges(status)).thenReturn(challenges);
+        Mockito.when(challengeMapper.mapEntityToDto(challenges.get(0))).thenReturn(challengeDto);
 
         //when:
         var response = mockMvc.perform(get("/api/v1/challenges?status=REMOVED"));
@@ -132,7 +161,7 @@ class ChallengeControllerTest {
                 .andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].status").value("REMOVED"));
 
-        verify(challengeService).getAllChallenges(Status.REMOVED, fields);
+        verify(challengeService).getAllChallenges(Status.REMOVED);
     }
 
     @Test
@@ -220,7 +249,7 @@ class ChallengeControllerTest {
     void attachSummit_shouldReturn403() throws Exception {
         //when:
         var response = mockMvc.perform(post(
-                "/api/v1/challenges/" + UUID.randomUUID() + "/attach-summit/" +UUID.randomUUID()));
+                "/api/v1/challenges/" + UUID.randomUUID() + "/attach-summit/" + UUID.randomUUID()));
 
         //then:
         response.andExpect(status().isForbidden());

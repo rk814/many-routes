@@ -35,27 +35,25 @@ public class ChallengeService {
         this.challengeMapper = challengeMapper;
     }
 
-    public List<ChallengeDto> getAllChallenges(Status status, List<String> fields) {
+    public List<Challenge> getAllChallenges(Status status) {
         List<Challenge> challenges = challengeRepository.findAllByStatusWithSummits(status);
         log.info("{} challenges were found", challenges.size());
-        return challenges.stream().map(challenge ->
-                (fields != null) ? challengeMapper.mapEntityToDto(challenge, fields) : challengeMapper.mapEntityToDto(challenge)
-        ).toList();
+        return challenges;
     }
 
-    public List<ChallengeDto> getAllChallengesWithoutSummitLists(Status status) {
+    public List<Challenge> getAllChallengesWithoutSummitLists(Status status) {
         List<Challenge> challenges = challengeRepository.findAllByStatus(status);
         log.info("{} challenges were found", challenges.size());
-        return challenges.stream().map(challengeMapper::mapEntityToDto).toList();
+        return challenges;
     }
 
-    public ChallengeDto getChallenge(UUID id) {
+    public Challenge getChallenge(UUID id) {
         Challenge challenge = challengeRepository.findById(id).orElseThrow(() -> {
             log.warn("Challenge with id '{}' was not found", id);
             return new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge was not found");
         });
         log.info("Challenge with id '{}' was found", id);
-        return challengeMapper.mapEntityToDto(challenge);
+        return challenge;
     }
 
     public ChallengeDto addNewChallenge(ChallengeRequestDto dto) {

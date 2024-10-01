@@ -34,9 +34,11 @@ import static com.codecool.kgp.config.SpringSecurityConfig.USER;
 public class ChallengeController {
 
     private final ChallengeService challengeService;
+    private final ChallengeMapper challengeMapper;
 
-    public ChallengeController(ChallengeService challengeService) {
+    public ChallengeController(ChallengeService challengeService, ChallengeMapper challengeMapper) {
         this.challengeService = challengeService;
+        this.challengeMapper = challengeMapper;
     }
 
 
@@ -50,27 +52,28 @@ public class ChallengeController {
     public List<ChallengeDto> getChallenges(
             @Parameter(description = "Challenge status")
             @RequestParam(required = false, defaultValue = "ACTIVE") Status status,
-            @Parameter(description = " A comma-separated list of field names to customize the fields returned in the ChallengeDto response", example = "name,id")
+            @Parameter(description = "A comma-separated list of field names to customize the fields returned in the ChallengeDto response", example = "name,id")
             @RequestParam(required = false) List<String> fields) {
         log.info("Received request for all challenges");
-        if (fields!=null && !fields.contains("summits")) {
-            return challengeService.getAllChallengesWithoutSummitLists(status);
+        List<Challenge> challenges;
+        if (fields != null && !fields.contains("summits")) {
+            challenges = challengeService.getAllChallengesWithoutSummitLists(status);
+        } else {
+            challenges = challengeService.getAllChallenges(status);
         }
-        return challengeService.getAllChallenges(status, fields);
-    }
 
-//    @GetMapping("/simplified")
-//    @RolesAllowed({ADMIN, USER})
-//    public List<ChallengeSimpleDto> getChallengesSimplified() {
-//        log.info("Received request for all challenges simplified");
-//        return challengeService.getAllChallengesSimplified();
-//    }
+        return challenges.stream().map(challenge ->
+                (fields != null) ? challengeMapper.mapEntityToDto(challenge, fields)
+                        : challengeMapper.mapEntityToDto(challenge)
+        ).toList();
+    }
 
     @GetMapping("/{id}")
     @RolesAllowed({ADMIN, USER})
     public ChallengeDto getChallenge(@PathVariable UUID id) {
         log.info("Received request for the challenge with id '{}'", id);
-        return challengeService.getChallenge(id);
+        Challenge challenge = challengeService.getChallenge(id);
+        return challengeMapper.mapEntityToDto(challenge);
     }
 
     @PostMapping("/add-new")

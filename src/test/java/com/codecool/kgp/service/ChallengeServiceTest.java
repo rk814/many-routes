@@ -30,6 +30,7 @@ class ChallengeServiceTest {
 
     @Test
     void getAllChallenges() {
+        //TODO
     }
 
     @Test
@@ -39,17 +40,13 @@ class ChallengeServiceTest {
         Challenge testChallenge = Instancio.of(Challenge.class)
                 .set(field(Challenge::getId), id)
                 .create();
-        ChallengeDto testChallengeDto = Instancio.of(ChallengeDto.class)
-                .set(field(ChallengeDto::id), id)
-                .create();
         Mockito.when(challengeRepository.findById(id)).thenReturn(Optional.of(testChallenge));
-        Mockito.when(challengeMapper.mapEntityToDto(testChallenge)).thenReturn(testChallengeDto);
 
         //when:
-        ChallengeDto actual = challengeService.getChallenge(id);
+        Challenge actual = challengeService.getChallenge(id);
 
         //then:
-        Assertions.assertThat(actual).isEqualTo(testChallengeDto);
+        Assertions.assertThat(actual).isEqualTo(testChallenge);
     }
 
     @Test
