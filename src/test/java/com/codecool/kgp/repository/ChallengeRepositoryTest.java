@@ -5,6 +5,7 @@ import com.codecool.kgp.entity.Summit;
 import com.codecool.kgp.entity.enums.Status;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.InstanceOfAssertFactories;
+import org.hibernate.Hibernate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -36,6 +37,11 @@ class ChallengeRepositoryTest {
         List<String> expectedNames = List.of("test1-challenge", "test2-challenge", "test3-challenge");
         Assertions.assertThat(actualNames).containsAll(expectedNames)
                 .doesNotContain("test4-challenge");
+        Assertions.assertThat(actual).filteredOn(a -> a.getName().equals("test1-challenge"))
+                .hasSize(1)
+                .first()
+                .satisfies(challenge -> Assertions.assertThat(Hibernate.isInitialized(challenge.getSummitList()))
+                        .isFalse());
     }
 
     @Test
@@ -51,9 +57,11 @@ class ChallengeRepositoryTest {
         List<String> expectedNames = List.of("test1-challenge", "test2-challenge", "test3-challenge");
         Assertions.assertThat(actualNames).containsAll(expectedNames)
                 .doesNotContain("test4-challenge");
-        Assertions.assertThat(actual).filteredOn(a->a.getName().equals("test1-challenge"))
+        Assertions.assertThat(actual).filteredOn(a -> a.getName().equals("test1-challenge"))
                 .hasSize(1)
                 .first()
+                .satisfies(challenge -> Assertions.assertThat(Hibernate.isInitialized(challenge.getSummitList()))
+                        .isTrue())
                 .extracting(Challenge::getSummitList, InstanceOfAssertFactories.list(Summit.class))
                 .hasSize(2);
     }
