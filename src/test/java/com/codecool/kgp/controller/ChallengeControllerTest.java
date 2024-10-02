@@ -15,6 +15,7 @@ import com.codecool.kgp.service.CustomUserDetailsService;
 import com.google.gson.Gson;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -23,7 +24,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -223,8 +223,12 @@ class ChallengeControllerTest {
     void addChallenge_shouldReturnNewAddedChallenge() throws Exception {
         //given:
         ChallengeRequestDto requestDto = Instancio.create(ChallengeRequestDto.class);
+        Challenge challenge = Instancio.create(Challenge.class);
+        Challenge savedChallenge = Instancio.create(Challenge.class);
         ChallengeDto dto = Instancio.create(ChallengeDto.class);
-        Mockito.when(challengeService.addNewChallenge(requestDto)).thenReturn(dto);
+        Mockito.when(challengeMapper.mapRequestDtoToEntity(requestDto)).thenReturn(challenge);
+        Mockito.when(challengeService.addNewChallenge(challenge)).thenReturn(savedChallenge);
+        Mockito.when(challengeMapper.mapEntityToDto(savedChallenge)).thenReturn(dto);
 
         //when:
         var response = mockMvc.perform(post("/api/v1/challenges/add-new")
@@ -235,7 +239,7 @@ class ChallengeControllerTest {
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(dto.id().toString()));
 
-        verify(challengeService).addNewChallenge(requestDto);
+        verify(challengeService).addNewChallenge(challenge);
     }
 
     @Test
@@ -265,7 +269,8 @@ class ChallengeControllerTest {
                 .set(field(ChallengeDto::summits), List.of(new SummitSimpleDto(summit.getId(), summit.getName(),
                         summit.getMountainRange(), summit.getMountains(), summit.getHeight(), summit.getStatus().toString())))
                 .create();
-        Mockito.when(challengeService.attachSummitToChallenge(summit.getId(), challenge.getId())).thenReturn(challengeDto);
+        Mockito.when(challengeService.attachSummitToChallenge(summit.getId(), challenge.getId())).thenReturn(challenge);
+        Mockito.when(challengeMapper.mapEntityToDto(challenge)).thenReturn(challengeDto);
 
         //when:
         var response = mockMvc.perform(post(

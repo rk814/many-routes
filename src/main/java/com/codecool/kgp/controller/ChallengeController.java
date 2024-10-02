@@ -80,14 +80,17 @@ public class ChallengeController {
     @RolesAllowed({ADMIN})
     public ChallengeDto addChallenge(@RequestBody ChallengeRequestDto dto) {
         log.info("Received request for a new challenge");
-        return challengeService.addNewChallenge(dto);
+        Challenge challenge = challengeMapper.mapRequestDtoToEntity(dto);
+        Challenge savedChallenge = challengeService.addNewChallenge(challenge);
+        return  challengeMapper.mapEntityToDto(savedChallenge);
     }
 
     @PostMapping("/{id}/attach-summit/{summitId}")
     @RolesAllowed({ADMIN})
     public ChallengeDto attachSummit(@PathVariable UUID id, @PathVariable UUID summitId) {
         log.info("Received request for attach summit with id '{}' to challenge with id '{}'", summitId, id);
-        return challengeService.attachSummitToChallenge(summitId, id);
+        Challenge challenge = challengeService.attachSummitToChallenge(summitId, id);
+        return challengeMapper.mapEntityToDto(challenge);
     }
 
     //TODO

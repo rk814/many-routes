@@ -56,20 +56,18 @@ public class ChallengeService {
         return challenge;
     }
 
-    public ChallengeDto addNewChallenge(ChallengeRequestDto dto) {
-        Challenge challenge = challengeMapper.mapRequestDtoToEntity(dto);
-
+    public Challenge addNewChallenge(Challenge challenge) {
         try {
             Challenge savedChallenge = challengeRepository.save(challenge);
             log.info("New challenge with id '{}' was saved", challenge.getId());
-            return challengeMapper.mapEntityToDto(savedChallenge);
+            return savedChallenge;
         } catch (DataIntegrityViolationException e) {
             log.warn("Challenge with name '{}' already exists", challenge.getName());
             throw new DuplicateEntryException("Challenge name must be unique");
         }
     }
 
-    public ChallengeDto attachSummitToChallenge(UUID summitId, UUID id) {
+    public Challenge attachSummitToChallenge(UUID summitId, UUID id) {
         Challenge challenge = challengeRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("Challenge with id '{}' was not found", id);
@@ -82,7 +80,7 @@ public class ChallengeService {
                 });
         challenge.addSummit(summit);
         summit.addChallenge(challenge);
-
-        return challengeMapper.mapEntityToDto(challenge);
+        log.info("Summit with id '{}' was successfully add to challenge with id '{}'", summitId, challenge);
+        return challenge;
     }
 }
