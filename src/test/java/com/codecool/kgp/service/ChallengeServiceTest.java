@@ -1,6 +1,5 @@
 package com.codecool.kgp.service;
 
-import com.codecool.kgp.controller.dto.ChallengeRequestDto;
 import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.Summit;
 import com.codecool.kgp.entity.enums.Status;
@@ -8,6 +7,8 @@ import com.codecool.kgp.errorhandling.DuplicateEntryException;
 import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.repository.ChallengeRepository;
 import com.codecool.kgp.repository.SummitRepository;
+import org.assertj.core.api.InstanceOfAssertFactories;
+import org.assertj.core.api.InstanceOfAssertFactory;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -27,10 +28,9 @@ class ChallengeServiceTest {
 
     private final ChallengeRepository challengeRepository = Mockito.mock();
     private final SummitRepository summitRepository = Mockito.mock();
-    private final ChallengeMapper challengeMapper = Mockito.mock();
 
     private final ChallengeService challengeService = new ChallengeService(
-            challengeRepository, summitRepository, challengeMapper
+            challengeRepository, summitRepository
     );
 
     @Test
@@ -177,6 +177,69 @@ class ChallengeServiceTest {
         //when and then:
         Assertions.assertThatThrownBy(() ->
                         challengeService.attachSummitToChallenge(summit.getId(), challenge.getId()))
+                .isInstanceOf(ResponseStatusException.class)
+                .hasMessageContaining("Summit", "not found")
+                .extracting("status")
+                .isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void detachSummitFromChallenge_shouldReturnChallengeWithoutSummit() {
+        //given:
+        Summit summit = Instancio.of(Summit.class)
+                .setBlank(field(Summit::getChallengeList))
+                .create();
+        Challenge challenge = Instancio.of(Challenge.class)
+                .set(field(Challenge::getSummitList), List.of(summit))
+                .create();
+        Mockito.when(challengeRepository.findById(challenge.getId())).thenReturn(Optional.of(challenge));
+        Mockito.when(summitRepository.findById(summit.getId())).thenReturn(Optional.of(summit));
+
+        //when:
+        Challenge actual = challengeService.detachSummitFromChallenge(summit.getId(), challenge.getId());
+
+        //then:
+        Assertions.assertThat(actual).extracting(Challenge::getSummitList, InstanceOfAssertFactories.list(Challenge.class))
+                .isEmpty();
+        Assertions.assertThat(summit).extracting(Summit::getChallengeList, InstanceOfAssertFactories.list(Summit.class))
+                .isEmpty();
+    }
+
+    @Test
+    void detachSummitFromChallenge_shouldReturn404NoChallengeFound() {
+        //given:
+        Summit summit = Instancio.of(Summit.class)
+                .setBlank(field(Summit::getChallengeList))
+                .create();
+        Challenge challenge = Instancio.of(Challenge.class)
+                .set(field(Challenge::getSummitList), List.of(summit))
+                .create();
+        Mockito.when(challengeRepository.findById(challenge.getId())).thenReturn(Optional.empty());
+
+        //when and then:
+        Assertions.assertThatThrownBy(() ->
+                        challengeService.detachSummitFromChallenge(summit.getId(), challenge.getId()))
+                .isInstanceOf(ResponseStatusException.class)
+                .hasMessageContaining("Challenge", "not found")
+                .extracting("status")
+                .isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void detachSummitFromChallenge_shouldReturn404NoSummitFound() {
+        //given:
+        Summit summit = Instancio.of(Summit.class)
+                .setBlank(field(Summit::getChallengeList))
+                .create();
+        Challenge challenge = Instancio.of(Challenge.class)
+                .set(field(Challenge::getSummitList), List.of(summit))
+                .create();
+        Mockito.when(challengeRepository.findById(challenge.getId())).thenReturn(Optional.of(challenge));
+        Mockito.when(summitRepository.findById(summit.getId())).thenReturn(Optional.empty());
+
+        //when and then:
+        Assertions.assertThatThrownBy(() ->
+                        challengeService.detachSummitFromChallenge(summit.getId(), challenge.getId()))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("Summit", "not found")
                 .extracting("status")

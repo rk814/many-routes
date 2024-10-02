@@ -42,10 +42,10 @@ public class Summit {
     @Min(value = 0, message = "Szczyt nie może być wartością ujemną")
     private int height;
 
-    @Size(max=4000, message = "Opis nie może przekroczyć 4000 znaków") // default 256
+    @Size(max = 4000, message = "Opis nie może przekroczyć 4000 znaków") // default 256
     private String description;
 
-    @Size(max=4000, message = "Opis nie może przekroczyć 4000 znaków") // default 256
+    @Size(max = 4000, message = "Opis nie może przekroczyć 4000 znaków") // default 256
     private String guideNotes;
 
     @NotNull
@@ -81,5 +81,9 @@ public class Summit {
 
     public void addChallenge(Challenge challenge) {
         challengeList.add(challenge);
+    }
+
+    public void removeChallenge(Challenge challenge) {
+        this.challengeList = challengeList.stream().filter(ch -> !ch.equals(challenge)).toList();
     }
 }

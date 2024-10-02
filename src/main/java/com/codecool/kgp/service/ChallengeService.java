@@ -24,12 +24,10 @@ public class ChallengeService {
 
     private final ChallengeRepository challengeRepository;
     private final SummitRepository summitRepository;
-    private final ChallengeMapper challengeMapper;
 
-    public ChallengeService(ChallengeRepository challengeRepository, SummitRepository summitRepository, ChallengeMapper challengeMapper) {
+    public ChallengeService(ChallengeRepository challengeRepository, SummitRepository summitRepository) {
         this.challengeRepository = challengeRepository;
         this.summitRepository = summitRepository;
-        this.challengeMapper = challengeMapper;
     }
 
     public List<Challenge> getAllChallenges(Status status) {
@@ -65,16 +63,9 @@ public class ChallengeService {
     }
 
     public Challenge attachSummitToChallenge(UUID summitId, UUID id) {
-        Challenge challenge = challengeRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.warn("Challenge with id '{}' was not found", id);
-                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge was not found");
-                });
-        Summit summit = summitRepository.findById(summitId)
-                .orElseThrow(() -> {
-                    log.warn("Summit with id '{}' was not found", summitId);
-                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Summit was not found");
-                });
+        Challenge challenge = findChallenge(id);
+        Summit summit = findSummit(summitId);
+
         challenge.addSummit(summit);
         summit.addChallenge(challenge);
         log.info("Summit with id '{}' was successfully add to challenge with id '{}'", summitId, challenge);
@@ -82,7 +73,14 @@ public class ChallengeService {
     }
 
     public Challenge detachSummitFromChallenge(UUID summitId, UUID id) {
-        return null;
+        Challenge challenge = findChallenge(id);
+        Summit summit = findSummit(summitId);
+
+        challenge.removeSummit(summit);
+        summit.removeChallenge(challenge);
+        challengeRepository.save(challenge);
+        log.info("Summit with id '{}' was successfully removed from challenge with id '{}'", summitId, challenge);
+        return challenge;
     }
 
     public Challenge updateChallenge(UUID id, Challenge challenge) {
@@ -105,4 +103,22 @@ public class ChallengeService {
         challengeRepository.delete(challenge);
         log.info("Challenge with id '{}' was successfully deleted", id);
     }
+
+    private Challenge findChallenge(UUID id) {
+        return challengeRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("Challenge with id '{}' was not found", id);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge was not found");
+                });
+    }
+
+    private Summit findSummit(UUID id) {
+        return summitRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("Summit with id '{}' was not found", id);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Summit was not found");
+                });
+    }
+
+
 }

@@ -25,7 +25,7 @@ public class Challenge {
     @Column(unique = true)
     private String name;
 
-    @Size(max=4000, message = "Opis nie może przekroczyć 4000 znaków") // default 256
+    @Size(max = 4000, message = "Opis nie może przekroczyć 4000 znaków") // default 256
     private String description;
 
     @Enumerated(EnumType.STRING)
@@ -35,7 +35,7 @@ public class Challenge {
     private Integer version = 0;
 
 
-    public Challenge(String name,String description, Status status) {
+    public Challenge(String name, String description, Status status) {
         this.name = name;
         this.description = description;
         this.status = status;
@@ -47,6 +47,10 @@ public class Challenge {
 
     public void addSummit(Summit summit) {
         summitList.add(summit);
+    }
+
+    public void removeSummit(Summit summit) {
+        this.summitList = summitList.stream().filter(s -> !s.equals(summit)).toList();
     }
 
     public void updateChallenge(Challenge challenge) {
