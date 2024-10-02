@@ -15,7 +15,6 @@ import com.codecool.kgp.service.CustomUserDetailsService;
 import com.google.gson.Gson;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -36,8 +35,7 @@ import static org.instancio.Select.field;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -129,7 +127,6 @@ class ChallengeControllerTest {
 
         //then:
         response.andExpect(status().isOk())
-                .andDo(print())
                 .andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].status").value("ACTIVE"))
                 .andExpect(jsonPath("$[0].id").exists())
@@ -139,6 +136,38 @@ class ChallengeControllerTest {
                 .andExpect(jsonPath("$[0].description").doesNotExist());
 
         verify(challengeService).getAllChallengesWithoutSummitLists(Status.ACTIVE);
+    }
+
+    @Test
+    @WithMockUser(roles = ADMIN)
+    void getChallenges_shouldReturnAllActiveChallengesWithSummitsField() throws Exception {
+        //given:
+        List<String> fields = List.of("summits");
+        List<Challenge> challenges = Instancio.ofList(Challenge.class).size(1)
+                .set(field(Challenge::getStatus), Status.ACTIVE)
+                .create();
+        ChallengeDto challengeDto = Instancio.of(ChallengeDto.class)
+                .ignore(field(ChallengeDto::id))
+                .ignore(field(ChallengeDto::status))
+                .ignore(field(ChallengeDto::name))
+                .ignore(field(ChallengeDto::description))
+                .create();
+        Mockito.when(challengeService.getAllChallenges(any(Status.class))).thenReturn(challenges);
+        Mockito.when(challengeMapper.mapEntityToDto(any(Challenge.class), eq(fields))).thenReturn(challengeDto);
+
+        //when:
+        var response = mockMvc.perform(get("/api/v1/challenges?fields=summits"));
+
+        //then:
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(1))
+                .andExpect(jsonPath("$[0].summits").exists())
+                .andExpect(jsonPath("$[0].id").doesNotExist())
+                .andExpect(jsonPath("$[0].status").doesNotExist())
+                .andExpect(jsonPath("$[0].name").doesNotExist())
+                .andExpect(jsonPath("$[0].description").doesNotExist());
+
+        verify(challengeMapper).mapEntityToDto(challenges.get(0),fields);
     }
 
     @Test
@@ -189,7 +218,7 @@ class ChallengeControllerTest {
     @Test
     @WithMockUser(roles = USER)
     void getChallenge_shouldReturnRequestedChallenge() throws Exception {
-       //given:
+        //given:
         UUID id = UUID.randomUUID();
         Challenge challenge = Instancio.create(Challenge.class);
         ChallengeDto challengeDto = Instancio.create(ChallengeDto.class);
@@ -207,7 +236,7 @@ class ChallengeControllerTest {
     @Test
     @WithMockUser(roles = USER)
     void getChallenge_shouldReturn404() throws Exception {
-       //given:
+        //given:
         UUID id = UUID.randomUUID();
         Mockito.when(challengeService.getChallenge(id)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -290,6 +319,125 @@ class ChallengeControllerTest {
         //when:
         var response = mockMvc.perform(post(
                 "/api/v1/challenges/" + UUID.randomUUID() + "/attach-summit/" + UUID.randomUUID()));
+
+        //then:
+        response.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = ADMIN)
+    void detachSummit_shouldReturnChallengeWithOutRemovedSummit() throws Exception {
+        //given:
+        Summit summit = Instancio.create(Summit.class);
+        Challenge challenge = Instancio.of(Challenge.class)
+                .set(field(Challenge::getSummitList), List.of(summit))
+                .create();
+        ChallengeDto challengeDto = Instancio.of(ChallengeDto.class)
+                .setBlank(field(ChallengeDto::summits))
+                .create();
+        Mockito.when(challengeService.detachSummitFromChallenge(summit.getId(), challenge.getId())).thenReturn(challenge);
+        Mockito.when(challengeMapper.mapEntityToDto(challenge)).thenReturn(challengeDto);
+
+        //when:
+        var response = mockMvc.perform(post(
+                "/api/v1/challenges/" + challenge.getId() + "/detach-summit/" + summit.getId()));
+
+        //then:
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.summits").isEmpty());
+
+        verify(challengeService).detachSummitFromChallenge(summit.getId(), challenge.getId());
+    }
+
+    @Test
+    @WithMockUser(roles = USER)
+    void detachSummit_shouldReturn403() throws Exception {
+        //when:
+        var response = mockMvc.perform(post(
+                "/api/v1/challenges/" + UUID.randomUUID() + "/detach-summit/" + UUID.randomUUID()));
+
+        //then:
+        response.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = ADMIN)
+    void updateChallenge_shouldReturnUpdatedChallenge() throws Exception {
+        //given:
+        Challenge oldChallenge = Instancio.create(Challenge.class);
+        ChallengeRequestDto requestDto = Instancio.create(ChallengeRequestDto.class);
+        Challenge requestedUpdate = new Challenge(requestDto.name(), requestDto.description(), requestDto.status());
+        Challenge updatedChallenge = Instancio.of(Challenge.class)
+                .set(field(Challenge::getId), oldChallenge.getId())
+                .set(field(Challenge::getName), requestedUpdate.getName())
+                .set(field(Challenge::getDescription), requestedUpdate.getDescription())
+                .set(field(Challenge::getStatus), requestedUpdate.getStatus())
+                .create();
+        ChallengeDto challengeDto = Instancio.of(ChallengeDto.class)
+                .set(field(ChallengeDto::id), updatedChallenge.getId())
+                .set(field(ChallengeDto::name), updatedChallenge.getName())
+                .set(field(ChallengeDto::description), updatedChallenge.getDescription())
+                .set(field(ChallengeDto::status), updatedChallenge.getStatus())
+                .create();
+        Mockito.when(challengeMapper.mapRequestDtoToEntity(requestDto)).thenReturn(requestedUpdate);
+        Mockito.when(challengeService.updateChallenge(oldChallenge.getId(), requestedUpdate)).thenReturn(updatedChallenge);
+        Mockito.when(challengeMapper.mapEntityToDto(updatedChallenge)).thenReturn(challengeDto);
+
+        //when:
+        var response = mockMvc.perform(put("/api/v1/challenges/" + oldChallenge.getId())
+                .contentType("application/json")
+                .content(gson.toJson(requestDto)));
+
+        //then:
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(oldChallenge.getId().toString()))
+                .andExpect(jsonPath("$.name").value(requestDto.name()))
+                .andExpect(jsonPath("$.description").value(requestDto.description()))
+                .andExpect(jsonPath("$.status").value(requestDto.status().toString()));
+
+        verify(challengeService).updateChallenge(oldChallenge.getId(), requestedUpdate);
+    }
+
+
+    @Test
+    @WithMockUser(roles = USER)
+    void updateChallenge_shouldReturn403() throws Exception {
+        //given:
+        UUID id = UUID.randomUUID();
+        ChallengeRequestDto requestDto = Instancio.create(ChallengeRequestDto.class);
+
+        //when:
+        var response = mockMvc.perform(put("/api/v1/challenges/" + id)
+                .contentType("application/json")
+                .content(gson.toJson(requestDto)));
+
+        //then:
+        response.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = ADMIN)
+    void deleteChallenge_shouldDeleteChallenge() throws Exception {
+        //given:
+        UUID id = UUID.randomUUID();
+
+        //when:
+        var response = mockMvc.perform(delete("/api/v1/challenges/" + id));
+
+        //then:
+        response.andExpect(status().isOk());
+
+        verify(challengeService).deleteChallenge(id);
+    }
+
+    @Test
+    @WithMockUser(roles = USER)
+    void deleteChallenge_shouldReturn403() throws Exception {
+        //given:
+        UUID id = UUID.randomUUID();
+
+        //when:
+        var response = mockMvc.perform(delete("/api/v1/challenges/" + id));
 
         //then:
         response.andExpect(status().isForbidden());

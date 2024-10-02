@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.ErrorResponse;
@@ -55,6 +56,7 @@ public class ChallengeController {
             @Parameter(description = "A comma-separated list of field names to customize the fields returned in the ChallengeDto response", example = "name,id")
             @RequestParam(required = false) List<String> fields) {
         log.info("Received request for all challenges");
+
         List<Challenge> challenges;
         if (fields != null && !fields.contains("summits")) {
             challenges = challengeService.getAllChallengesWithoutSummitLists(status);
@@ -78,11 +80,11 @@ public class ChallengeController {
 
     @PostMapping("/add-new")
     @RolesAllowed({ADMIN})
-    public ChallengeDto addChallenge(@RequestBody ChallengeRequestDto dto) {
+    public ChallengeDto addChallenge(@RequestBody @Valid ChallengeRequestDto dto) {
         log.info("Received request for a new challenge");
         Challenge challenge = challengeMapper.mapRequestDtoToEntity(dto);
         Challenge savedChallenge = challengeService.addNewChallenge(challenge);
-        return  challengeMapper.mapEntityToDto(savedChallenge);
+        return challengeMapper.mapEntityToDto(savedChallenge);
     }
 
     @PostMapping("/{id}/attach-summit/{summitId}")
@@ -93,17 +95,27 @@ public class ChallengeController {
         return challengeMapper.mapEntityToDto(challenge);
     }
 
-    //TODO
-    @PutMapping("/{id}")
+    @PostMapping("/{id}/detach-summit/{summitId}")
     @RolesAllowed({ADMIN})
-    public ChallengeDto updateChallenge() {
-        throw new ResponseStatusException(HttpStatusCode.valueOf(501), "Not implemented yet");
+    public ChallengeDto detachSummit(@PathVariable UUID id, @PathVariable UUID summitId) {
+        log.info("Received request for detach summit with id '{}' to challenge with id '{}'", summitId, id);
+        Challenge challenge = challengeService.detachSummitFromChallenge(summitId, id);
+        return challengeMapper.mapEntityToDto(challenge);
     }
 
-    //TODO
+    @PutMapping("/{id}")
+    @RolesAllowed({ADMIN})
+    public ChallengeDto updateChallenge(@PathVariable UUID id, @RequestBody @Valid ChallengeRequestDto dto) {
+        log.info("Received request for update challenge with id '{}'", id);
+        Challenge challenge = challengeMapper.mapRequestDtoToEntity(dto);
+        Challenge savedChallenge = challengeService.updateChallenge(id, challenge);
+        return challengeMapper.mapEntityToDto(savedChallenge);
+    }
+
     @DeleteMapping("/{id}")
     @RolesAllowed({ADMIN})
-    public ChallengeDto deleteChallenge() {
-        throw new ResponseStatusException(HttpStatusCode.valueOf(501), "Not implemented yet");
+    public void deleteChallenge(@PathVariable UUID id) {
+        log.info("Received request for delete challenge with id '{}'", id);
+        challengeService.deleteChallenge(id);
     }
 }

@@ -48,4 +48,10 @@ public class Challenge {
     public void addSummit(Summit summit) {
         summitList.add(summit);
     }
+
+    public void updateChallenge(Challenge challenge) {
+        this.name = challenge.getName();
+        this.description = challenge.getDescription();
+        this.status = challenge.getStatus();
+    }
 }

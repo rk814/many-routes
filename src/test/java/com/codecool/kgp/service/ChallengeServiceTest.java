@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.instancio.Select.field;
+import static org.mockito.Mockito.verify;
 
 class ChallengeServiceTest {
 
@@ -178,6 +179,73 @@ class ChallengeServiceTest {
                         challengeService.attachSummitToChallenge(summit.getId(), challenge.getId()))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("Summit", "not found")
+                .extracting("status")
+                .isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void updateChallenge_shouldReturnUpdatedChallenge() {
+        //given:
+        UUID id = UUID.randomUUID();
+        Challenge challenge = new Challenge("testChallenge", "some description", Status.ACTIVE);
+        Challenge challengeFromDb = Instancio.of(Challenge.class)
+                .set(field(Challenge::getName), challenge.getName())
+                .set(field(Challenge::getDescription), challenge.getDescription())
+                .set(field(Challenge::getStatus), challenge.getStatus())
+                .create();
+        Mockito.when(challengeRepository.findById(id)).thenReturn(Optional.of(challengeFromDb));
+        Mockito.when(challengeRepository.save(challengeFromDb)).thenReturn(challengeFromDb);
+
+        //when:
+        Challenge actual = challengeService.updateChallenge(id, challenge);
+
+        //then:
+        Assertions.assertThat(actual).isEqualTo(challengeFromDb);
+
+        verify(challengeRepository).findById(id);
+        verify(challengeRepository).save(challengeFromDb);
+    }
+
+    @Test
+    void updateChallenge_shouldReturn404() {
+        //given:
+        UUID id = UUID.randomUUID();
+        Challenge challenge = new Challenge("testChallenge", "some description", Status.ACTIVE);
+        Mockito.when(challengeRepository.findById(id)).thenReturn(Optional.empty());
+
+        //when and then:
+        Assertions.assertThatThrownBy(() -> challengeService.updateChallenge(id, challenge))
+                .isInstanceOf(ResponseStatusException.class)
+                .hasMessageContaining("Challenge", "not found")
+                .extracting("status")
+                .isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void deleteChallenge_shouldDeleteChallenge() {
+        //given:
+        UUID id = UUID.randomUUID();
+        Challenge challenge = Instancio.create(Challenge.class);
+        Mockito.when(challengeRepository.findById(id)).thenReturn(Optional.of(challenge));
+
+        //when:
+        challengeService.deleteChallenge(id);
+
+        //then:
+        verify(challengeRepository).findById(id);
+        verify(challengeRepository).delete(challenge);
+    }
+
+    @Test
+    void deleteChallenge_shouldReturn404() {
+        //given:
+        UUID id = UUID.randomUUID();
+        Mockito.when(challengeRepository.findById(id)).thenReturn(Optional.empty());
+
+        //when and then:
+        Assertions.assertThatThrownBy(() -> challengeService.deleteChallenge(id))
+                .isInstanceOf(ResponseStatusException.class)
+                .hasMessageContaining("not found")
                 .extracting("status")
                 .isEqualTo(HttpStatus.NOT_FOUND);
     }

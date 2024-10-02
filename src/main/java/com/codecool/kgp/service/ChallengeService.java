@@ -1,8 +1,5 @@
 package com.codecool.kgp.service;
 
-import com.codecool.kgp.controller.dto.ChallengeDto;
-import com.codecool.kgp.controller.dto.ChallengeRequestDto;
-import com.codecool.kgp.controller.dto.ChallengeSimpleDto;
 import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.Summit;
 import com.codecool.kgp.entity.enums.Status;
@@ -82,5 +79,30 @@ public class ChallengeService {
         summit.addChallenge(challenge);
         log.info("Summit with id '{}' was successfully add to challenge with id '{}'", summitId, challenge);
         return challenge;
+    }
+
+    public Challenge detachSummitFromChallenge(UUID summitId, UUID id) {
+        return null;
+    }
+
+    public Challenge updateChallenge(UUID id, Challenge challenge) {
+        Challenge challengeFromDB = challengeRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("Challenge with id '{}' was not found", id);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge was not found");
+                });
+        challengeFromDB.updateChallenge(challenge);
+        challengeRepository.save(challengeFromDB);
+        return challengeFromDB;
+    }
+
+    public void deleteChallenge(UUID id) {
+        Challenge challenge = challengeRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("Challenge with id '{}' was not found", id);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge was not found");
+                });
+        challengeRepository.delete(challenge);
+        log.info("Challenge with id '{}' was successfully deleted", id);
     }
 }
