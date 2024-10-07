@@ -10,11 +10,13 @@ import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.repository.ChallengeRepository;
 import com.codecool.kgp.repository.SummitRepository;
+import com.codecool.kgp.repository.UserRepository;
 import com.codecool.kgp.service.ChallengeService;
 import com.codecool.kgp.service.CustomUserDetailsService;
 import com.google.gson.Gson;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -40,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Import(SpringSecurityConfig.class)
+@Import({SpringSecurityConfig.class, CustomUserDetailsService.class})
 @WebMvcTest(controllers = ChallengeController.class)
 class ChallengeControllerTest {
 
@@ -56,13 +58,13 @@ class ChallengeControllerTest {
     private ChallengeMapper challengeMapper;
 
     @MockBean
-    private CustomUserDetailsService customUserDetailsService;
-
-    @MockBean
     private ChallengeRepository challengeRepository;
 
     @MockBean
     private SummitRepository summitRepository;
+
+    @MockBean
+    private UserRepository userRepository;
 
 
     @Test
