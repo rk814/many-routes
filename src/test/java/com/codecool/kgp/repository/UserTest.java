@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.instancio.Select.field;
 
 class UserTest {
+
     @Test
     void getCoordinatesArray_shouldReturnArrayWithDoubles() {
         //given:
