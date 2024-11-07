@@ -27,7 +27,7 @@ public record SummitRequestDto(
         String mountainRange,
 
         @Size(max = 50, message = "Imię może mieć maksymalnie 50 znaków", groups = UserBasic.class)
-        String mountains,
+        String mountainChain,
 
         @Min(value = 0, message = "Wysokość musi być większa od 0", groups = UserBasic.class)
         int height,

@@ -6,7 +6,7 @@ public record SummitSimpleDto(
         UUID id,
         String name,
         String mountainRange,
-        String mountains,
+        String mountainChain,
         int height,
         String status
 ) {
