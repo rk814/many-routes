@@ -84,22 +84,14 @@ public class ChallengeService {
     }
 
     public Challenge updateChallenge(UUID id, Challenge challenge) {
-        Challenge challengeFromDB = challengeRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.warn("Challenge with id '{}' was not found", id);
-                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge was not found");
-                });
+        Challenge challengeFromDB = findChallenge(id);
         challengeFromDB.updateChallenge(challenge);
         challengeRepository.save(challengeFromDB);
         return challengeFromDB;
     }
 
     public void deleteChallenge(UUID id) {
-        Challenge challenge = challengeRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.warn("Challenge with id '{}' was not found", id);
-                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge was not found");
-                });
+        Challenge challenge = findChallenge(id);
         challengeRepository.delete(challenge);
         log.info("Challenge with id '{}' was successfully deleted", id);
     }

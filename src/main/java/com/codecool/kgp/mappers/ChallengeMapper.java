@@ -17,22 +17,18 @@ public class ChallengeMapper {
     }
 
     public ChallengeDto mapEntityToDto(Challenge challenge) {
-        return new ChallengeDto(
-                challenge.getId(),
-                challenge.getName(),
-                challenge.getDescription(),
-                challenge.getStatus(),
-                challenge.getSummitList().stream().map(summitMapper::mapEntityToSimpleDto).toList()
-        );
+        return mapEntityToDto(challenge, null);
     }
 
     public ChallengeDto mapEntityToDto(Challenge challenge, List<String> fields) {
+        if (fields==null) fields = getAllFields();
+
         return new ChallengeDto(
                 fields.contains("id") ? challenge.getId() : null,
                 fields.contains("name") ? challenge.getName() : null,
                 fields.contains("description") ? challenge.getDescription() : null,
                 fields.contains("status") ? challenge.getStatus() : null,
-                fields.contains("summits") ? challenge.getSummitList().stream().map(summitMapper::mapEntityToSimpleDto).toList() : null
+                fields.contains("summitList") ? challenge.getSummitList().stream().map(summitMapper::mapEntityToSimpleDto).toList() : null
         );
     }
 
@@ -42,5 +38,9 @@ public class ChallengeMapper {
                 dto.description(),
                 dto.status()
         );
+    }
+
+    private List<String> getAllFields() {
+        return List.of("id", "name", "description","status","summitList");
     }
 }

@@ -4,23 +4,16 @@ import com.codecool.kgp.controller.dto.ChallengeDto;
 import com.codecool.kgp.controller.dto.ChallengeRequestDto;
 import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.enums.Status;
-import com.codecool.kgp.errorhandling.ErrorResponseDto;
 import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.service.ChallengeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -58,16 +51,12 @@ public class ChallengeController {
         log.info("Received request for all challenges");
 
         List<Challenge> challenges;
-        if (fields != null && !fields.contains("summits")) {
+        if (fields != null && !fields.contains("summitList")) {
             challenges = challengeService.getAllChallengesWithoutSummitLists(status);
         } else {
             challenges = challengeService.getAllChallenges(status);
         }
-
-        return challenges.stream().map(challenge ->
-                (fields != null) ? challengeMapper.mapEntityToDto(challenge, fields)
-                        : challengeMapper.mapEntityToDto(challenge)
-        ).toList();
+        return challenges.stream().map(challenge -> challengeMapper.mapEntityToDto(challenge, fields)).toList();
     }
 
     @GetMapping("/{id}")

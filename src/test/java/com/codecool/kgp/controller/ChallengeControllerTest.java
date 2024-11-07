@@ -16,7 +16,6 @@ import com.codecool.kgp.service.CustomUserDetailsService;
 import com.google.gson.Gson;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -38,7 +37,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -81,7 +79,7 @@ class ChallengeControllerTest {
         Mockito.when(challengeService.getAllChallenges(status)).thenReturn(challenges);
 
         AtomicInteger counter = new AtomicInteger(0);
-        Mockito.when(challengeMapper.mapEntityToDto(any(Challenge.class))).thenAnswer(invocationOnMock ->
+        Mockito.when(challengeMapper.mapEntityToDto(any(Challenge.class), eq(fields))).thenAnswer(invocationOnMock ->
                 challengesDto.get(counter.getAndIncrement())
         );
 
@@ -105,7 +103,7 @@ class ChallengeControllerTest {
 
     @Test
     @WithMockUser(roles = ADMIN)
-    void getChallenges_shouldReturnAllActiveChallengesWithSpecifyFieldsOnly() throws Exception {
+    void getChallenges_shouldReturnAllActiveChallengesWithSpecifiedFieldsOnly() throws Exception {
         //given:
         Status status = Status.ACTIVE;
         List<String> fields = List.of("id", "status");
@@ -117,7 +115,7 @@ class ChallengeControllerTest {
                 .create();
         ChallengeDto challengeDto = Instancio.of(ChallengeDto.class)
                 .set(field(ChallengeDto::status), Status.ACTIVE)
-                .ignore(field(ChallengeDto::summits))
+                .ignore(field(ChallengeDto::summitList))
                 .ignore(field(ChallengeDto::name))
                 .ignore(field(ChallengeDto::description))
                 .create();
@@ -142,9 +140,9 @@ class ChallengeControllerTest {
 
     @Test
     @WithMockUser(roles = ADMIN)
-    void getChallenges_shouldReturnAllActiveChallengesWithSummitsField() throws Exception {
+    void getChallenges_shouldReturnAllActiveChallengesWithSummitsFields() throws Exception {
         //given:
-        List<String> fields = List.of("summits");
+        List<String> fields = List.of("summitList");
         List<Challenge> challenges = Instancio.ofList(Challenge.class).size(1)
                 .set(field(Challenge::getStatus), Status.ACTIVE)
                 .create();
@@ -185,7 +183,7 @@ class ChallengeControllerTest {
                 .set(field(ChallengeDto::status), Status.REMOVED)
                 .create();
         Mockito.when(challengeService.getAllChallenges(status)).thenReturn(challenges);
-        Mockito.when(challengeMapper.mapEntityToDto(challenges.get(0))).thenReturn(challengeDto);
+        Mockito.when(challengeMapper.mapEntityToDto(challenges.get(0), fields)).thenReturn(challengeDto);
 
         //when:
         var response = mockMvc.perform(get("/api/v1/challenges?status=REMOVED"));
@@ -275,7 +273,7 @@ class ChallengeControllerTest {
 
     @Test
     @WithMockUser(roles = USER)
-    void addChallenge_shouldReturn401() throws Exception {
+    void addChallenge_shouldReturn403() throws Exception {
         //given:
         ChallengeRequestDto requestDto = Instancio.create(ChallengeRequestDto.class);
 
@@ -297,8 +295,8 @@ class ChallengeControllerTest {
                 .create();
         Summit summit = Instancio.create(Summit.class);
         ChallengeDto challengeDto = Instancio.of(ChallengeDto.class)
-                .set(field(ChallengeDto::summits), List.of(new SummitSimpleDto(summit.getId(), summit.getName(),
-                        summit.getMountainRange(), summit.getMountains(), summit.getHeight(), summit.getStatus().toString())))
+                .set(field(ChallengeDto::summitList), List.of(new SummitSimpleDto(summit.getId(), summit.getName(),
+                        summit.getMountainRange(), summit.getMountainChain(), summit.getHeight(), summit.getStatus().toString())))
                 .create();
         Mockito.when(challengeService.attachSummitToChallenge(summit.getId(), challenge.getId())).thenReturn(challenge);
         Mockito.when(challengeMapper.mapEntityToDto(challenge)).thenReturn(challengeDto);
@@ -328,14 +326,14 @@ class ChallengeControllerTest {
 
     @Test
     @WithMockUser(roles = ADMIN)
-    void detachSummit_shouldReturnChallengeWithOutRemovedSummit() throws Exception {
+    void detachSummit_shouldReturnChallengeWithoutRemovedSummit() throws Exception {
         //given:
         Summit summit = Instancio.create(Summit.class);
         Challenge challenge = Instancio.of(Challenge.class)
                 .set(field(Challenge::getSummitList), List.of(summit))
                 .create();
         ChallengeDto challengeDto = Instancio.of(ChallengeDto.class)
-                .setBlank(field(ChallengeDto::summits))
+                .setBlank(field(ChallengeDto::summitList))
                 .create();
         Mockito.when(challengeService.detachSummitFromChallenge(summit.getId(), challenge.getId())).thenReturn(challenge);
         Mockito.when(challengeMapper.mapEntityToDto(challenge)).thenReturn(challengeDto);
