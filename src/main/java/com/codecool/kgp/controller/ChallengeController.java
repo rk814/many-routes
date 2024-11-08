@@ -41,7 +41,7 @@ public class ChallengeController {
             @ApiResponse(responseCode = "200", description = "List of Challenges found"),
             @ApiResponse(responseCode = "400", description = "Invalid status supplied")
     })
-    @GetMapping(produces = "application/json")
+    @GetMapping(value = "/", produces = "application/json")
     @RolesAllowed({ADMIN, USER})
     public List<ChallengeDto> getChallenges(
             @Parameter(description = "Challenge status")

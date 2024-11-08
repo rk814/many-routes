@@ -56,7 +56,7 @@ public class UserChallengeMapper {
                             summit.getName(),
                             summit.getCoordinatesArray(),
                             summit.getMountainRange(),
-                            summit.getMountains(),
+                            summit.getMountainChain(),
                             summit.getHeight(),
                             summit.getDescription(),
                             summit.getGuideNotes(),

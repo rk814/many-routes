@@ -84,7 +84,7 @@ class ChallengeControllerTest {
         );
 
         //when:
-        var response = mockMvc.perform(get("/api/v1/challenges"));
+        var response = mockMvc.perform(get("/api/v1/challenges/"));
 
         //then:
         response.andExpect(status().isOk())
@@ -96,7 +96,7 @@ class ChallengeControllerTest {
                 .andExpect(jsonPath("$[0].name").exists())
                 .andExpect(jsonPath("$[0].status").exists())
                 .andExpect(jsonPath("$[0].description").exists())
-                .andExpect(jsonPath("$[0].summits").exists());
+                .andExpect(jsonPath("$[0].summitList").exists());
 
         verify(challengeService).getAllChallenges(Status.ACTIVE);
     }
@@ -123,7 +123,7 @@ class ChallengeControllerTest {
         Mockito.when(challengeMapper.mapEntityToDto(any(Challenge.class), eq(fields))).thenReturn(challengeDto);
 
         //when:
-        var response = mockMvc.perform(get("/api/v1/challenges?fields=id,status"));
+        var response = mockMvc.perform(get("/api/v1/challenges/?fields=id,status"));
 
         //then:
         response.andExpect(status().isOk())
@@ -156,12 +156,12 @@ class ChallengeControllerTest {
         Mockito.when(challengeMapper.mapEntityToDto(any(Challenge.class), eq(fields))).thenReturn(challengeDto);
 
         //when:
-        var response = mockMvc.perform(get("/api/v1/challenges?fields=summits"));
+        var response = mockMvc.perform(get("/api/v1/challenges/" + "?fields="+ String.join(",", fields)));
 
         //then:
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(1))
-                .andExpect(jsonPath("$[0].summits").exists())
+                .andExpect(jsonPath("$[0].summitList").exists())
                 .andExpect(jsonPath("$[0].id").doesNotExist())
                 .andExpect(jsonPath("$[0].status").doesNotExist())
                 .andExpect(jsonPath("$[0].name").doesNotExist())
@@ -186,7 +186,7 @@ class ChallengeControllerTest {
         Mockito.when(challengeMapper.mapEntityToDto(challenges.get(0), fields)).thenReturn(challengeDto);
 
         //when:
-        var response = mockMvc.perform(get("/api/v1/challenges?status=REMOVED"));
+        var response = mockMvc.perform(get("/api/v1/challenges/?status=REMOVED"));
 
         //then:
         response.andExpect(status().isOk())
@@ -200,7 +200,7 @@ class ChallengeControllerTest {
     @WithMockUser(roles = ADMIN)
     void getChallenges_shouldThrow404() throws Exception {
         //when:
-        var response = mockMvc.perform(get("/api/v1/challenges?status=UNKNOWN"));
+        var response = mockMvc.perform(get("/api/v1/challenges/?status=UNKNOWN"));
 
         //then:
         response.andExpect(status().isBadRequest());
@@ -307,8 +307,8 @@ class ChallengeControllerTest {
 
         //then:
         response.andExpect(status().isOk())
-                .andExpect(jsonPath("$.summits.size()").value(1))
-                .andExpect(jsonPath("$.summits[0].id").value(summit.getId().toString()));
+                .andExpect(jsonPath("$.summitList.size()").value(1))
+                .andExpect(jsonPath("$.summitList[0].id").value(summit.getId().toString()));
 
         verify(challengeService).attachSummitToChallenge(summit.getId(), challenge.getId());
     }
@@ -344,7 +344,7 @@ class ChallengeControllerTest {
 
         //then:
         response.andExpect(status().isOk())
-                .andExpect(jsonPath("$.summits").isEmpty());
+                .andExpect(jsonPath("$.summitList").isEmpty());
 
         verify(challengeService).detachSummitFromChallenge(summit.getId(), challenge.getId());
     }
