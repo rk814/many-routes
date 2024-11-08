@@ -1,10 +1,10 @@
 spring:
   application.name: kgp-backend
   datasource:
+    driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/got
     username: rk
     password: test123
-    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: validate

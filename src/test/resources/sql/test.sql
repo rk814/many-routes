@@ -9,6 +9,12 @@ INSERT INTO challenge(id, name)
 VALUES ('4c39c496-ff63-4c8a-bad4-47d6a97053e7',
         'KGP');
 
+INSERT INTO challenge(id, description, name, status)
+VALUES ('8b7935ab-5e22-485b-ae18-7e5ad88b005e', 'first challenge', 'test1-challenge', 'ACTIVE'),
+       (gen_random_uuid(), 'second challenge', 'test2-challenge', 'ACTIVE'),
+       (gen_random_uuid(), 'third challenge', 'test3-challenge', 'ACTIVE'),
+       (gen_random_uuid(), 'fourth challenge', 'test4-challenge', 'REMOVED');
+
 INSERT INTO user_challenge(id, user_id, challenge_id, started_at, finished_at, score)
 VALUES ('6c39c496-ff63-4c8a-bad4-47d6a97053e7',
         '5c39c496-ff63-4c8a-bad4-47d6a97053e7',
@@ -16,13 +22,6 @@ VALUES ('6c39c496-ff63-4c8a-bad4-47d6a97053e7',
         TIMESTAMP '2004-10-19 10:23:54',
         TIMESTAMP '2014-03-11 08:23:54',
         30);
-
-
-INSERT INTO challenge(id, description, name, status)
-VALUES ('8b7935ab-5e22-485b-ae18-7e5ad88b005e', 'first challenge', 'test1-challenge', 'ACTIVE'),
-       (gen_random_uuid(), 'second challenge', 'test2-challenge', 'ACTIVE'),
-       (gen_random_uuid(), 'third challenge', 'test3-challenge', 'ACTIVE'),
-       (gen_random_uuid(), 'fourth challenge', 'test4-challenge', 'REMOVED');
 
 INSERT INTO summit(id, name, height, score, status)
 VALUES ('6a20c34e-7de5-4216-8238-2e0a1ef45fcc', 'summit1', 1, 11, 'ACTIVE'),

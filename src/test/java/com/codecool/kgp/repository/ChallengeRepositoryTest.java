@@ -28,13 +28,13 @@ class ChallengeRepositoryTest {
     void findAllByStatus_shouldReadAllActiveChallengesFromDb() {
         //given:
         Status status = Status.ACTIVE;
+        List<String> expectedNames = List.of("test1-challenge", "test2-challenge", "test3-challenge");
 
         //when:
         List<Challenge> actual = testedRepository.findAllByStatus(status);
         List<String> actualNames = actual.stream().map(Challenge::getName).toList();
 
         //then:
-        List<String> expectedNames = List.of("test1-challenge", "test2-challenge", "test3-challenge");
         Assertions.assertThat(actualNames).containsAll(expectedNames)
                 .doesNotContain("test4-challenge");
         Assertions.assertThat(actual).filteredOn(a -> a.getName().equals("test1-challenge"))
@@ -45,16 +45,31 @@ class ChallengeRepositoryTest {
     }
 
     @Test
+    void findAllByStatus_shouldReadEmptyListFromDb() {
+        //given:
+        Status status = Status.DEVELOP;
+        List<String> noneExpectedNames = List.of("test1-challenge", "test2-challenge", "test3-challenge");
+
+        //when:
+        List<Challenge> actual = testedRepository.findAllByStatus(status);
+        List<String> actualNames = actual.stream().map(Challenge::getName).toList();
+
+        //then:
+        Assertions.assertThat(actual).hasSize(0);
+        Assertions.assertThat(actualNames).doesNotContainAnyElementsOf(noneExpectedNames);
+    }
+
+    @Test
     void findAllByStatusWithSummits_shouldReadAllActiveChallengesFromDb() {
         //given:
         Status status = Status.ACTIVE;
+        List<String> expectedNames = List.of("test1-challenge", "test2-challenge", "test3-challenge");
 
         //when:
         List<Challenge> actual = testedRepository.findAllByStatusWithSummits(status);
         List<String> actualNames = actual.stream().map(Challenge::getName).toList();
 
         //then:
-        List<String> expectedNames = List.of("test1-challenge", "test2-challenge", "test3-challenge");
         Assertions.assertThat(actualNames).containsAll(expectedNames)
                 .doesNotContain("test4-challenge");
         Assertions.assertThat(actual).filteredOn(a -> a.getName().equals("test1-challenge"))
