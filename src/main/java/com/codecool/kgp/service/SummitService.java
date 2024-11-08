@@ -1,19 +1,15 @@
 package com.codecool.kgp.service;
 
-import com.codecool.kgp.controller.dto.SummitDto;
-import com.codecool.kgp.controller.dto.SummitRequestDto;
-import com.codecool.kgp.controller.dto.SummitSimpleDto;
 import com.codecool.kgp.entity.Summit;
-import com.codecool.kgp.mappers.SummitMapper;
-import com.codecool.kgp.mappers.UserMapper;
+import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.repository.SummitRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -21,41 +17,55 @@ import java.util.UUID;
 @Service
 public class SummitService {
 
-    private final SummitRepository summitRepository;
-    private final SummitMapper summitMapper;
+    public final SummitRepository summitRepository;
 
-    public SummitService(SummitRepository summitRepository, SummitMapper summitMapper) {
+    public SummitService(SummitRepository summitRepository) {
         this.summitRepository = summitRepository;
-        this.summitMapper = summitMapper;
     }
 
 
-    public SummitDto getSummit(UUID id) {
-        Summit summit = summitRepository.findById(id)
-                .orElseThrow(()-> {
-                    log.error("Summit with id '{}' not found", id);
-                    return new NoSuchElementException("Summit not found");
-                });
+    public Summit getSummit(UUID id) {
+        Summit summit = findSummit(id);
         log.info("Summit with id '{}' was found", id);
-        return summitMapper.mapEntityToDto(summit);
+        return summit;
     }
 
-    public List<SummitDto> getAllSummits() {
-        List<Summit> summits = summitRepository.findAll();
-        log.info("{} summits were found", summits.size());
-        return summits.stream().map(summitMapper::mapEntityToDto).toList();
+    public List<Summit> getAllSummits(Status status) {
+        List<Summit> summits = summitRepository.findAllByStatus(status);
+        log.info("{} summitList were found", summits.size());
+        return summits;
     }
 
-    public List<SummitSimpleDto> getAllSummitsSimplified() {
-        List<Summit> summits = summitRepository.findAll();
-        log.info("{} summits were found", summits.size());
-        return summits.stream().map(summitMapper::mapEntityToSimpleDto).toList();
-    }
+//    public List<SummitSimpleDto> getAllSummitsSimplified() {
+//        List<Summit> summits = summitRepository.findAll();
+//        log.info("{} summitList were found", summits.size());
+//        return summits.stream().map(summitMapper::mapEntityToSimpleDto).toList();
+//    }
 
-    public SummitDto addNewSummit(SummitRequestDto dto) {
-        Summit summit = summitMapper.mapRequestDtoToEntity(dto);
+    public Summit addNewSummit(Summit summit) {
         Summit summitFromDb = summitRepository.save(summit);
         log.info("New summit with id '{}' was saved", summit.getId());
-        return summitMapper.mapEntityToDto(summitFromDb);
+        return summitFromDb;
+    }
+
+    public Summit updateSummit(UUID id, Summit summit) {
+        Summit summitFromDb = findSummit(id);
+        summitFromDb.updateSummit(summit);
+        summitRepository.save(summitFromDb);
+        log.info("Summit with id '{}' was successfully updated", id);
+        return summitFromDb;
+    }
+
+    public void deleteSummit(UUID id) {
+        Summit summitFromDb = findSummit(id);
+        summitRepository.delete(summitFromDb);
+        log.info("Summit with id '{}' was successfully deleted", id);
+    }
+
+    private Summit findSummit(UUID id) {
+        return summitRepository.findById(id).orElseThrow(() -> {
+            log.warn("Challenge with id '{}' was not found", id);
+            return new ResponseStatusException(HttpStatus.NOT_FOUND, "Summit was not found");
+        });
     }
 }

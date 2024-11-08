@@ -37,10 +37,10 @@ public class Summit {
 
     private String mountainRange;
 
-    private String mountains;
+    private String mountainChain;
 
     @Min(value = 0, message = "Szczyt nie może być wartością ujemną")
-    private int height;
+    private Integer height;
 
     @Size(max = 4000, message = "Opis nie może przekroczyć 4000 znaków") // default 256
     private String description;
@@ -63,7 +63,7 @@ public class Summit {
         this.name = name;
         this.coordinates = coordinates;
         this.mountainRange = mountainRange;
-        this.mountains = mountains;
+        this.mountainChain = mountains;
         this.height = height;
         this.description = description;
         this.guideNotes = guideNotes;
@@ -85,5 +85,17 @@ public class Summit {
 
     public void removeChallenge(Challenge challenge) {
         this.challengeList = challengeList.stream().filter(ch -> !ch.equals(challenge)).toList();
+    }
+
+    public void updateSummit(Summit summit) {
+        this.name = summit.getName();
+        this.coordinates = summit.getCoordinates();
+        this.mountainRange = summit.getMountainRange();
+        this.mountainChain = summit.getMountainChain();
+        this.height = summit.getHeight();
+        this.description = summit.getDescription();
+        this.guideNotes = summit.getGuideNotes();
+        this.score = summit.getScore();
+        this.status = summit.getStatus();
     }
 }
