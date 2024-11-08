@@ -1,6 +1,5 @@
 package com.codecool.kgp.integration;
 
-import com.codecool.kgp.repository.ChallengeRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -28,9 +27,9 @@ public class ChallengeTest {
 
     @Test
     @WithMockUser(roles = ADMIN)
-    void challenge_whenGetAll_shouldReturnStatus200() throws Exception {
+    void challenge_shouldReturnStatus200_whenRequestAllChallenges() throws Exception {
         // when:
-        ResultActions response = mockMvc.perform(get("/api/v1/challenges"));
+        ResultActions response = mockMvc.perform(get("/api/v1/challenges/"));
 
         // then:
         response.andExpect(status().isOk());
