@@ -35,6 +35,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static com.codecool.kgp.config.SpringSecurityConfig.ADMIN;
+import static com.codecool.kgp.config.SpringSecurityConfig.USER;
 import static org.instancio.Select.field;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -104,8 +105,8 @@ class SummitControllerTest {
     }
 
     @ParameterizedTest
+    @WithMockUser(roles = {ADMIN})
     @MethodSource("ProvideSummits")
-    @WithMockUser(value = ADMIN)
     void getSummits_shouldReturnAllActiveSummits_whenNoParametersSend(List<Summit> summitsList) throws Exception {
         //given:
         Status status = Status.ACTIVE;
@@ -132,7 +133,7 @@ class SummitControllerTest {
 
     @ParameterizedTest
     @MethodSource("ProvideSummits")
-    @WithMockUser(value = ADMIN)
+    @WithMockUser(roles = ADMIN)
     void getSummits_shouldReturnAllSummitsWithChooseStatus_whenStatusSend(List<Summit> summitsList) throws Exception {
         //given:
         Status status = Status.REMOVED;
@@ -159,7 +160,7 @@ class SummitControllerTest {
 
     @ParameterizedTest
     @MethodSource("ProvideSummits")
-    @WithMockUser(value = ADMIN)
+    @WithMockUser(roles = ADMIN)
     void getSummits_shouldReturnAllSummitsWithChooseFields_whenFieldsSend(List<Summit> summitsList) throws Exception {
         //given:
         Status status = Status.ACTIVE;
@@ -196,7 +197,7 @@ class SummitControllerTest {
     }
 
     @Test
-    @WithMockUser(value = ADMIN)
+    @WithMockUser(roles = ADMIN)
     void getSummit_shouldReturnRequestSummit() throws Exception {
         //given:
         int challengeListSize = 5;
@@ -225,7 +226,7 @@ class SummitControllerTest {
     }
 
     @Test
-    @WithMockUser(value = ADMIN)
+    @WithMockUser(roles = ADMIN)
     void getSummit_shouldReturn404() throws Exception {
         //given:
         UUID id = UUID.randomUUID();

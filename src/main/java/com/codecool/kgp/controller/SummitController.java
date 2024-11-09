@@ -35,7 +35,7 @@ public class SummitController {
         this.summitMapper = summitMapper;
     }
 
-    @RolesAllowed({ADMIN, USER})
+    @RolesAllowed(ADMIN)
     @Operation(summary = "Get list of summitList (default ACTIVE)")
     @GetMapping("/")
     public List<SummitDto> getSummits(
