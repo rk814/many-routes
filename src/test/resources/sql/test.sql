@@ -1,9 +1,10 @@
-INSERT INTO actor(id, login, email, hash_password, name)
+INSERT INTO actor(id, login, email, hash_password, name, role)
 VALUES ('5c39c496-ff63-4c8a-bad4-47d6a97053e7',
         'adam',
         'adam@email.com',
         'xxx',
-        'Adam');
+        'Adam',
+        'ADMIN');
 
 INSERT INTO challenge(id, name)
 VALUES ('4c39c496-ff63-4c8a-bad4-47d6a97053e7',
