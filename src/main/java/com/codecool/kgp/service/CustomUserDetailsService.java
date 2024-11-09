@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Slf4j
-@Component
+@Service
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
