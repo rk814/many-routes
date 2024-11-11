@@ -1,35 +1,45 @@
 package com.codecool.kgp.service;
 
-import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.controller.dto.UserRequestDto;
-import com.codecool.kgp.errorhandling.DuplicateEntryException;
-import com.codecool.kgp.mappers.UserMapper;
 import com.codecool.kgp.entity.User;
+import com.codecool.kgp.entity.UserChallenge;
+import com.codecool.kgp.entity.enums.Role;
 import com.codecool.kgp.repository.UserRepository;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.ThrowableAssert;
 import org.instancio.Instancio;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.instancio.Select.field;
+import static org.mockito.ArgumentMatchers.any;
 
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-    private final UserRepository userRepository = Mockito.mock();
-    private final UserMapper userMapper = Mockito.mock();
-    private final UserService userService = new UserService(userRepository, userMapper);
+    @Mock
+    private UserRepository userRepository;
+
+    private UserService userService;
+
+
+    @BeforeEach
+    void setup() {
+        userService = new UserService(userRepository);
+    }
+
 
     @Test
     void getUsers_shouldReturnAllUsersButNotDeleted() {
@@ -37,167 +47,226 @@ class UserServiceTest {
         User user1 = Instancio.create(User.class);
         User user2 = Instancio.create(User.class);
         User user3 = Instancio.of(User.class)
-                .generate(field(User::getEmail), gen -> gen.oneOf("deleted-xxx"))
+                .set(field(User::getEmail), "deleted-xxx")
                 .create();
-        Mockito.when(userRepository.findAll()).thenReturn(List.of(user1, user2, user3));
-
-        UserDto user1Dto = Instancio.create(UserDto.class);
-        UserDto user2Dto = Instancio.create(UserDto.class);
-
-        Mockito.when(userMapper.mapEntityToDto(user1)).thenReturn(user1Dto);
-        Mockito.when(userMapper.mapEntityToDto(user2)).thenReturn(user2Dto);
+        List<User> users = List.of(user1, user2, user3);
+        Mockito.when(userRepository.findAll()).thenReturn(users);
 
         //when:
-        List<UserDto> actual = userService.getUsers();
+        List<User> actual = userService.getUsers();
 
         //then:
-        Assertions.assertThat(actual).isEqualTo(List.of(user1Dto, user2Dto));
+        Assertions.assertThat(actual).containsExactly(user1, user2)
+                .doesNotContain(user3);
     }
 
     @Test
-    void getUserByLogin_shouldReturnUserWithLogin() {
+    void getUsers_shouldReturnEmptyList() {
         //given:
-        String login = "abc";
+        User user3 = Instancio.of(User.class)
+                .set(field(User::getEmail), "deleted-xxx")
+                .create();
+        List<User> users = List.of(user3);
+        Mockito.when(userRepository.findAll()).thenReturn(users);
+
+        //when:
+        List<User> actual = userService.getUsers();
+
+        //then:
+        Assertions.assertThat(actual).isEmpty();
+    }
+
+    @Test
+    void getUser_shouldReturnUser() {
+        //given:
+        UUID id = UUID.randomUUID();
         User user = Instancio.of(User.class)
-                .set(field(User::getLogin), login)
+                .set(field(User::getId), id)
                 .create();
-        UserDto userDto = Instancio.of(UserDto.class)
-                .set(field(UserDto::login), login)
-                .create();
-        Mockito.when(userRepository.findByLogin(login)).thenReturn(Optional.of(user));
-        Mockito.when(userMapper.mapEntityToDto(user)).thenReturn(userDto);
+        Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(user));
 
         //when:
-        UserDto actual = userService.getUser(login);
+        User actual = userService.getUser(id);
 
         //then:
-        Assertions.assertThat(actual.login()).isEqualTo(login);
+        Assertions.assertThat(actual).isEqualTo(user);
     }
 
     @Test
-    void getUserByLogin_shouldReturnResponseStatusException() {
+    void getUser_shouldReturn404() {
         //given:
-        String login = "abc";
-        Mockito.when(userRepository.findByLogin(login)).thenReturn(Optional.empty());
+        UUID id = UUID.randomUUID();
 
-        //when:
-        Throwable actual = Assertions.catchThrowable(
-                () -> userService.getUser(login)
-        );
-
-        //then:
-        Assertions.assertThat(actual)
-                .isInstanceOf(ResponseStatusException.class)
-                .hasFieldOrPropertyWithValue("status", HttpStatus.NOT_FOUND);
+        //when and then:
+        getUserById_shouldReturn404(() -> userService.getUser(id));
     }
 
-    @Captor
-    private ArgumentCaptor<User> userCaptor;
-
     @Test
-    void updateUser_shouldUpdateUserAndReturnUserDto() {
+    void updateUser_shouldUpdateUserAndReturnUpdatedUser() {
         //given:
         User user = Instancio.of(User.class)
                 .set(field(User::getName), "Adam")
                 .create();
-        UserRequestDto userRequestDto = Instancio.of(UserRequestDto.class)
-                .set(field(UserRequestDto::name), "Bogdan")
-                .create();
-        UserDto userDto = Instancio.of(UserDto.class)
-                .set(field(UserDto::name), "Bogdan")
-                .create();
+        UserRequestDto userRequestDto = new UserRequestDto(
+                "bogdan@email.com",
+                "Bogdan",
+                "123456789",
+                true,
+                1.11,
+                2.22);
 
-        Mockito.when(userRepository.findByLogin(user.getLogin())).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         Mockito.when(userRepository.save(user)).thenReturn(user);
-        Mockito.when(userMapper.mapEntityToDto(user)).thenReturn(userDto);
 
         //when:
-        UserDto actual = userService.updateUser(user.getLogin(), userRequestDto);
+        User actual = userService.updateUser(user.getId(), userRequestDto);
 
         //then:
-        Assertions.assertThat(actual.name()).isEqualTo(userRequestDto.name());
+        Assertions.assertThat(actual.getEmail()).isEqualTo(userRequestDto.email());
+        Assertions.assertThat(actual.getName()).isEqualTo(userRequestDto.name());
+        Assertions.assertThat(actual.getPhone()).isEqualTo(userRequestDto.phone());
+        Assertions.assertThat(actual.getNewsletter()).isEqualTo(userRequestDto.newsletter());
+        Assertions.assertThat(actual.getCoordinatesArray()).containsExactly(userRequestDto.latitude(),
+                userRequestDto.longitude());
+
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         Mockito.verify(userRepository).save(userCaptor.capture());
-        Assertions.assertThat(userCaptor.getValue().getName()).isEqualTo("Bogdan");
+        Assertions.assertThat(userCaptor.getValue().getEmail()).isEqualTo(userRequestDto.email());
+        Assertions.assertThat(userCaptor.getValue().getName()).isEqualTo(userRequestDto.name());
+        Assertions.assertThat(userCaptor.getValue().getPhone()).isEqualTo(userRequestDto.phone());
+        Assertions.assertThat(userCaptor.getValue().getNewsletter()).isEqualTo(userRequestDto.newsletter());
+        Assertions.assertThat(userCaptor.getValue().getCoordinatesArray()).containsExactly(userRequestDto.latitude(),
+                userRequestDto.longitude());
     }
 
     @Test
-    void updateUser_shouldThrowResponseStatusException() {
+    void updateUser_shouldReturn404() {
         //given:
-        String login = "testLogin";
+        UUID id = UUID.randomUUID();
         UserRequestDto dto = Instancio.create(UserRequestDto.class);
-        Mockito.when(userRepository.findByLogin(login)).thenReturn(Optional.empty());
 
         //when and then:
-        Assertions.assertThatThrownBy(() -> userService.updateUser(login, dto))
-                .isInstanceOf(ResponseStatusException.class)
-                .hasFieldOrPropertyWithValue("status", HttpStatus.NOT_FOUND);
+        getUserById_shouldReturn404(() -> userService.updateUser(id, dto));
+    }
+
+    @Test
+    void getUserScore_shouldReturnScore() {
+        //given:
+        UUID id = UUID.randomUUID();
+        User user = Instancio.of(User.class)
+                .set(field(User::getId), id)
+                .setBlank(field(User::getUserChallenges))
+                .create();
+        user.setUserChallenges(List.of(
+                Instancio.of(UserChallenge.class)
+                        .set(field(UserChallenge::getScore), 10)
+                        .create(),
+                Instancio.of(UserChallenge.class)
+                        .set(field(UserChallenge::getScore), 20)
+                        .create()
+        ));
+        Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(user));
+
+        //when:
+        int actual = userService.getUserScore(id);
+
+        //then:
+        Assertions.assertThat(actual).isEqualTo(30);
+    }
+
+    @Test
+    void getUserScore_shouldReturnZero() {
+        //given:
+        UUID id = UUID.randomUUID();
+        User user = Instancio.of(User.class)
+                .set(field(User::getId), id)
+                .setBlank(field(User::getUserChallenges))
+                .create();
+        Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(user));
+
+        //when:
+        int actual = userService.getUserScore(id);
+
+        //then:
+        Assertions.assertThat(actual).isEqualTo(0);
+    }
+
+    @Test
+    void getUserScore_shouldReturn404() {
+        //given:
+        UUID id = UUID.randomUUID();
+
+        //when and then:
+        getUserById_shouldReturn404(() -> userService.getUserScore(id));
     }
 
     @Test
     void deleteUser_shouldDeleteUser() {
         //given:
-        String userLogin = "Login";
         User user = Instancio.create(User.class);
-        Mockito.when(userRepository.findByLogin(userLogin)).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
         //when:
-        userService.deleteUser(userLogin);
+        userService.deleteUser(user.getId());
 
         //then:
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         Mockito.verify(userRepository).delete(userCaptor.capture());
         Assertions.assertThat(userCaptor.getValue()).isEqualTo(user);
     }
 
     @Test
-    void deleteUser_shouldThrowResponseStatusException() {
+    void deleteUser_shouldReturn404() {
         //given:
-        String userLogin = "Login";
-        Mockito.when(userRepository.findByLogin(userLogin)).thenReturn(Optional.empty());
+        UUID id = UUID.randomUUID();
 
-        //when:
-        Assertions.assertThatThrownBy(() -> userService.deleteUser(userLogin))
-                .isInstanceOf(ResponseStatusException.class)
-                .hasFieldOrPropertyWithValue("status", HttpStatus.NOT_FOUND);
+        //when and then:
+        getUserById_shouldReturn404(() -> userService.deleteUser(id));
     }
 
     @Test
     void softDeleteUser_shouldDeleteUser() {
         //given:
-        String userLogin = "Login";
-        User user = Instancio.of(User.class)
-                .set(field(User::getName),"Adam")
-                .set(field(User::getLogin),"adam")
-                .set(field(User::getHashPassword),"xxx")
-                .set(field(User::getEmail),"adam@email.com")
-                .set(field(User::getNewsletter),true)
-                .create()                ;
-        Mockito.when(userRepository.findByLogin(userLogin)).thenReturn(Optional.of(user));
+        User user = new User("login", "password", "email@email.com", Role.USER);
+        user.setPhone("123456789");
+        user.setName("Adam");
+        Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
         //when:
-        userService.softDeleteUser(userLogin);
+        userService.softDeleteUser(user.getId());
 
         //then:
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         Mockito.verify(userRepository).save(userCaptor.capture());
-        Assertions.assertThat(userCaptor.getValue().getName())
-                .isEqualTo("****");
-        Assertions.assertThat(userCaptor.getValue().getLogin())
-                .isEqualTo("****");
-        Assertions.assertThat(userCaptor.getValue().getHashPassword())
-                .isEqualTo("***");
-        Assertions.assertThat(userCaptor.getValue().getEmail())
-                .startsWith("deleted-");
-        Assertions.assertThat(userCaptor.getValue().getNewsletter())
-                .isEqualTo(false);
+        Assertions.assertThat(userCaptor.getValue().getName()).isEqualTo("****");
+        Assertions.assertThat(userCaptor.getValue().getLogin()).isEqualTo("*****");
+        Assertions.assertThat(userCaptor.getValue().getHashPassword()).isEqualTo("********");
+        Assertions.assertThat(userCaptor.getValue().getPhone()).isEqualTo("*********");
+        Assertions.assertThat(userCaptor.getValue().getEmail()).startsWith("deleted-");
+        Assertions.assertThat(userCaptor.getValue().getNewsletter()).isEqualTo(false);
+        Assertions.assertThat(userCaptor.getValue().getDeletedAt()).isNotNull();
     }
 
     @Test
-    void softDeleteUser_shouldThrowResponseStatusException() {
+    void softDeleteUser_shouldReturn404() {
         //given:
-        String userLogin = "Login";
-        Mockito.when(userRepository.findByLogin(userLogin)).thenReturn(Optional.empty());
+        UUID id = UUID.randomUUID();
+
+        //when and then:
+        getUserById_shouldReturn404(() -> userService.softDeleteUser(id));
+    }
+
+    private void getUserById_shouldReturn404(ThrowableAssert.ThrowingCallable throwingCallable) {
+        //given:
+        Mockito.when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
         //when:
-        Assertions.assertThatThrownBy(() -> userService.softDeleteUser(userLogin))
+        Throwable actual = Assertions.catchThrowable(
+                throwingCallable
+        );
+
+        //then:
+        Assertions.assertThat(actual)
                 .isInstanceOf(ResponseStatusException.class)
                 .hasFieldOrPropertyWithValue("status", HttpStatus.NOT_FOUND);
     }

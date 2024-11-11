@@ -17,7 +17,7 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
     public SecurityContext createSecurityContext(WithMockCustomUser annotation) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
-        UUID id = UUID.randomUUID();
+        UUID id = annotation.id().equals("00000000-0000-0000-0000-000000000000") ? UUID.randomUUID() : UUID.fromString(annotation.id());
 
         CustomUserDetails principal = new CustomUserDetails(
                 id,

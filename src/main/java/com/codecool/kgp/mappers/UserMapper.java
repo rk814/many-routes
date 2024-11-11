@@ -19,6 +19,7 @@ public class UserMapper {
         this.userChallengeMapper = userChallengeMapper;
     }
 
+
     public UserDto mapEntityToDto(User user) {
         return new UserDto(
                 user.getId(),

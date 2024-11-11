@@ -12,8 +12,8 @@ public record UserDto(
         String phone,
         Boolean newsletter,
         LocalDateTime createAt,
-        LocalDateTime deletedAt,
+        LocalDateTime deleteAt,
         String role,
-        List<UserChallengeSimpleDto> userChallengeSimpleDtoList
+        List<UserChallengeSimpleDto> userChallengeSimplified
 ) {
 }

@@ -1,7 +1,6 @@
 package com.codecool.kgp.service;
 
 import com.codecool.kgp.entity.UserChallenge;
-import com.codecool.kgp.errorhandling.DuplicateEntryException;
 import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.controller.dto.UserRequestDto;
 import com.codecool.kgp.mappers.UserMapper;
@@ -9,7 +8,6 @@ import com.codecool.kgp.entity.User;
 import com.codecool.kgp.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,70 +24,52 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    private final UserMapper userMapper;
-
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.userMapper = userMapper;
     }
 
-    public List<UserDto> getUsers() {
+    public List<User> getUsers() {
         List<User> users = userRepository.findAll();
-        log.info("{} users was found", users.size());
-        return users.stream()
-                .filter(user -> !user.getEmail().startsWith("deleted-"))
-                .map(userMapper::mapEntityToDto).toList();
+        List<User> filterUsers = users.stream().filter(user -> !user.getEmail().startsWith("deleted-")).toList();
+        log.info("{} users was found", filterUsers.size());
+        return filterUsers;
     }
 
-    public UserDto getUser(String login) {
-        User user = getUserByLogin(login);
-        log.info("User with id '{}' was found", user.getId());
-        return userMapper.mapEntityToDto(user);
+    public User getUser(UUID id) {
+        User user = findUser(id);
+        log.info("User with id '{}' was found", id);
+        return user;
     }
 
-    public int getUserScore(String login) {
-        User user = getUserByLogin(login);
+    public int getUserScore(UUID id) {
+        User user = findUser(id);
         List<UserChallenge> userChallenges = user.getUserChallenges();
-        int score = user.getUserChallenges().stream().mapToInt(UserChallenge::getScore).sum();
-        log.info("User with id '{}' has score of value {}", user.getId(), score);
+        int score = userChallenges.stream().mapToInt(UserChallenge::getScore).sum();
+        log.info("User with id '{}' has score of value {}", id, score);
         return score;
     }
 
-    public UserDto updateUser(String login, UserRequestDto dto) {
-        User user = userRepository.findByLogin(login)
-                .orElseThrow(() -> {
-                    log.error("Attempted to update user with login '{}', but no matching user was found in the database", login);
-                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje");
-                });
-
+    public User updateUser(UUID id, UserRequestDto dto) {
+        User user = findUser(id);
         user.updateUser(dto);
-
         User userFromDb = userRepository.save(user);
-        log.info("User with id '{}' was updated",userFromDb.getId());
-        return userMapper.mapEntityToDto(userFromDb);
+        log.info("User with id '{}' was updated", id);
+        return userFromDb;
     }
 
-    public void deleteUser(String login) {
-        User user = userRepository.findByLogin(login)
-                .orElseThrow(() -> {
-                    log.error("Attempted to delete user with login '{}', but no matching user was found in the database", login);
-                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje");
-                });
+    public void deleteUser(UUID id) {
+        User user = findUser(id);
         userRepository.delete(user);
-        log.info("User with id '{}' was deleted", user.getId());
+        log.info("User with id '{}' was deleted", id);
     }
 
-    public void softDeleteUser(String login) {
-        User user = userRepository.findByLogin(login)
-                .orElseThrow(() -> {
-                    log.error("Attempted to soft delete user with login '{}', but no matching user was found in the database", login);
-                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje");
-                });
+    public void softDeleteUser(UUID id) {
+        User user = findUser(id);
         obfuscatePiData(user);
         userRepository.save(user);
-        log.info("User with id '{}' was soft deleted", user.getId());
+        log.info("User with id '{}' was soft deleted", id);
     }
 
     private void obfuscatePiData(User user) {
@@ -114,11 +95,11 @@ public class UserService {
         user.setDeletedAt(LocalDateTime.now());
     }
 
-    private User getUserByLogin(String login) {
-        return userRepository.findByLogin(login)
+    private User findUser(UUID id) {
+        return userRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.error("Attempted to get user data with login '{}', but no matching user was found in the database", login);
-                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Login nie istnieje");
+                    log.error("Attempted to get user data with id '{}', but no matching user was found in the database", id);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Użytkownik nie istnieje");
                 });
     }
 }
