@@ -27,7 +27,7 @@ Content-Type: application/json
 
 ### GET ALL
 
-GET localhost:8888/api/v1/users
+GET localhost:8888/api/v1/users/
 Authorization: Bearer {{auth-token}}
 
 ### GET ONE
