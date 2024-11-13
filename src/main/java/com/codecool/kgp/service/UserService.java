@@ -68,8 +68,20 @@ public class UserService {
     public void softDeleteUser(UUID id) {
         User user = findUser(id);
         obfuscatePiData(user);
-        userRepository.save(user);
+        saveUser(user);
         log.info("User with id '{}' was soft deleted", id);
+    }
+
+    protected void saveUser(User user) {
+        userRepository.save(user);
+    }
+
+    protected User findUser(UUID id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.error("Attempted to get user data with id '{}', but no matching user was found in the database", id);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Użytkownik nie istnieje");
+                });
     }
 
     private void obfuscatePiData(User user) {
@@ -93,13 +105,5 @@ public class UserService {
         user.setEmail(randomPrefix + user.getEmail().substring(charPos));
 
         user.setDeletedAt(LocalDateTime.now());
-    }
-
-    private User findUser(UUID id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.error("Attempted to get user data with id '{}', but no matching user was found in the database", id);
-                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Użytkownik nie istnieje");
-                });
     }
 }

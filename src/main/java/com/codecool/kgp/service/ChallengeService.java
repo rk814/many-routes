@@ -4,7 +4,6 @@ import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.Summit;
 import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.errorhandling.DuplicateEntryException;
-import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.repository.ChallengeRepository;
 import com.codecool.kgp.repository.SummitRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -96,12 +95,16 @@ public class ChallengeService {
         log.info("Challenge with id '{}' was successfully deleted", id);
     }
 
-    private Challenge findChallenge(UUID id) {
+    protected Challenge findChallenge(UUID id) {
         return challengeRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("Challenge with id '{}' was not found", id);
                     return new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge was not found");
                 });
+    }
+
+    protected List<Challenge> getAllActiveChallenges() {
+        return challengeRepository.findAllByStatus(Status.ACTIVE);
     }
 
     private Summit findSummit(UUID id) {

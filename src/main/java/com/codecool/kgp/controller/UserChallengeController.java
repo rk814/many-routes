@@ -1,111 +1,132 @@
 package com.codecool.kgp.controller;
 
+import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.CustomUserDetails;
-import com.codecool.kgp.service.JwtTokenService;
+import com.codecool.kgp.entity.UserChallenge;
+import com.codecool.kgp.entity.UserSummit;
+import com.codecool.kgp.mappers.ChallengeMapper;
+import com.codecool.kgp.mappers.UserChallengeMapper;
 import com.codecool.kgp.service.UserChallengeService;
-import io.jsonwebtoken.Jwt;
+import com.codecool.kgp.validators.UserChallengeValidator;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import com.codecool.kgp.controller.dto.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
-import static com.codecool.kgp.config.SpringSecurityConfig.ADMIN;
 import static com.codecool.kgp.config.SpringSecurityConfig.USER;
 
-// TODO validate if user is fetching only data belonging to him
 
 @Slf4j
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/api/v1/users/{login}/user-challenges")
+@RequestMapping("/api/v1/users/me/user-challenges")
 public class UserChallengeController {
 
     private final UserChallengeService userChallengeService;
 
-    public UserChallengeController(UserChallengeService userChallengeService, JwtTokenService jwtTokenService) {
+    private final UserChallengeValidator userChallengeValidator;
+
+    private final UserChallengeMapper userChallengeMapper;
+    private final ChallengeMapper challengeMapper;
+
+    public UserChallengeController(UserChallengeService userChallengeService, UserChallengeValidator userChallengeValidator, UserChallengeMapper userChallengeMapper, ChallengeMapper challengeMapper) {
         this.userChallengeService = userChallengeService;
+        this.userChallengeValidator = userChallengeValidator;
+        this.userChallengeMapper = userChallengeMapper;
+        this.challengeMapper = challengeMapper;
     }
 
     @GetMapping("/")
-    @RolesAllowed({USER, ADMIN})
-    public List<UserChallengeDto> getAllUserChallenges(@PathVariable String login, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        System.out.println(userDetails.getUserId());
-        log.info("Received request for all user challenges of the user with login '{}'", login);
-        return userChallengeService.getUserChallenges(login);
+    @RolesAllowed({USER})
+    public List<UserChallengeDto> getUserChallenges(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @Parameter(description = "Optional filter for user challenges. Available options: 'completed', 'uncompleted'. Use 'all' or leave blank for no filter.")
+            @RequestParam(required = false, defaultValue = "all") String filter) {
+        CustomUserDetails cud = (CustomUserDetails) userDetails;
+        UUID userId = cud.getUserId();
+        log.info("Received request for all user challenges of the user with id '{}'", userId);
+
+        List<UserChallenge> userChallenges = switch (filter) {
+            case "completed" -> userChallengeService.getCompletedUserChallenges(userId);
+            case "uncompleted" -> userChallengeService.getUncompletedUserChallenges(userId);
+            case "all", "" -> userChallengeService.getUserChallenges(userId);
+            default -> {
+                log.warn("Invalid filter parameter '{}' in request for all user challenges with user id: '{}'", filter, userId);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid filter parameter");
+            }
+        };
+        return userChallenges.stream().map(userChallengeMapper::mapEntityToDto).toList();
     }
 
-    @GetMapping("/isFinished")
-    @RolesAllowed({USER, ADMIN})
-    public List<UserChallengeDto> getFinishedUserChallenges(@PathVariable String login) {
-        log.info("Received request for all completed user challenges of the user with login '{}'", login);
-        return userChallengeService.getCompletedUserChallenges(login);
+    // todo bad place??
+    @GetMapping("/?filter=unstarted")
+    @RolesAllowed({USER})
+    public List<ChallengeDto> getGoals(@AuthenticationPrincipal UserDetails userDetails) {
+        CustomUserDetails cud = (CustomUserDetails) userDetails;
+        UUID userId = cud.getUserId();
+        log.info("Received request for all goals of the user with id '{}'", userId);
+        List<Challenge> availableChallenges = userChallengeService.getUnstartedChallenges(userId);
+        return availableChallenges.stream().map(challengeMapper::mapEntityToDto).toList();
     }
 
-    @GetMapping("/isUnfinished")
-    @RolesAllowed({USER, ADMIN})
-    public List<UserChallengeDto> getUnfinishedUserChallenges(@PathVariable String login) {
-        log.info("Received request for all active user challenges of the user with login '{}'", login);
-        return userChallengeService.getActiveUserChallenges(login);
-    }
-
-    @GetMapping("/{id}")
-    @RolesAllowed({USER, ADMIN})
-    public UserChallengeDto getUserChallenge(@PathVariable String login, @PathVariable UUID id) {
-        log.info("Received request for user challenge with id '{}' of the user with login '{}'", id, login);
-        return userChallengeService.getUserChallenge(id);
-    }
-
-    @GetMapping("/isUnstarted")
-    @RolesAllowed({USER, ADMIN})
-    public List<ChallengeDto> getGoals(@PathVariable String login) {
-        log.info("Received request for all goals of the user with login '{}'", login);
-        return userChallengeService.getAvailableChallenges(login);
+    @GetMapping("/{userChallengeId}")
+    @RolesAllowed({USER})
+    public UserChallengeDto getUserChallenge(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID userChallengeId) {
+        CustomUserDetails cud = (CustomUserDetails) userDetails;
+        UUID userId = cud.getUserId();
+        log.info("Received request for user challenge with id '{}' of the user with id '{}'", userChallengeId, userId);
+        UserChallenge userChallenge = userChallengeService.getUserChallenge(userChallengeId);
+        return userChallengeMapper.mapEntityToDto(userChallenge);
     }
 
     @PostMapping(value = "/add-new/{challengeId}")
-    @RolesAllowed({USER, ADMIN})
-    public UserChallengeDto addUserChallenge(@PathVariable String login, @PathVariable UUID challengeId) {
-        log.info("Received request to add new user challenge with id '{}' for user with login '{}'", challengeId, login);
-        return userChallengeService.saveUserChallenge(login, challengeId);
+    @RolesAllowed({USER})
+    public UserChallengeDto addUserChallenge(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID challengeId) {
+        CustomUserDetails cud = (CustomUserDetails) userDetails;
+        UUID userId = cud.getUserId();
+        log.info("Received request to add new user challenge with id '{}' for user with id '{}'", challengeId, userId);
+        UserChallenge userChallenge = userChallengeService.saveUserChallenge(userId, challengeId);
+        return userChallengeMapper.mapEntityToDto(userChallenge);
     }
 
     @PostMapping(value = "/{userChallengeId}/user-summits/{userSummitId}/conquer/{score}")
-    @RolesAllowed({USER, ADMIN})
-    public UserChallengeDto conquerSummit(@PathVariable String login, @PathVariable UUID userChallengeId,
+    @RolesAllowed({USER})
+    public UserChallengeDto conquerSummit(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID userChallengeId,
                                           @PathVariable UUID userSummitId, @PathVariable int score) {
-        log.info("Received request to conquer user summit with id '{}' and login '{}'", userSummitId, login);
-        if (score < 0) {
-            log.warn("Request for conquer of user summit with id '{}' has invalid score value of {}", userSummitId, score);
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Punkty (score) nie mogą być ujemne");
-        }
-        return userChallengeService.setSummitConquered(userChallengeId, userSummitId, score);
+        CustomUserDetails cud = (CustomUserDetails) userDetails;
+        UUID userId = cud.getUserId();
+        log.info("Received request to conquer user summit with id '{}' and id '{}'", userSummitId, userId);
+        userChallengeValidator.validateScore(UserSummit.class, userSummitId, score);
+        UserChallenge userChallenge = userChallengeService.setSummitConquered(userChallengeId, userSummitId, score);
+        return userChallengeMapper.mapEntityToDto(userChallenge);
     }
 
-    @PatchMapping("/{id}/update-score/{score}")
-    @RolesAllowed({USER, ADMIN})
-    public void updateUserChallengeScore(@PathVariable String login, @PathVariable UUID id, @PathVariable Integer score) {
-        log.info("Received request to update score of user challenge with id '{}' for user with login '{}'", id, login);
-        if (score < 0) {
-            log.warn("Request to update user score of user challenge with id '{}' had wrong value of '{}' ", id, score);
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Score can be only positive value or zero");
-        }
-        userChallengeService.setUserChallengeScore(id, score);
+    @PatchMapping("/{userChallengeId}/update-score/{score}")
+    @RolesAllowed({USER})
+    public void updateUserChallengeScore(@AuthenticationPrincipal UserDetails userDetails,
+                                         @PathVariable UUID userChallengeId, @PathVariable Integer score) {
+        CustomUserDetails cud = (CustomUserDetails) userDetails;
+        UUID userId = cud.getUserId();
+        log.info("Received request to update score of user challenge with id '{}' for user with id '{}'", userChallengeId, userId);
+        userChallengeValidator.validateScore(UserChallenge.class, userChallengeId, score);
+        userChallengeService.setUserChallengeScore(userChallengeId, score);
     }
 
-    @DeleteMapping("/{id}")
-    @RolesAllowed({USER, ADMIN})
-    public void deleteUserChallenge(@PathVariable String login, @PathVariable UUID id) {
-        log.info("Received request to delete user challenge with id '{}' for user with login '{}'", id, login);
-        userChallengeService.deleteUserChallenge(id);
+    @DeleteMapping("/{userChallengeId}")
+    @RolesAllowed({USER})
+    public void deleteUserChallenge(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID userChallengeId) {
+        CustomUserDetails cud = (CustomUserDetails) userDetails;
+        UUID userId = cud.getUserId();
+        log.info("Received request to delete user challenge with id '{}' for user with id '{}'", userChallengeId, userId);
+        userChallengeService.deleteUserChallenge(userChallengeId);
     }
+    // TODO soft delete
 }

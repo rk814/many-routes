@@ -1,14 +1,10 @@
 package com.codecool.kgp.service;
 
-import com.codecool.kgp.controller.dto.ChallengeDto;
-import com.codecool.kgp.controller.dto.UserChallengeDto;
 import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.User;
 import com.codecool.kgp.entity.UserChallenge;
 import com.codecool.kgp.entity.UserSummit;
 import com.codecool.kgp.errorhandling.DuplicateEntryException;
-import com.codecool.kgp.mappers.ChallengeMapper;
-import com.codecool.kgp.mappers.UserChallengeMapper;
 import com.codecool.kgp.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,71 +22,65 @@ import java.util.UUID;
 public class UserChallengeService {
 
     private final UserChallengeRepository userChallengeRepository;
-    private final UserChallengeMapper userChallengeMapper;
-    private final UserRepository userRepository;
-    private final ChallengeRepository challengeRepository;
-    private final ChallengeMapper challengeMapper;
+    private final ChallengeService challengeService;
+    private final UserService userService;
 
-    public UserChallengeService(UserRepository userRepository, ChallengeRepository challengeRepository,
-                                UserChallengeRepository userChallengeRepository,
-                                UserChallengeMapper userChallengeMapper, ChallengeMapper challengeMapper) {
-        this.userRepository = userRepository;
-        this.challengeRepository = challengeRepository;
+
+    public UserChallengeService(UserChallengeRepository userChallengeRepository, ChallengeService challengeService, UserService userService) {
+        this.challengeService = challengeService;
+        this.userService = userService;
         this.userChallengeRepository = userChallengeRepository;
-        this.userChallengeMapper = userChallengeMapper;
-        this.challengeMapper = challengeMapper;
     }
 
-    public List<UserChallengeDto> getUserChallenges(String login) {
-        List<UserChallenge> userChallenges = getAllUserChallenges(login);
-        log.info("Found {} user challenges with login '{}'", userChallenges.size(), login);
-        return userChallenges.stream().map(userChallengeMapper::mapEntityToDto).toList();
+
+    public List<UserChallenge> getUserChallenges(UUID userId) {
+        List<UserChallenge> userChallenges = userChallengeRepository.findAllByUserId(userId);
+        log.info("Found {} user challenges with id '{}'", userChallenges.size(), userId);
+        return userChallenges;
     }
 
-    public UserChallengeDto getUserChallenge(UUID id) {
-        UserChallenge userChallenge = getUserChallengeById(id);
-        log.info("User challenge with id '{}' was found", id);
-        return userChallengeMapper.mapEntityToDto(userChallenge);
+    public UserChallenge getUserChallenge(UUID userId) {
+        UserChallenge userChallenge = findUserChallengeById(userId);
+        log.info("User challenge with id '{}' was found", userId);
+        return userChallenge;
     }
 
-    public List<UserChallengeDto> getCompletedUserChallenges(String login) {
-        List<UserChallenge> userChallenges = getAllUserChallenges(login);
-        List<UserChallengeDto> userChallengesDto = userChallenges.stream()
-                .filter(ch -> ch.getFinishedAt() != null)
-                .map(userChallengeMapper::mapEntityToDto).toList();
-        log.info("Found {} completed user challenges with login '{}'", userChallengesDto.size(), login);
-        return userChallengesDto;
+    public List<UserChallenge> getCompletedUserChallenges(UUID userId) {
+        List<UserChallenge> userChallenges = userChallengeRepository.findAllByUserId(userId);
+        List<UserChallenge> completedUserChallenges = userChallenges.stream()
+                .filter(ch -> ch.getFinishedAt() != null).toList();
+        log.info("Found {} completed user challenges with id '{}'", completedUserChallenges.size(), userId);
+        return completedUserChallenges;
     }
 
-    public List<UserChallengeDto> getActiveUserChallenges(String login) {
-        List<UserChallenge> userChallenges = getAllUserChallenges(login);
-        List<UserChallengeDto> userChallengesDto = userChallenges.stream()
-                .filter(ch -> ch.getFinishedAt() == null)
-                .map(userChallengeMapper::mapEntityToDto).toList();
-        log.info("Found {} active user challenges with login '{}'", userChallengesDto.size(), login);
-        return userChallengesDto;
+    public List<UserChallenge> getUncompletedUserChallenges(UUID userId) {
+        List<UserChallenge> userChallenges = userChallengeRepository.findAllByUserId(userId);
+        List<UserChallenge> uncompletedUserChallenges = userChallenges.stream()
+                .filter(ch -> ch.getFinishedAt() == null).toList();
+        log.info("Found {} active user challenges with id '{}'", uncompletedUserChallenges.size(), userId);
+        return uncompletedUserChallenges;
     }
 
-    public List<ChallengeDto> getAvailableChallenges(String login) {
-        List<Challenge> challenges = challengeRepository.findAll();
-        List<UserChallenge> userChallenges = getAllUserChallenges(login);
-        List<ChallengeDto> challengesDto = challenges.stream()
+    public List<Challenge> getUnstartedChallenges(UUID userId) {
+        List<Challenge> challenges = challengeService.getAllActiveChallenges();
+        List<UserChallenge> userChallenges = userChallengeRepository.findAllByUserId(userId);
+        List<Challenge> availableChallenges = challenges.stream()
                 .filter(challenge ->
                         userChallenges.stream()
                                 .noneMatch(userChallenge -> challenge.getId().equals(userChallenge.getChallenge().getId())))
-                .map(challengeMapper::mapEntityToDto).toList();
-        log.info("Found {} available user challenges with login '{}'", challengesDto.size(), login);
-        return challengesDto;
+                .toList();
+        log.info("Found {} available user challenges with id '{}'", availableChallenges.size(), userId);
+        return availableChallenges;
     }
 
-    public UserChallengeDto saveUserChallenge(String login, UUID challengeId) {
-        User user = getUserByLogin(login);
-        if (hasThatChallengeActive(challengeId, user.getUserChallenges())) {
-            log.warn("User with login '{}' attempted to start the challenge with id '{}' already active", login, challengeId);
-            throw new DuplicateEntryException("Użytkownik już uczestniczy w tym wyzwaniu");
+    public UserChallenge saveUserChallenge(UUID userId, UUID challengeId) {
+        User user = userService.findUser(userId);
+        if (isTheChallengeActive(challengeId, user.getUserChallenges())) {
+            log.warn("User with id '{}' attempted to start the challenge with id '{}' already active", userId, challengeId);
+            throw new DuplicateEntryException("To wyzwanie jest już rozpoczęte");
         }
 
-        Challenge challenge = getChallengeById(challengeId);
+        Challenge challenge = challengeService.findChallenge(challengeId);
         UserChallenge userChallenge = new UserChallenge(user, challenge);
         challenge.getSummitList().forEach(summit -> {
             UserSummit userSummit = new UserSummit(userChallenge, summit);
@@ -100,21 +90,21 @@ public class UserChallengeService {
         UserChallenge userChallengeFromDb = userChallengeRepository.save(userChallenge);
 
         user.assignUserChallenge(userChallengeFromDb);
-        userRepository.save(user);
+        userService.saveUser(user);
 
-        log.info("User challenge with id '{}' was save for user with login '{}' as user challenge with id '{}'",
-                challengeId, login, userChallenge.getId());
+        log.info("User challenge with id '{}' was save for user with id '{}' as user challenge with id '{}'",
+                challengeId, userId, userChallenge.getId());
 
-        return userChallengeMapper.mapEntityToDto(userChallengeFromDb);
+        return userChallengeFromDb;
     }
 
-    public UserChallengeDto setSummitConquered(UUID userChallengeId, UUID userSummitId, int score) {
-        UserChallenge userChallenge = getUserChallengeById(userChallengeId);
+    public UserChallenge setSummitConquered(UUID userChallengeId, UUID userSummitId, int score) {
+        UserChallenge userChallenge = findUserChallengeById(userChallengeId);
         UserSummit userSummit = userChallenge.getUserSummitList().stream().filter(us -> us.getId().equals(userSummitId)).findFirst()
                 .orElseThrow(() -> {
                     log.warn("User Challenge with id '{}' does not contain User Summit with id '{}'", userChallengeId, userSummitId);
                     return new ResponseStatusException(HttpStatus.NOT_FOUND,
-                            String.format("Szczyt o numerze id '%s' nie został znaleziony", userSummitId)
+                            String.format("Szczyt o numerze id '%s' nie istnieje", userSummitId)
                     );
                 });
 
@@ -131,59 +121,33 @@ public class UserChallengeService {
             log.info("User challenge with id '{}' is not completed jet", userChallenge.getId());
         }
 
-        UserChallenge userChallengeFromDb = userChallengeRepository.save(userChallenge);
-        return userChallengeMapper.mapEntityToDto(userChallengeFromDb);
+        return userChallengeRepository.save(userChallenge);
     }
 
-    public void setUserChallengeScore(UUID id, Integer score) {
-        UserChallenge userChallenge = getUserChallengeById(id);
-
+    public void setUserChallengeScore(UUID userChallengeId, Integer score) {
+        UserChallenge userChallenge = findUserChallengeById(userChallengeId);
         userChallenge.setScore(score);
         userChallengeRepository.save(userChallenge);
-        log.info("Score of user challenge with id '{}' was update to new value of {} points", id, score);
+        log.info("Score of user challenge with id '{}' was update to new value of {} points", userChallengeId, score);
     }
 
 
-    public void deleteUserChallenge(UUID id) {
-        UserChallenge userChallenge = getUserChallengeById(id);
-
+    public void deleteUserChallenge(UUID userChallengeId) {
+        UserChallenge userChallenge = findUserChallengeById(userChallengeId);
         userChallengeRepository.delete(userChallenge);
-        log.info("User challenge with id '{}' was successfully deleted", id);
-        // TODO soft delete
+        log.info("User challenge with id '{}' was successfully deleted", userChallengeId);
     }
 
-    protected UserChallenge getUserChallengeById(UUID id) {
-        return userChallengeRepository.findById(id)
+    protected UserChallenge findUserChallengeById(UUID userChallengeId) {
+        return userChallengeRepository.findById(userChallengeId)
                 .orElseThrow(() -> {
-                    log.warn("User challenge with id '{}' was not found", id);
+                    log.warn("User challenge with id '{}' was not found", userChallengeId);
                     return new ResponseStatusException(HttpStatus.NOT_FOUND,
-                            String.format("Wyzwanie użytkownika o numerze id '%s' nie istnieje", id));
+                            String.format("Wyzwanie użytkownika o numerze id '%s' nie istnieje", userChallengeId));
                 });
     }
 
-    private User getUserByLogin(String login) {
-        return userRepository.findByLogin(login)
-                .orElseThrow(() -> {
-                    log.warn("Login '{}' is invalid", login);
-                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Login jest niewłaściwy");
-                });
-    }
-
-    private List<UserChallenge> getAllUserChallenges(String login) {
-        User user = getUserByLogin(login);
-        return userChallengeRepository.findAllByUserId(user.getId());
-    }
-
-    private Challenge getChallengeById(UUID challengeId) {
-        return challengeRepository.findById(challengeId)
-                .orElseThrow(() -> {
-                    log.warn("Challenge with {} was not found", challengeId);
-                    return new ResponseStatusException(HttpStatus.NOT_FOUND,
-                            String.format("Wyzwanie o numerze id '%s' nie zostało znalezione", challengeId));
-                });
-    }
-
-    private boolean hasThatChallengeActive(UUID challengeId, List<UserChallenge> userChallenges) {
+    private boolean isTheChallengeActive(UUID challengeId, List<UserChallenge> userChallenges) {
         return userChallenges.stream().anyMatch(ch -> ch.getChallenge().getId() == challengeId && ch.getFinishedAt() == null);
     }
 
@@ -200,7 +164,7 @@ public class UserChallengeService {
     private void setUserChallengeFinishedTime(UserChallenge userChallenge) {
         try {
             userChallenge.setFinishedAt(LocalDateTime.now());
-        } catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
             log.warn("User challenge with id '{}' was already completed", userChallenge.getId());
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "To wyzwanie zostało już wcześniej zakończone");
         }

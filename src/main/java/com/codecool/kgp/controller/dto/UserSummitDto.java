@@ -1,7 +1,5 @@
 package com.codecool.kgp.controller.dto;
 
-import com.codecool.kgp.entity.Challenge;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -17,7 +15,7 @@ public record UserSummitDto(
         String name,
         Double[] coordinates,
         String mountainRange,
-        String mountains,
+        String mountainsChain,
         int height,
         String description,
         String guideNotes,
