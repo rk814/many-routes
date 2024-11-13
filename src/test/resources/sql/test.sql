@@ -2,7 +2,7 @@ INSERT INTO actor(id, login, email, hash_password, name, role)
 VALUES ('5c39c496-ff63-4c8a-bad4-47d6a97053e7',
         'adam_wanderlust',
         'adam@adventureworld.com',
-        'safe-password123',
+        '$2a$10$X.Y0Peu/aIl7rDOFOANth.b/Prgy2ZVNNOHPK8lXw9XnF2B3ao.am', -- Bcrypt hash of 'safe-password123'
         'Adam',
         'ADMIN');
 
@@ -14,9 +14,11 @@ VALUES ('7b92d376-cc0d-4a1a-bc2e-d8f7c9d5e5a7',
         'Bella',
         'USER');
 
-INSERT INTO challenge(id, name)
+INSERT INTO challenge(id, name, description, status)
 VALUES ('4c39c496-ff63-4c8a-bad4-47d6a97053e7',
-        'KGP');
+        'Conqueror',
+        'Climb the highest peak of the mountain range and earn points'
+        'ACTIVE');
 
 INSERT INTO challenge(id, description, name, status)
 VALUES ('8b7935ab-5e22-485b-ae18-7e5ad88b005e', 'first challenge', 'test1-challenge', 'ACTIVE'),
