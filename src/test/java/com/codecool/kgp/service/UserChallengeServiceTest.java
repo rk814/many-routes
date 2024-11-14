@@ -2,7 +2,6 @@ package com.codecool.kgp.service;
 
 import com.codecool.kgp.entity.*;
 import com.codecool.kgp.entity.enums.Role;
-import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.errorhandling.DuplicateEntryException;
 import com.codecool.kgp.repository.UserChallengeRepository;
 import org.instancio.Instancio;
@@ -56,8 +55,7 @@ class UserChallengeServiceTest {
 
         UserChallenge challenge1 = Instancio.create(UserChallenge.class);
         UserChallenge challenge2 = Instancio.create(UserChallenge.class);
-        Mockito.when(userChallengeRepository.findAllByUserId(user1Id))
-                .thenReturn(List.of(challenge1, challenge2));
+        Mockito.when(userChallengeRepository.findAllByUserId(user1Id)).thenReturn(List.of(challenge1, challenge2));
 
         //when:
         List<UserChallenge> actual = userChallengeService.getUserChallenges(user1Id);
@@ -119,28 +117,6 @@ class UserChallengeServiceTest {
     }
 
     @Test
-    public void getUnstartedChallenges_shouldReturnAllUnstartedChallenges() {
-        //given:
-        UUID user1Id = user1.getId();
-        List<Challenge> challenges = Instancio.ofList(Challenge.class).size(2)
-                .set(field(Challenge::getStatus), Status.ACTIVE)
-                .create();
-        Mockito.when(challengeService.getAllActiveChallenges()).thenReturn(challenges);
-
-        UserChallenge userChallenge = Instancio.of(UserChallenge.class)
-                .set(field(UserChallenge::getChallenge), challenges.get(0))
-                .create();
-
-        Mockito.when(userChallengeRepository.findAllByUserId(user1.getId())).thenReturn(List.of(userChallenge));
-
-        //when:
-        List<Challenge> actual = userChallengeService.getUnstartedChallenges(user1Id);
-
-        //then:
-        Assertions.assertThat(actual).containsExactly(challenges.get(1));
-    }
-
-    @Test
     void saveUserChallenge_shouldReturnSavedUserChallenge() {
         //given:
         UUID user1Id = user1.getId();
@@ -178,6 +154,8 @@ class UserChallengeServiceTest {
     void saveUserChallenge_shouldThrowDuplicatedEntryException() {
         //given:
         UUID user1Id = user1.getId();
+        Mockito.when(userService.findUser(user1Id)).thenReturn(user1);
+
         Challenge challenge = Instancio.create(Challenge.class);
         UserChallenge userChallenges = Instancio.of(UserChallenge.class)
                 .set(field(UserChallenge::getChallenge), challenge)
@@ -185,7 +163,6 @@ class UserChallengeServiceTest {
                 .create();
         user1.setUserChallenges(List.of(userChallenges));
 
-        Mockito.when(userService.findUser(user1Id)).thenReturn(user1);
         Mockito.when(challengeService.findChallenge(challenge.getId())).thenReturn(challenge);
 
         //when and then:

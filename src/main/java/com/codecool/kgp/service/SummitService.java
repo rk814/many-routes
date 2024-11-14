@@ -24,9 +24,9 @@ public class SummitService {
     }
 
 
-    public Summit getSummit(UUID id) {
-        Summit summit = findSummit(id);
-        log.info("Summit with id '{}' was found", id);
+    public Summit getSummit(UUID summitId) {
+        Summit summit = findSummit(summitId);
+        log.info("Summit with id '{}' was found", summitId);
         return summit;
     }
 
@@ -36,35 +36,29 @@ public class SummitService {
         return summits;
     }
 
-//    public List<SummitSimpleDto> getAllSummitsSimplified() {
-//        List<Summit> summits = summitRepository.findAll();
-//        log.info("{} summitList were found", summits.size());
-//        return summits.stream().map(summitMapper::mapEntityToSimpleDto).toList();
-//    }
-
     public Summit addNewSummit(Summit summit) {
         Summit summitFromDb = summitRepository.save(summit);
         log.info("New summit with id '{}' was saved", summit.getId());
         return summitFromDb;
     }
 
-    public Summit updateSummit(UUID id, Summit summit) {
-        Summit summitFromDb = findSummit(id);
+    public Summit updateSummit(UUID summitId, Summit summit) {
+        Summit summitFromDb = findSummit(summitId);
         summitFromDb.updateSummit(summit);
         summitRepository.save(summitFromDb);
-        log.info("Summit with id '{}' was successfully updated", id);
+        log.info("Summit with id '{}' was successfully updated", summitId);
         return summitFromDb;
     }
 
-    public void deleteSummit(UUID id) {
-        Summit summitFromDb = findSummit(id);
+    public void deleteSummit(UUID summitId) {
+        Summit summitFromDb = findSummit(summitId);
         summitRepository.delete(summitFromDb);
-        log.info("Summit with id '{}' was successfully deleted", id);
+        log.info("Summit with id '{}' was successfully deleted", summitId);
     }
 
-    private Summit findSummit(UUID id) {
-        return summitRepository.findById(id).orElseThrow(() -> {
-            log.warn("Challenge with id '{}' was not found", id);
+    private Summit findSummit(UUID summitId) {
+        return summitRepository.findById(summitId).orElseThrow(() -> {
+            log.warn("Summit with id '{}' was not found", summitId);
             return new ResponseStatusException(HttpStatus.NOT_FOUND, "Summit was not found");
         });
     }

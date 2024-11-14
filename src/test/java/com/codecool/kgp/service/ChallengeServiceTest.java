@@ -4,11 +4,9 @@ import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.Summit;
 import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.errorhandling.DuplicateEntryException;
-import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.repository.ChallengeRepository;
 import com.codecool.kgp.repository.SummitRepository;
 import org.assertj.core.api.InstanceOfAssertFactories;
-import org.assertj.core.api.InstanceOfAssertFactory;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -27,44 +25,50 @@ import static org.mockito.Mockito.verify;
 class ChallengeServiceTest {
 
     private final ChallengeRepository challengeRepository = Mockito.mock();
-    private final SummitRepository summitRepository = Mockito.mock();
+    private final SummitService summitService = Mockito.mock();
+    private final UserChallengeService userChallengeService = Mockito.mock();
 
     private final ChallengeService challengeService = new ChallengeService(
-            challengeRepository, summitRepository
+            challengeRepository, summitService, userChallengeService
     );
 
     @Test
-    void getAllChallenges_shouldReturnAllChallenges() {
+    void getAllChallenges_shouldReturnAllChallengesWithSummits() {
         //given:
         Status status = Status.ACTIVE;
+        List<String> fields = List.of("summitList");
         List<Challenge> challenges = Instancio.ofList(Challenge.class)
                 .set(field(Challenge::getStatus), Status.ACTIVE)
                 .create();
         Mockito.when(challengeRepository.findAllByStatusWithSummits(status)).thenReturn(challenges);
 
         //when:
-        List<Challenge> actual = challengeService.getAllChallenges(status);
+        List<Challenge> actual = challengeService.getAllChallenges(status, fields);
 
         //then:
         Assertions.assertThat(actual).hasSize(challenges.size());
         actual.forEach(a -> Assertions.assertThat(a.getStatus()).isEqualTo(Status.ACTIVE));
+        actual.forEach(a -> Assertions.assertThat(a.getSummitList()).isNotEmpty());
     }
 
     @Test
-    void getAllChallengesWithoutSummitLists_shouldReturnAllChallenges() {
+    void getAllChallenges_shouldReturnAllChallengesWithoutSummitList() {
         //given:
         Status status = Status.ACTIVE;
+        List<String> fields = null;
         List<Challenge> challenges = Instancio.ofList(Challenge.class)
                 .set(field(Challenge::getStatus), Status.ACTIVE)
+                .setBlank(field(Challenge::getSummitList))
                 .create();
         Mockito.when(challengeRepository.findAllByStatus(status)).thenReturn(challenges);
 
         //when:
-        List<Challenge> actual = challengeService.getAllChallengesWithoutSummitLists(status);
+        List<Challenge> actual = challengeService.getAllChallenges(status, fields);
 
         //then:
         Assertions.assertThat(actual).hasSize(challenges.size());
         actual.forEach(a -> Assertions.assertThat(a.getStatus()).isEqualTo(Status.ACTIVE));
+        actual.forEach(a -> Assertions.assertThat(a.getSummitList()).isEmpty());
     }
 
     @Test
@@ -108,6 +112,7 @@ class ChallengeServiceTest {
 
         //then:
         Assertions.assertThat(actual).isEqualTo(savedChallenge);
+        Mockito.verify(challengeRepository).save(challenge);
     }
 
     @Test
@@ -120,6 +125,7 @@ class ChallengeServiceTest {
         //when and then:
         Assertions.assertThatThrownBy(() -> challengeService.addNewChallenge(challenge))
                 .isInstanceOf(DuplicateEntryException.class);
+        Mockito.verify(challengeRepository).save(challenge);
     }
 
     @Test
@@ -132,7 +138,7 @@ class ChallengeServiceTest {
                 .setBlank(field(Challenge::getSummitList))
                 .create();
         Mockito.when(challengeRepository.findById(challenge.getId())).thenReturn(Optional.of(challenge));
-        Mockito.when(summitRepository.findById(summit.getId())).thenReturn(Optional.of(summit));
+        Mockito.when(summitService.getSummit(summit.getId())).thenReturn(summit);
 
         //when:
         Challenge actual = challengeService.attachSummitToChallenge(summit.getId(), challenge.getId());
@@ -143,7 +149,7 @@ class ChallengeServiceTest {
     }
 
     @Test
-    void attachSummitToChallenge_shouldReturn404NoChallengeFound() {
+    void attachSummitToChallenge_shouldReturn404() {
         //given:
         Summit summit = Instancio.of(Summit.class)
                 .setBlank(field(Summit::getChallengeList))
@@ -158,27 +164,6 @@ class ChallengeServiceTest {
                         challengeService.attachSummitToChallenge(summit.getId(), challenge.getId()))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("Challenge", "not found")
-                .extracting("status")
-                .isEqualTo(HttpStatus.NOT_FOUND);
-    }
-
-    @Test
-    void attachSummitToChallenge_shouldReturn404NoSummitFound() {
-        //given:
-        Summit summit = Instancio.of(Summit.class)
-                .setBlank(field(Summit::getChallengeList))
-                .create();
-        Challenge challenge = Instancio.of(Challenge.class)
-                .setBlank(field(Challenge::getSummitList))
-                .create();
-        Mockito.when(challengeRepository.findById(challenge.getId())).thenReturn(Optional.of(challenge));
-        Mockito.when(summitRepository.findById(summit.getId())).thenReturn(Optional.empty());
-
-        //when and then:
-        Assertions.assertThatThrownBy(() ->
-                        challengeService.attachSummitToChallenge(summit.getId(), challenge.getId()))
-                .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining("Summit", "not found")
                 .extracting("status")
                 .isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -193,7 +178,7 @@ class ChallengeServiceTest {
                 .set(field(Challenge::getSummitList), List.of(summit))
                 .create();
         Mockito.when(challengeRepository.findById(challenge.getId())).thenReturn(Optional.of(challenge));
-        Mockito.when(summitRepository.findById(summit.getId())).thenReturn(Optional.of(summit));
+        Mockito.when(summitService.getSummit(summit.getId())).thenReturn(summit);
 
         //when:
         Challenge actual = challengeService.detachSummitFromChallenge(summit.getId(), challenge.getId());
@@ -206,7 +191,7 @@ class ChallengeServiceTest {
     }
 
     @Test
-    void detachSummitFromChallenge_shouldReturn404NoChallengeFound() {
+    void detachSummitFromChallenge_shouldReturn404() {
         //given:
         Summit summit = Instancio.of(Summit.class)
                 .setBlank(field(Summit::getChallengeList))
@@ -221,27 +206,6 @@ class ChallengeServiceTest {
                         challengeService.detachSummitFromChallenge(summit.getId(), challenge.getId()))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("Challenge", "not found")
-                .extracting("status")
-                .isEqualTo(HttpStatus.NOT_FOUND);
-    }
-
-    @Test
-    void detachSummitFromChallenge_shouldReturn404NoSummitFound() {
-        //given:
-        Summit summit = Instancio.of(Summit.class)
-                .setBlank(field(Summit::getChallengeList))
-                .create();
-        Challenge challenge = Instancio.of(Challenge.class)
-                .set(field(Challenge::getSummitList), List.of(summit))
-                .create();
-        Mockito.when(challengeRepository.findById(challenge.getId())).thenReturn(Optional.of(challenge));
-        Mockito.when(summitRepository.findById(summit.getId())).thenReturn(Optional.empty());
-
-        //when and then:
-        Assertions.assertThatThrownBy(() ->
-                        challengeService.detachSummitFromChallenge(summit.getId(), challenge.getId()))
-                .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining("Summit", "not found")
                 .extracting("status")
                 .isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -265,8 +229,8 @@ class ChallengeServiceTest {
         //then:
         Assertions.assertThat(actual).isEqualTo(challengeFromDb);
 
-        verify(challengeRepository).findById(id);
-        verify(challengeRepository).save(challengeFromDb);
+       Mockito.verify(challengeRepository).findById(id);
+       Mockito.verify(challengeRepository).save(challengeFromDb);
     }
 
     @Test
@@ -295,8 +259,8 @@ class ChallengeServiceTest {
         challengeService.deleteChallenge(id);
 
         //then:
-        verify(challengeRepository).findById(id);
-        verify(challengeRepository).delete(challenge);
+        Mockito.verify(challengeRepository).findById(id);
+        Mockito.verify(challengeRepository).delete(challenge);
     }
 
     @Test

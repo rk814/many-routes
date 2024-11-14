@@ -8,14 +8,19 @@ import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.Summit;
 import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.mappers.ChallengeMapper;
+import com.codecool.kgp.mockuser.WithMockCustomUser;
 import com.codecool.kgp.repository.ChallengeRepository;
 import com.codecool.kgp.repository.SummitRepository;
 import com.codecool.kgp.repository.UserRepository;
 import com.codecool.kgp.service.ChallengeService;
 import com.codecool.kgp.service.CustomUserDetailsService;
 import com.google.gson.Gson;
+import org.hamcrest.Matchers;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -65,9 +70,19 @@ class ChallengeControllerTest {
     private UserRepository userRepository;
 
 
-    @Test
-    @WithMockUser(roles = ADMIN)
-    void getChallenges_shouldReturnAllActiveChallenges() throws Exception {
+    @ParameterizedTest
+    @CsvSource(value = {
+            "?filter=&status=ACTIVE",
+            "?filter=&status=active",
+            "?filter=&status=Active",
+            "?filter=all&status=ACTIVE",
+            "?filter=All&status=ACTIVE",
+            "?status=ACTIVE&filter=All",
+            "''",
+            "?filter=All",
+    })
+    @WithMockCustomUser(username = "adam_wanderlust", role = ADMIN, id = "5c39c496-ff63-4c8a-bad4-47d6a97053e7")
+    void getChallenges_shouldReturnAllActiveChallenges(String query) throws Exception {
         //given:
         Status status = Status.ACTIVE;
         List<String> fields = null;
@@ -76,7 +91,7 @@ class ChallengeControllerTest {
         List<ChallengeDto> challengesDto = Instancio.ofList(ChallengeDto.class).size(3)
                 .set(field(ChallengeDto::status), Status.ACTIVE)
                 .create();
-        Mockito.when(challengeService.getAllChallenges(status)).thenReturn(challenges);
+        Mockito.when(challengeService.getAllChallenges(status, fields)).thenReturn(challenges);
 
         AtomicInteger counter = new AtomicInteger(0);
         Mockito.when(challengeMapper.mapEntityToDto(any(Challenge.class), eq(fields))).thenAnswer(invocationOnMock ->
@@ -84,7 +99,7 @@ class ChallengeControllerTest {
         );
 
         //when:
-        var response = mockMvc.perform(get("/api/v1/challenges/"));
+        var response = mockMvc.perform(get("/api/v1/challenges/" + query));
 
         //then:
         response.andExpect(status().isOk())
@@ -98,11 +113,29 @@ class ChallengeControllerTest {
                 .andExpect(jsonPath("$[0].description").exists())
                 .andExpect(jsonPath("$[0].summitList").exists());
 
-        verify(challengeService).getAllChallenges(Status.ACTIVE);
+        Mockito.verify(challengeService).getAllChallenges(Status.ACTIVE, fields);
+        Mockito.verify(challengeMapper, Mockito.times(3)).mapEntityToDto(any(Challenge.class), eq(fields));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "?filter=non&status=ACTIVE",
+            "?filter=Unstarted&status=xxx",
+            "?filter=off&status=deActive",
+            "?filter=off",
+            "?status=unActive",
+    })
+    @WithMockCustomUser(username = "adam_wanderlust", role = ADMIN, id = "5c39c496-ff63-4c8a-bad4-47d6a97053e7")
+    void getChallenges_shouldReturn404(String query) throws Exception {
+        //when:
+        var response = mockMvc.perform(get("/api/v1/challenges/" + query));
+
+        //then:
+        response.andExpect(status().isBadRequest());
     }
 
     @Test
-    @WithMockUser(roles = ADMIN)
+    @WithMockCustomUser(username = "adam_wanderlust", role = ADMIN, id = "5c39c496-ff63-4c8a-bad4-47d6a97053e7")
     void getChallenges_shouldReturnAllActiveChallengesWithSpecifiedFieldsOnly() throws Exception {
         //given:
         Status status = Status.ACTIVE;
@@ -119,7 +152,7 @@ class ChallengeControllerTest {
                 .ignore(field(ChallengeDto::name))
                 .ignore(field(ChallengeDto::description))
                 .create();
-        Mockito.when(challengeService.getAllChallengesWithoutSummitLists(status)).thenReturn(challenges);
+        Mockito.when(challengeService.getAllChallenges(status, fields)).thenReturn(challenges);
         Mockito.when(challengeMapper.mapEntityToDto(any(Challenge.class), eq(fields))).thenReturn(challengeDto);
 
         //when:
@@ -135,11 +168,12 @@ class ChallengeControllerTest {
                 .andExpect(jsonPath("$[0].name").doesNotExist())
                 .andExpect(jsonPath("$[0].description").doesNotExist());
 
-        verify(challengeService).getAllChallengesWithoutSummitLists(Status.ACTIVE);
+        Mockito.verify(challengeService).getAllChallenges(Status.ACTIVE, fields);
+        Mockito.verify(challengeMapper).mapEntityToDto(challenges.get(0), fields);
     }
 
     @Test
-    @WithMockUser(roles = ADMIN)
+    @WithMockCustomUser(username = "adam_wanderlust", role = ADMIN, id = "5c39c496-ff63-4c8a-bad4-47d6a97053e7")
     void getChallenges_shouldReturnAllActiveChallengesWithSummitsFields() throws Exception {
         //given:
         List<String> fields = List.of("summitList");
@@ -152,11 +186,11 @@ class ChallengeControllerTest {
                 .ignore(field(ChallengeDto::name))
                 .ignore(field(ChallengeDto::description))
                 .create();
-        Mockito.when(challengeService.getAllChallenges(any(Status.class))).thenReturn(challenges);
+        Mockito.when(challengeService.getAllChallenges(any(Status.class), eq(fields))).thenReturn(challenges);
         Mockito.when(challengeMapper.mapEntityToDto(any(Challenge.class), eq(fields))).thenReturn(challengeDto);
 
         //when:
-        var response = mockMvc.perform(get("/api/v1/challenges/" + "?fields="+ String.join(",", fields)));
+        var response = mockMvc.perform(get("/api/v1/challenges/" + "?fields=" + String.join(",", fields)));
 
         //then:
         response.andExpect(status().isOk())
@@ -167,11 +201,39 @@ class ChallengeControllerTest {
                 .andExpect(jsonPath("$[0].name").doesNotExist())
                 .andExpect(jsonPath("$[0].description").doesNotExist());
 
-        verify(challengeMapper).mapEntityToDto(challenges.get(0),fields);
+        Mockito.verify(challengeService).getAllChallenges(Status.ACTIVE, fields);
+        Mockito.verify(challengeMapper).mapEntityToDto(challenges.get(0), fields);
+    }
+
+
+    @ParameterizedTest
+    @ValueSource(strings = {"unstarted", "UNSTARTED", "Unstarted"})
+    @WithMockCustomUser(username = "adam_wanderlust", role = ADMIN, id = "5c39c496-ff63-4c8a-bad4-47d6a97053e7")
+    void getChallenges_shouldReturnAllActiveUnstartedChallengesWithoutSummitsFields(String filter) throws Exception {
+        //given:
+        UUID userId = UUID.fromString("5c39c496-ff63-4c8a-bad4-47d6a97053e7");
+        List<String> fields = null;
+
+        List<Challenge> challenges = Instancio.ofList(Challenge.class).size(8).create();
+        ChallengeDto challengeDto = Instancio.of(ChallengeDto.class)
+                .set(field(ChallengeDto::status), Status.ACTIVE).create();
+
+        Mockito.when(challengeService.getUnstartedChallenges(eq(userId), any(Status.class), eq(fields))).thenReturn(challenges);
+        Mockito.when(challengeMapper.mapEntityToDto(any(Challenge.class), eq(fields))).thenReturn(challengeDto);
+
+        //when:
+        var response = mockMvc.perform(get("/api/v1/challenges/" + "?filter=" + filter));
+
+        //then:
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(8));
+        response.andExpect(jsonPath("$[*].status").value(Matchers.everyItem(Matchers.is("ACTIVE"))));
+        Mockito.verify(challengeService).getUnstartedChallenges(userId, Status.ACTIVE, null);
+        Mockito.verify(challengeMapper, Mockito.times(8)).mapEntityToDto(any(Challenge.class), eq(null));
     }
 
     @Test
-    @WithMockUser(roles = ADMIN)
+    @WithMockCustomUser(username = "adam_wanderlust", role = ADMIN, id = "5c39c496-ff63-4c8a-bad4-47d6a97053e7")
     void getChallenges_shouldReturnAllRemovedChallenges() throws Exception {
         //given:
         Status status = Status.REMOVED;
@@ -182,7 +244,7 @@ class ChallengeControllerTest {
         ChallengeDto challengeDto = Instancio.of(ChallengeDto.class)
                 .set(field(ChallengeDto::status), Status.REMOVED)
                 .create();
-        Mockito.when(challengeService.getAllChallenges(status)).thenReturn(challenges);
+        Mockito.when(challengeService.getAllChallenges(status, fields)).thenReturn(challenges);
         Mockito.when(challengeMapper.mapEntityToDto(challenges.get(0), fields)).thenReturn(challengeDto);
 
         //when:
@@ -193,11 +255,12 @@ class ChallengeControllerTest {
                 .andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].status").value("REMOVED"));
 
-        verify(challengeService).getAllChallenges(Status.REMOVED);
+        Mockito.verify(challengeService).getAllChallenges(Status.REMOVED, fields);
+        Mockito.verify(challengeMapper).mapEntityToDto(challenges.get(0), fields);
     }
 
     @Test
-    @WithMockUser(roles = ADMIN)
+    @WithMockCustomUser(username = "adam_wanderlust", role = ADMIN, id = "5c39c496-ff63-4c8a-bad4-47d6a97053e7")
     void getChallenges_shouldThrow404() throws Exception {
         //when:
         var response = mockMvc.perform(get("/api/v1/challenges/?status=UNKNOWN"));

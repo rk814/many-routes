@@ -2,14 +2,15 @@ package com.codecool.kgp.service;
 
 import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.Summit;
+import com.codecool.kgp.entity.UserChallenge;
 import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.errorhandling.DuplicateEntryException;
 import com.codecool.kgp.repository.ChallengeRepository;
-import com.codecool.kgp.repository.SummitRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -22,31 +23,47 @@ import java.util.UUID;
 public class ChallengeService {
 
     private final ChallengeRepository challengeRepository;
-    private final SummitRepository summitRepository;
+    private final SummitService summitService;
+    private final UserChallengeService userChallengeService;
 
-    public ChallengeService(ChallengeRepository challengeRepository, SummitRepository summitRepository) {
+    public ChallengeService(ChallengeRepository challengeRepository, SummitService summitService, UserChallengeService userChallengeService) {
         this.challengeRepository = challengeRepository;
-        this.summitRepository = summitRepository;
+        this.summitService = summitService;
+        this.userChallengeService = userChallengeService;
     }
 
-    public List<Challenge> getAllChallenges(Status status) {
-        List<Challenge> challenges = challengeRepository.findAllByStatusWithSummits(status);
+    @Transactional(propagation = Propagation.NEVER)
+    public List<Challenge> getAllChallenges(Status status, List<String> fields) {
+        boolean includeSummitList = fields != null && fields.contains("summitList");
+        List<Challenge> challenges;
+        if (includeSummitList) {
+            challenges = challengeRepository.findAllByStatusWithSummits(status);
+        } else {
+            challenges = challengeRepository.findAllByStatus(status);
+            System.out.println("ssss");
+        }
         log.info("{} challenges were found", challenges.size());
         return challenges;
     }
 
-    public List<Challenge> getAllChallengesWithoutSummitLists(Status status) {
-        List<Challenge> challenges = challengeRepository.findAllByStatus(status);
-        log.info("{} challenges were found", challenges.size());
-        return challenges;
+    public List<Challenge> getUnstartedChallenges(UUID userId, Status status, List<String> fields) {
+        List<Challenge> allChallenges = getAllChallenges(status, fields);
+        List<UserChallenge> userChallenges = userChallengeService.getUserChallenges(userId);
+        List<Challenge> availableChallenges = allChallenges.stream()
+                .filter(challenge ->
+                        userChallenges.stream()
+                                .noneMatch(userChallenge -> challenge.getId().equals(userChallenge.getChallenge().getId())))
+                .toList();
+        log.info("Found {} available (unstarted) user challenges for user with id '{}'", availableChallenges.size(), userId);
+        return availableChallenges;
     }
 
-    public Challenge getChallenge(UUID id) {
-        Challenge challenge = challengeRepository.findById(id).orElseThrow(() -> {
-            log.warn("Challenge with id '{}' was not found", id);
+    public Challenge getChallenge(UUID challengeId) {
+        Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(() -> {
+            log.warn("Challenge with id '{}' was not found", challengeId);
             return new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge was not found");
         });
-        log.info("Challenge with id '{}' was found", id);
+        log.info("Challenge with id '{}' was found", challengeId);
         return challenge;
     }
 
@@ -61,9 +78,9 @@ public class ChallengeService {
         }
     }
 
-    public Challenge attachSummitToChallenge(UUID summitId, UUID id) {
-        Challenge challenge = findChallenge(id);
-        Summit summit = findSummit(summitId);
+    public Challenge attachSummitToChallenge(UUID summitId, UUID challengeId) {
+        Challenge challenge = findChallenge(challengeId);
+        Summit summit = summitService.getSummit(summitId);
 
         challenge.addSummit(summit);
         summit.addChallenge(challenge);
@@ -71,9 +88,9 @@ public class ChallengeService {
         return challenge;
     }
 
-    public Challenge detachSummitFromChallenge(UUID summitId, UUID id) {
-        Challenge challenge = findChallenge(id);
-        Summit summit = findSummit(summitId);
+    public Challenge detachSummitFromChallenge(UUID summitId, UUID challengeId) {
+        Challenge challenge = findChallenge(challengeId);
+        Summit summit = summitService.getSummit(summitId);
 
         challenge.removeSummit(summit);
         summit.removeChallenge(challenge);
@@ -82,38 +99,28 @@ public class ChallengeService {
         return challenge;
     }
 
-    public Challenge updateChallenge(UUID id, Challenge challenge) {
-        Challenge challengeFromDB = findChallenge(id);
+    public Challenge updateChallenge(UUID challengeId, Challenge challenge) {
+        Challenge challengeFromDB = findChallenge(challengeId);
         challengeFromDB.updateChallenge(challenge);
         challengeRepository.save(challengeFromDB);
         return challengeFromDB;
     }
 
-    public void deleteChallenge(UUID id) {
-        Challenge challenge = findChallenge(id);
+    public void deleteChallenge(UUID challengeId) {
+        Challenge challenge = findChallenge(challengeId);
         challengeRepository.delete(challenge);
-        log.info("Challenge with id '{}' was successfully deleted", id);
+        log.info("Challenge with id '{}' was successfully deleted", challengeId);
     }
 
-    protected Challenge findChallenge(UUID id) {
-        return challengeRepository.findById(id)
+    protected Challenge findChallenge(UUID challengeId) {
+        return challengeRepository.findById(challengeId)
                 .orElseThrow(() -> {
-                    log.warn("Challenge with id '{}' was not found", id);
+                    log.warn("Challenge with id '{}' was not found", challengeId);
                     return new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge was not found");
                 });
     }
 
     protected List<Challenge> getAllActiveChallenges() {
-        return challengeRepository.findAllByStatus(Status.ACTIVE);
+        return getAllChallenges(Status.ACTIVE, null);
     }
-
-    private Summit findSummit(UUID id) {
-        return summitRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.warn("Summit with id '{}' was not found", id);
-                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Summit was not found");
-                });
-    }
-
-
 }

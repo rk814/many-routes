@@ -17,6 +17,8 @@ import com.codecool.kgp.service.UserChallengeService;
 import com.codecool.kgp.validators.UserChallengeValidator;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -62,9 +64,16 @@ class UserChallengeControllerTest {
     UserRepository userRepository;
 
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "?filter=",
+            "?filter=all",
+            "?filter=ALL",
+            "?filter=All",
+            "",
+    })
     @WithMockCustomUser(username = "bella_mystique", id = "7b92d376-cc0d-4a1a-bc2e-d8f7c9d5e5a7")
-    void getUserChallenges_shouldReturnAllUserChallenges() throws Exception {
+    void getUserChallenges_shouldReturnAllUserChallenges(String query) throws Exception {
         // given:
         User user = new User("bella_mystique", "password", "email", Role.USER);
         setId(user, UUID.fromString("7b92d376-cc0d-4a1a-bc2e-d8f7c9d5e5a7"));
@@ -80,7 +89,7 @@ class UserChallengeControllerTest {
 
 
         // when:
-        ResultActions response = mockMvc.perform(get("/api/v1/users/me/user-challenges/"));
+        ResultActions response = mockMvc.perform(get("/api/v1/users/me/user-challenges/" + query));
 
         // then:
         response.andExpect(status().isOk())

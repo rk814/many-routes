@@ -61,18 +61,6 @@ public class UserChallengeService {
         return uncompletedUserChallenges;
     }
 
-    public List<Challenge> getUnstartedChallenges(UUID userId) {
-        List<Challenge> challenges = challengeService.getAllActiveChallenges();
-        List<UserChallenge> userChallenges = userChallengeRepository.findAllByUserId(userId);
-        List<Challenge> availableChallenges = challenges.stream()
-                .filter(challenge ->
-                        userChallenges.stream()
-                                .noneMatch(userChallenge -> challenge.getId().equals(userChallenge.getChallenge().getId())))
-                .toList();
-        log.info("Found {} available user challenges with id '{}'", availableChallenges.size(), userId);
-        return availableChallenges;
-    }
-
     public UserChallenge saveUserChallenge(UUID userId, UUID challengeId) {
         User user = userService.findUser(userId);
         if (isTheChallengeActive(challengeId, user.getUserChallenges())) {

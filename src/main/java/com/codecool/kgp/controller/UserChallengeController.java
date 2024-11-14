@@ -4,6 +4,7 @@ import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.CustomUserDetails;
 import com.codecool.kgp.entity.UserChallenge;
 import com.codecool.kgp.entity.UserSummit;
+import com.codecool.kgp.entity.enums.UserChallengeFilter;
 import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.mappers.UserChallengeMapper;
 import com.codecool.kgp.service.UserChallengeService;
@@ -35,13 +36,13 @@ public class UserChallengeController {
     private final UserChallengeValidator userChallengeValidator;
 
     private final UserChallengeMapper userChallengeMapper;
-    private final ChallengeMapper challengeMapper;
 
-    public UserChallengeController(UserChallengeService userChallengeService, UserChallengeValidator userChallengeValidator, UserChallengeMapper userChallengeMapper, ChallengeMapper challengeMapper) {
+
+    public UserChallengeController(UserChallengeService userChallengeService, UserChallengeValidator userChallengeValidator, UserChallengeMapper userChallengeMapper) {
         this.userChallengeService = userChallengeService;
         this.userChallengeValidator = userChallengeValidator;
         this.userChallengeMapper = userChallengeMapper;
-        this.challengeMapper = challengeMapper;
+
     }
 
     @GetMapping("/")
@@ -49,32 +50,17 @@ public class UserChallengeController {
     public List<UserChallengeDto> getUserChallenges(
             @AuthenticationPrincipal UserDetails userDetails,
             @Parameter(description = "Optional filter for user challenges. Available options: 'completed', 'uncompleted'. Use 'all' or leave blank for no filter.")
-            @RequestParam(required = false, defaultValue = "all") String filter) {
+            @RequestParam(required = false, defaultValue = "ALL") UserChallengeFilter filter) {
         CustomUserDetails cud = (CustomUserDetails) userDetails;
         UUID userId = cud.getUserId();
         log.info("Received request for all user challenges of the user with id '{}'", userId);
 
         List<UserChallenge> userChallenges = switch (filter) {
-            case "completed" -> userChallengeService.getCompletedUserChallenges(userId);
-            case "uncompleted" -> userChallengeService.getUncompletedUserChallenges(userId);
-            case "all", "" -> userChallengeService.getUserChallenges(userId);
-            default -> {
-                log.warn("Invalid filter parameter '{}' in request for all user challenges with user id: '{}'", filter, userId);
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid filter parameter");
-            }
+            case COMPLETED -> userChallengeService.getCompletedUserChallenges(userId);
+            case UNCOMPLETED -> userChallengeService.getUncompletedUserChallenges(userId);
+            case ALL -> userChallengeService.getUserChallenges(userId);
         };
         return userChallenges.stream().map(userChallengeMapper::mapEntityToDto).toList();
-    }
-
-    // todo bad place??
-    @GetMapping("/?filter=unstarted")
-    @RolesAllowed({USER})
-    public List<ChallengeDto> getGoals(@AuthenticationPrincipal UserDetails userDetails) {
-        CustomUserDetails cud = (CustomUserDetails) userDetails;
-        UUID userId = cud.getUserId();
-        log.info("Received request for all goals of the user with id '{}'", userId);
-        List<Challenge> availableChallenges = userChallengeService.getUnstartedChallenges(userId);
-        return availableChallenges.stream().map(challengeMapper::mapEntityToDto).toList();
     }
 
     @GetMapping("/{userChallengeId}")

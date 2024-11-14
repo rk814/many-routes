@@ -2,7 +2,9 @@ package com.codecool.kgp.controller;
 
 import com.codecool.kgp.controller.dto.ChallengeDto;
 import com.codecool.kgp.controller.dto.ChallengeRequestDto;
+import com.codecool.kgp.entity.enums.ChallengeFilter;
 import com.codecool.kgp.entity.Challenge;
+import com.codecool.kgp.entity.CustomUserDetails;
 import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.service.ChallengeService;
@@ -13,6 +15,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,18 +48,25 @@ public class ChallengeController {
     @GetMapping(value = "/", produces = "application/json")
     @RolesAllowed({ADMIN, USER})
     public List<ChallengeDto> getChallenges(
-            @Parameter(description = "Challenge status")
+            @AuthenticationPrincipal UserDetails userDetails,
+            @Parameter(description = "Challenge status. Available options: 'ACTIVE', 'DEVELOP', 'REMOVED'")
             @RequestParam(required = false, defaultValue = "ACTIVE") Status status,
-            @Parameter(description = "A comma-separated list of field names to customize the fields returned in the ChallengeDto response", example = "name,id")
-            @RequestParam(required = false) List<String> fields) {
-        log.info("Received request for all challenges");
+            @Parameter(description = "A comma-separated list of field names to customize the fields returned in the ChallengeDto response. " +
+                    "If not provided, will return all fields, but summit list ", example = "name,id")
+            @RequestParam(required = false) List<String> fields,
+            @Parameter(description = "Optional filter for challenges. Available options: 'unstarted' and 'all'.")
+            @RequestParam(required = false, defaultValue = "ALL") ChallengeFilter filter) {
 
-        List<Challenge> challenges;
-        if (fields != null && !fields.contains("summitList")) {
-            challenges = challengeService.getAllChallengesWithoutSummitLists(status);
-        } else {
-            challenges = challengeService.getAllChallenges(status);
-        }
+        CustomUserDetails cud = (CustomUserDetails) userDetails;
+        UUID userId = cud.getUserId();
+
+        log.info("Received request for all challenges from user with id '{}'", userId);
+
+        List<Challenge> challenges = switch (filter) {
+            case ALL -> challengeService.getAllChallenges(status, fields);
+            case UNSTARTED -> challengeService.getUnstartedChallenges(userId, status, fields);
+        };
+
         return challenges.stream().map(challenge -> challengeMapper.mapEntityToDto(challenge, fields)).toList();
     }
 
