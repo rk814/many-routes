@@ -7,6 +7,7 @@ import com.codecool.kgp.entity.UserSummit;
 import com.codecool.kgp.errorhandling.DuplicateEntryException;
 import com.codecool.kgp.repository.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,7 @@ public class UserChallengeService {
     private final UserService userService;
 
 
-    public UserChallengeService(UserChallengeRepository userChallengeRepository, ChallengeService challengeService, UserService userService) {
+    public UserChallengeService(UserChallengeRepository userChallengeRepository, @Lazy ChallengeService challengeService, UserService userService) {
         this.challengeService = challengeService;
         this.userService = userService;
         this.userChallengeRepository = userChallengeRepository;
