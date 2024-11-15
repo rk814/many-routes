@@ -26,7 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Slf4j
 @Configuration
-@EnableConfigurationProperties({AuthConfigProperties.class})
+@EnableConfigurationProperties({AuthConfigProperties.class, WeatherApiProperties.class})
 @EnableMethodSecurity(jsr250Enabled = true)
 @SecurityScheme(
         name = "jwtauth",

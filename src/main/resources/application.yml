@@ -21,4 +21,7 @@ app:
 server:
   port: 8888
 
-
+weather:
+  api:
+    key: 1fca4767945c4ee6b33133345241807
+    url: 'http://api.weatherapi.com/v1/'

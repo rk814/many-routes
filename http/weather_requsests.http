@@ -1,0 +1,19 @@
+### GET CURRENT WEATHER
+
+GET http://localhost:8888/api/v1/weather/get-current-weather?latitude=12.1&longitude=21.2
+Authorization: Bearer {{auth-token}}
+
+### GET WEATHER FORECAST
+
+GET http://localhost:8888/api/v1/weather/get-weather-forecast?latitude=12.1&longitude=21.2&days=3
+Authorization: Bearer {{auth-token}}
+
+### GET CURRENT ASTRONOMY
+
+GET http://localhost:8888/api/v1/weather/get-current-astronomy?latitude=12.1&longitude=21.2
+Authorization: Bearer {{auth-token}}
+
+
+### GET CURRENT WEATHER (ORIGINAL API)
+
+GET http://api.weatherapi.com/v1/astronomy.json?key=1fca4767945c4ee6b33133345241807&q=12.1,21.2&current_fields=temp_c,wind_mph
