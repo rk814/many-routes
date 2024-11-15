@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -112,8 +113,9 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.coordinates").value(containsInAnyOrder(user.getCoordinatesArray())))
                 .andExpect(jsonPath("$.phone").value(user.getPhone()))
                 .andExpect(jsonPath("$.newsletter").value(user.getNewsletter()))
-                .andExpect(jsonPath("$.createAt").value(user.getCreatedAt().toString()))
-                .andExpect(jsonPath("$.deleteAt").value(user.getDeletedAt().toString()))
+                .andExpect(jsonPath("$.createAt").value(user.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                )
+                .andExpect(jsonPath("$.deleteAt").value(user.getDeletedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                 .andExpect(jsonPath("$.role").value(user.getRole().toString()))
                 .andExpect(jsonPath("$.userChallengeSimplified").isNotEmpty());
     }
@@ -143,8 +145,8 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.coordinates").value(containsInAnyOrder(user.getCoordinatesArray())))
                 .andExpect(jsonPath("$.phone").value(user.getPhone()))
                 .andExpect(jsonPath("$.newsletter").value(user.getNewsletter()))
-                .andExpect(jsonPath("$.createAt").value(user.getCreatedAt().toString()))
-                .andExpect(jsonPath("$.deleteAt").value(user.getDeletedAt().toString()))
+                .andExpect(jsonPath("$.createAt").value(user.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+                .andExpect(jsonPath("$.deleteAt").value(user.getDeletedAt().format(DateTimeFormatter.ISO_DATE_TIME)))
                 .andExpect(jsonPath("$.role").value(user.getRole().toString()))
                 .andExpect(jsonPath("$.userChallengeSimplified").isNotEmpty());
     }
@@ -191,8 +193,8 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.coordinates").value(containsInAnyOrder(updatedUser.getCoordinatesArray())))
                 .andExpect(jsonPath("$.phone").value(updatedUser.getPhone()))
                 .andExpect(jsonPath("$.newsletter").value(updatedUser.getNewsletter()))
-                .andExpect(jsonPath("$.createAt").value(updatedUser.getCreatedAt().toString()))
-                .andExpect(jsonPath("$.deleteAt").value(updatedUser.getDeletedAt().toString()))
+                .andExpect(jsonPath("$.createAt").value(updatedUser.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+                .andExpect(jsonPath("$.deleteAt").value(updatedUser.getDeletedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                 .andExpect(jsonPath("$.role").value(updatedUser.getRole().toString()))
                 .andExpect(jsonPath("$.userChallengeSimplified").isNotEmpty());
         ArgumentCaptor<UserRequestDto> captor = ArgumentCaptor.forClass(UserRequestDto.class);

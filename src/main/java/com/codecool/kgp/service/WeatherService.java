@@ -51,7 +51,7 @@ public class WeatherService {
             return mapToJsonObject(json);
 
         } catch (ResponseStatusException e) {
-            log.error("Error fetching current weather data from weather server. Original status: {}, message: {}", e.getStatusCode(), e.getMessage(),e);
+            log.error("Error fetching current weather data from weather server. Original status: {}, message: {}", e.getStatusCode(), e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             log.error("Unexpected error occurred while fetching current weather data: {}", e.getMessage(),e);
@@ -75,7 +75,7 @@ public class WeatherService {
             return mapToJsonObject(json);
 
         } catch (ResponseStatusException e) {
-            log.error("Error fetching forecast data from weather server. Original status: {}, message: {}", e.getStatusCode(), e.getMessage(), e);
+            log.error("Error fetching forecast data from weather server. Original status: {}, message: {}", e.getStatusCode(), e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             log.error("Unexpected error occurred while fetching forecast weather data: {}", e.getMessage(), e);
@@ -97,7 +97,7 @@ public class WeatherService {
             return mapToAstronomyDto(json);
 
         } catch (ResponseStatusException e) {
-            log.error("Error fetching astronomy data from weather server. Original status: {}, message: {}", e.getStatusCode(), e.getMessage(), e);
+            log.error("Error fetching astronomy data from weather server. Original status: {}, message: {}", e.getStatusCode(), e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             log.error("Unexpected error occurred while fetching astronomy weather data: {}", e.getMessage(), e);

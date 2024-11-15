@@ -1,4 +1,4 @@
-package com.codecool.kgp.repository;
+package com.codecool.kgp.entity;
 
 import com.codecool.kgp.controller.dto.UserRequestDto;
 import com.codecool.kgp.entity.User;

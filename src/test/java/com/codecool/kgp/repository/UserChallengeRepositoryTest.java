@@ -30,7 +30,7 @@ class UserChallengeRepositoryTest {
 
         //then:
         Assertions.assertThat(actual).hasSize(1);
-        Assertions.assertThat(actual.get(0).getId()).isEqualTo(UUID.fromString("6c39c496-ff63-4c8a-bad4-47d6a97053e7"));
+        Assertions.assertThat(actual.get(0).getId()).isEqualTo(UUID.fromString("8b7935ab-5e22-485b-ae18-7e5ad88b005e"));
         Assertions.assertThat(actual.get(0).getChallenge().getId())
                 .isEqualTo(UUID.fromString("4c39c496-ff63-4c8a-bad4-47d6a97053e7"));
         Assertions.assertThat(actual.get(0).getStartedAt()).isEqualTo(LocalDateTime
