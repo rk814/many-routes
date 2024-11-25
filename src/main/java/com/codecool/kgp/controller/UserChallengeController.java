@@ -1,23 +1,20 @@
 package com.codecool.kgp.controller;
 
-import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.CustomUserDetails;
 import com.codecool.kgp.entity.UserChallenge;
 import com.codecool.kgp.entity.UserSummit;
 import com.codecool.kgp.entity.enums.UserChallengeFilter;
-import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.mappers.UserChallengeMapper;
 import com.codecool.kgp.service.UserChallengeService;
 import com.codecool.kgp.validators.UserChallengeValidator;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import com.codecool.kgp.controller.dto.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +26,7 @@ import static com.codecool.kgp.config.SpringSecurityConfig.USER;
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/v1/users/me/user-challenges")
+@Transactional
 public class UserChallengeController {
 
     private final UserChallengeService userChallengeService;

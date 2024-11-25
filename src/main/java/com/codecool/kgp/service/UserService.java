@@ -31,7 +31,7 @@ public class UserService {
     }
 
     public List<User> getUsers() {
-        List<User> users = userRepository.findAll();
+        List<User> users = userRepository.findAllWithChallenges();
         List<User> filterUsers = users.stream().filter(user -> !user.getEmail().startsWith("deleted-")).toList();
         log.info("{} users was found", filterUsers.size());
         return filterUsers;
