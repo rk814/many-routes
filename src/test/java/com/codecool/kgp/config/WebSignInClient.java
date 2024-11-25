@@ -10,16 +10,19 @@ import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 
-@Component
+//@Component
 public class WebSignInClient {
 
     private final int port;
 
-    @Autowired
-    public WebSignInClient(ServletWebServerApplicationContext webServerAppContext) {
-        this.port = webServerAppContext.getWebServer().getPort();
-    }
+//    @Autowired
+//    public WebSignInClient(ServletWebServerApplicationContext webServerAppContext) {
+//        this.port = webServerAppContext.getWebServer().getPort();
+//    }
 
+    public WebSignInClient(int port) {
+        this.port = port;
+    }
 
     public String signIn(String login, String password) {
         WebClient webClient = WebClient.create("http://localhost:" + port);

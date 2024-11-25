@@ -50,7 +50,7 @@ class UserServiceTest {
                 .set(field(User::getEmail), "deleted-xxx")
                 .create();
         List<User> users = List.of(user1, user2, user3);
-        Mockito.when(userRepository.findAll()).thenReturn(users);
+        Mockito.when(userRepository.findAllWithChallenges()).thenReturn(users);
 
         //when:
         List<User> actual = userService.getUsers();
@@ -67,7 +67,7 @@ class UserServiceTest {
                 .set(field(User::getEmail), "deleted-xxx")
                 .create();
         List<User> users = List.of(user3);
-        Mockito.when(userRepository.findAll()).thenReturn(users);
+        Mockito.when(userRepository.findAllWithChallenges()).thenReturn(users);
 
         //when:
         List<User> actual = userService.getUsers();

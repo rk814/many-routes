@@ -220,8 +220,8 @@ class SummitControllerTest {
                 .andExpect(jsonPath("$.height").value(summitDto.height()))
                 .andExpect(jsonPath("$.coordinates[0]").value(summitDto.coordinates()[0]))
                 .andExpect(jsonPath("$.coordinates[1]").value(summitDto.coordinates()[1]))
-                .andExpect(jsonPath("$.challengeList.size()").value(challengeListSize))
-                .andExpect(jsonPath("$.challengeList[0].id").value(summitDto.challengesList().get(0).id().toString()));
+                .andExpect(jsonPath("$.challengesList.size()").value(challengeListSize))
+                .andExpect(jsonPath("$.challengesList[0].id").value(summitDto.challengesList().get(0).id().toString()));
     }
 
     @Test

@@ -15,6 +15,7 @@ import com.codecool.kgp.repository.UserRepository;
 import com.codecool.kgp.service.ChallengeService;
 import com.codecool.kgp.service.CustomUserDetailsService;
 import com.google.gson.Gson;
+import org.apache.catalina.core.ApplicationContext;
 import org.hamcrest.Matchers;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
@@ -111,7 +112,7 @@ class ChallengeControllerTest {
                 .andExpect(jsonPath("$[0].name").exists())
                 .andExpect(jsonPath("$[0].status").exists())
                 .andExpect(jsonPath("$[0].description").exists())
-                .andExpect(jsonPath("$[0].summitList").exists());
+                .andExpect(jsonPath("$[0].summitsList").exists());
 
         Mockito.verify(challengeService).getAllChallenges(Status.ACTIVE, fields);
         Mockito.verify(challengeMapper, Mockito.times(3)).mapEntityToDto(any(Challenge.class), eq(fields));
@@ -195,7 +196,7 @@ class ChallengeControllerTest {
         //then:
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(1))
-                .andExpect(jsonPath("$[0].summitList").exists())
+                .andExpect(jsonPath("$[0].summitsList").exists())
                 .andExpect(jsonPath("$[0].id").doesNotExist())
                 .andExpect(jsonPath("$[0].status").doesNotExist())
                 .andExpect(jsonPath("$[0].name").doesNotExist())
@@ -370,8 +371,8 @@ class ChallengeControllerTest {
 
         //then:
         response.andExpect(status().isOk())
-                .andExpect(jsonPath("$.summitList.size()").value(1))
-                .andExpect(jsonPath("$.summitList[0].id").value(summit.getId().toString()));
+                .andExpect(jsonPath("$.summitsList.size()").value(1))
+                .andExpect(jsonPath("$.summitsList[0].id").value(summit.getId().toString()));
 
         verify(challengeService).attachSummitToChallenge(summit.getId(), challenge.getId());
     }
@@ -407,7 +408,7 @@ class ChallengeControllerTest {
 
         //then:
         response.andExpect(status().isOk())
-                .andExpect(jsonPath("$.summitList").isEmpty());
+                .andExpect(jsonPath("$.summitsList").isEmpty());
 
         verify(challengeService).detachSummitFromChallenge(summit.getId(), challenge.getId());
     }

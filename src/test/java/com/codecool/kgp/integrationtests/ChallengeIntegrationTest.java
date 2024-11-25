@@ -9,14 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
-
 import static org.hamcrest.Matchers.*;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = "/sql/test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@TestPropertySource(properties = {"spring.datasource.url = jdbc:h2:mem:testdb1;MODE=PostgreSQL;", "server.port=0"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ChallengeIntegrationTest {
@@ -27,14 +28,12 @@ public class ChallengeIntegrationTest {
     private String token;
 
     @Autowired
-    private WebSignInClient webSignInClient;
-
-    @Autowired
     private WebTestClient webTestClient;
 
 
     @BeforeAll
     void setUpAll() {
+        WebSignInClient webSignInClient = new WebSignInClient(port);
         this.token = webSignInClient.signIn("adam_wanderlust", "safe-password123");
     }
 
@@ -43,8 +42,10 @@ public class ChallengeIntegrationTest {
         webTestClient = WebTestClient.bindToServer().baseUrl("http://localhost:" + port).build();
     }
 
+
     @Test
     void getChallenges_shouldReturnAllChallengesWithoutSummitList_whenNoFieldRequest() {
+
         // when & then:
         webTestClient.get()
                 .uri("/api/v1/challenges/")

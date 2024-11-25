@@ -9,13 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Sql(value = "/sql/test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@TestPropertySource(properties = {"spring.datasource.url = jdbc:h2:mem:testdb2;MODE=PostgreSQL;", "server.port=0"})
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserIntegrationTest {
 
@@ -27,12 +31,10 @@ public class UserIntegrationTest {
     @Autowired
     private WebTestClient webTestClient;
 
-    @Autowired
-    private WebSignInClient webSignInClient;
-
 
     @BeforeAll
     void setUpAll() {
+        WebSignInClient webSignInClient = new WebSignInClient(port);
         this.token = webSignInClient.signIn("adam_wanderlust", "safe-password123");
     }
 
@@ -40,6 +42,7 @@ public class UserIntegrationTest {
     void setUp() {
         webTestClient = WebTestClient.bindToServer().baseUrl("http://localhost:" + port).build();
     }
+
 
     @Test
     void getUsers_shouldGetAllUsers() {

@@ -229,8 +229,8 @@ class UserChallengeControllerTest {
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("$.userId").value(userId.toString()))
                 .andExpect(jsonPath("$.challengeId").value(conquerorChallengeId.toString()))
-                .andExpect(jsonPath("$.userSummitList.size()").value(1))
-                .andExpect(jsonPath("$.userSummitList[0].conqueredAt").isNotEmpty())
+                .andExpect(jsonPath("$.userSummitsList.size()").value(1))
+                .andExpect(jsonPath("$.userSummitsList[0].conqueredAt").isNotEmpty())
                 .andExpect(jsonPath("$.score").value(score));
         Mockito.verify(userChallengeValidator).validateScore(UserSummit.class, userSummit.getId(), score);
         Mockito.verify(userChallengeService).setSummitConquered(userChallenge.getId(), userSummit.getId(), score);

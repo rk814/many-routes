@@ -2,7 +2,6 @@ package com.codecool.kgp.repository;
 
 import com.codecool.kgp.entity.UserChallenge;
 import org.assertj.core.api.Assertions;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -20,17 +19,17 @@ import java.util.UUID;
 class UserChallengeRepositoryTest {
 
     @Autowired
-    private UserChallengeRepository testeduserChallengeRepository;
+    private UserChallengeRepository testedUserChallengeRepository;
 
     @Test
     void shouldReadAllChallengesByUserId() {
         //when:
-        List<UserChallenge> actual = testeduserChallengeRepository
+        List<UserChallenge> actual = testedUserChallengeRepository
                 .findAllByUserId(UUID.fromString("5c39c496-ff63-4c8a-bad4-47d6a97053e7"));
 
         //then:
         Assertions.assertThat(actual).hasSize(1);
-        Assertions.assertThat(actual.get(0).getId()).isEqualTo(UUID.fromString("8b7935ab-5e22-485b-ae18-7e5ad88b005e"));
+        Assertions.assertThat(actual.get(0).getId()).isEqualTo(UUID.fromString("cfe64228-2975-41af-bf4c-04bf48bc4523"));
         Assertions.assertThat(actual.get(0).getChallenge().getId())
                 .isEqualTo(UUID.fromString("4c39c496-ff63-4c8a-bad4-47d6a97053e7"));
         Assertions.assertThat(actual.get(0).getStartedAt()).isEqualTo(LocalDateTime

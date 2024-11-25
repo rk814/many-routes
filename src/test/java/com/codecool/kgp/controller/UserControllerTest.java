@@ -83,10 +83,10 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[0].coordinates").value(containsInAnyOrder(users.get(0).getCoordinatesArray())))
                 .andExpect(jsonPath("$[0].phone").value(users.get(0).getPhone()))
                 .andExpect(jsonPath("$[0].newsletter").value(users.get(0).getNewsletter()))
-                .andExpect(jsonPath("$[0].createAt").value(users.get(0).getCreatedAt().toString()))
-                .andExpect(jsonPath("$[0].deleteAt").value(users.get(0).getDeletedAt().toString()))
+                .andExpect(jsonPath("$[0].createAt").value(users.get(0).getCreatedAt().format(DateTimeFormatter.ISO_DATE_TIME)))
+                .andExpect(jsonPath("$[0].deleteAt").value(users.get(0).getDeletedAt().format(DateTimeFormatter.ISO_DATE_TIME)))
                 .andExpect(jsonPath("$[0].role").value(users.get(0).getRole().toString()))
-                .andExpect(jsonPath("$[0].userChallengeSimplified").isNotEmpty());
+                .andExpect(jsonPath("$[0].userChallengesListSimplified").isNotEmpty());
     }
 
     @Test
@@ -117,7 +117,7 @@ class UserControllerTest {
                 )
                 .andExpect(jsonPath("$.deleteAt").value(user.getDeletedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                 .andExpect(jsonPath("$.role").value(user.getRole().toString()))
-                .andExpect(jsonPath("$.userChallengeSimplified").isNotEmpty());
+                .andExpect(jsonPath("$.userChallengesListSimplified").isNotEmpty());
     }
 
     @Test
@@ -148,7 +148,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.createAt").value(user.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                 .andExpect(jsonPath("$.deleteAt").value(user.getDeletedAt().format(DateTimeFormatter.ISO_DATE_TIME)))
                 .andExpect(jsonPath("$.role").value(user.getRole().toString()))
-                .andExpect(jsonPath("$.userChallengeSimplified").isNotEmpty());
+                .andExpect(jsonPath("$.userChallengesListSimplified").isNotEmpty());
     }
 
     @Test
@@ -196,7 +196,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.createAt").value(updatedUser.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                 .andExpect(jsonPath("$.deleteAt").value(updatedUser.getDeletedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                 .andExpect(jsonPath("$.role").value(updatedUser.getRole().toString()))
-                .andExpect(jsonPath("$.userChallengeSimplified").isNotEmpty());
+                .andExpect(jsonPath("$.userChallengesListSimplified").isNotEmpty());
         ArgumentCaptor<UserRequestDto> captor = ArgumentCaptor.forClass(UserRequestDto.class);
         Mockito.verify(userService).updateUser(Mockito.eq(id), captor.capture());
         Assertions.assertEquals(captor.getValue(), dto);
