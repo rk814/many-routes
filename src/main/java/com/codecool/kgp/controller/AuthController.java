@@ -35,7 +35,9 @@ public class AuthController {
         var userToken = new UsernamePasswordAuthenticationToken(dto.login(), dto.password());
         authenticationManager.authenticate(userToken);
 //        return new JwtTokenResponseDto(jwtTokenService.generateJwtToken(dto.login()));
-        return jwtTokenService.generateJwtTokenDto(dto.login());
+        JwtTokenResponseDto jwtTokenResponseDto = jwtTokenService.generateJwtTokenDto(dto.login());
+        log.info("User '{}' signed in successfully", dto.login());
+        return jwtTokenResponseDto;
     }
 
     @PostMapping("/register")
