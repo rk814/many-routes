@@ -41,11 +41,11 @@ class ChallengeMapperTest {
                 Arguments.of(UUID.fromString("8c24db8e-37cb-4c80-90df-b00c2448d134"), "hard", "hard challenge",
                         Status.ACTIVE, Instancio.ofList(Summit.class).size(3).create(), null),
                 Arguments.of(UUID.fromString("3b9649b8-4e49-40f6-9a7e-38e53e9102ba"), "light", "light challenge",
-                        Status.ACTIVE, Instancio.ofList(Summit.class).size(2).create(), List.of("id", "name", "summitList")),
+                        Status.ACTIVE, Instancio.ofList(Summit.class).size(2).create(), List.of("id", "name", "summitsList")),
                 Arguments.of(UUID.fromString("f31ff492-4959-4637-a2cc-98779f365eed"), "old", "old challenge",
-                        Status.REMOVED, Instancio.ofList(Summit.class).size(1).create(), List.of("id", "name", "description", "status", "summitList")),
+                        Status.REMOVED, Instancio.ofList(Summit.class).size(1).create(), List.of("id", "name", "description", "status", "summitsList")),
                 Arguments.of(UUID.fromString("225bd451-1f2d-44fe-8141-7fc98d283dbb"), "xxx", "surprise",
-                        Status.DEVELOP, Instancio.ofList(Summit.class).size(1).create(), List.of("name", "summitList"))
+                        Status.DEVELOP, Instancio.ofList(Summit.class).size(1).create(), List.of("name", "summitsList"))
         );
     }
 
@@ -75,7 +75,7 @@ class ChallengeMapperTest {
         Assertions.assertThat(actual).extracting("name").isEqualTo(result.name());
         Assertions.assertThat(actual).extracting("description").isEqualTo(result.description());
         Assertions.assertThat(actual).extracting("status").isEqualTo(result.status());
-        Assertions.assertThat(actual).extracting("summitList").isEqualTo(result.summitList());
+        Assertions.assertThat(actual).extracting("summitsList").isEqualTo(result.summitsList());
     }
 
     @ParameterizedTest
@@ -108,8 +108,8 @@ class ChallengeMapperTest {
                 .isEqualTo((fields == null || fields.contains("description")) ? result.description() : null);
         Assertions.assertThat(actual).extracting("status")
                 .isEqualTo((fields == null || fields.contains("status")) ? result.status() : null);
-        Assertions.assertThat(actual).extracting("summitList")
-                .isEqualTo((fields == null || fields.contains("summitList")) ? result.summitList() : null);
+        Assertions.assertThat(actual).extracting("summitsList")
+                .isEqualTo((fields == null || fields.contains("summitsList")) ? result.summitsList() : null);
     }
 
     private static Stream<Arguments> provideChallengesWithoutSummits() {
@@ -148,8 +148,8 @@ class ChallengeMapperTest {
                 .isEqualTo((fields == null || fields.contains("description")) ? result.description() : null);
         Assertions.assertThat(actual).extracting("status")
                 .isEqualTo((fields == null || fields.contains("status")) ? result.status() : null);
-        Assertions.assertThat(actual).extracting("summitList")
-                .isEqualTo((fields == null || fields.contains("summitList")) ? result.summitList() : null);
+        Assertions.assertThat(actual).extracting("summitsList")
+                .isEqualTo((fields == null || fields.contains("summitsList")) ? result.summitsList() : null);
     }
 
     @ParameterizedTest

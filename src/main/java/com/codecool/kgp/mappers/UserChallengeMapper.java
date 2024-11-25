@@ -24,7 +24,7 @@ public class UserChallengeMapper {
                 userChallenge.getStartedAt(),
                 userChallenge.getFinishedAt(),
                 userChallenge.getScore(),
-                getSummitListDto(userChallenge.getUserSummitList())
+                getSummitListDto(userChallenge.getUserSummitsList())
         );
     }
 
@@ -48,7 +48,7 @@ public class UserChallengeMapper {
                             s.getUserChallenge().getId(),
                             s.getConqueredAt(),
 
-                            summit.getChallengeList().stream().map(ch -> new ChallengeSimpleDto(
+                            summit.getChallengesList().stream().map(ch -> new ChallengeSimpleDto(
                                     ch.getId(),
                                     ch.getName(),
                                     ch.getStatus()

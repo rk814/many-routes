@@ -14,6 +14,6 @@ public record UserDto(
         LocalDateTime createAt,
         LocalDateTime deleteAt,
         String role,
-        List<UserChallengeSimpleDto> userChallengeSimplified
+        List<UserChallengeSimpleDto> userChallengesListSimplified
 ) {
 }

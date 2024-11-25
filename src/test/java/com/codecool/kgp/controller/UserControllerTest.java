@@ -7,7 +7,7 @@ import com.codecool.kgp.controller.dto.UserRequestDto;
 import com.codecool.kgp.entity.User;
 import com.codecool.kgp.entity.UserChallenge;
 import com.codecool.kgp.mappers.UserMapper;
-import com.codecool.kgp.mockuser.WithMockCustomUser;
+import com.codecool.kgp.config.WithMockCustomUser;
 import com.codecool.kgp.repository.UserRepository;
 import com.codecool.kgp.service.CustomUserDetailsService;
 import com.codecool.kgp.service.UserService;

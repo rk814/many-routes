@@ -12,6 +12,6 @@ public record ChallengeDto(
         String name,
         String description,
         Status status,
-        List<SummitSimpleDto> summitList
+        List<SummitSimpleDto> summitsList
 ) {
 }

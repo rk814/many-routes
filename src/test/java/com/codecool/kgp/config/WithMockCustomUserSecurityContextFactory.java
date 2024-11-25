@@ -1,4 +1,4 @@
-package com.codecool.kgp.mockuser;
+package com.codecool.kgp.config;
 
 import com.codecool.kgp.entity.CustomUserDetails;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

@@ -24,8 +24,8 @@ public class SummitMapper {
 
         return new SummitDto(
                 fields.contains("id") ? summit.getId() : null,
-                fields.contains("challengeList") ?
-                        summit.getChallengeList().stream().map(ch -> new ChallengeSimpleDto(
+                fields.contains("challengesList") ?
+                        summit.getChallengesList().stream().map(ch -> new ChallengeSimpleDto(
                                 ch.getId(),
                                 ch.getName(),
                                 ch.getStatus()
@@ -69,7 +69,7 @@ public class SummitMapper {
 
     private List<String> getAllFields() {
         List<String> fields;
-        fields = List.of("id", "challengeList", "name", "coordinates", "mountainRange", "mountainChain", "height", "description", "guideNotes", "score", "status");
+        fields = List.of("id", "challengesList", "name", "coordinates", "mountainRange", "mountainChain", "height", "description", "guideNotes", "score", "status");
         return fields;
     }
 }

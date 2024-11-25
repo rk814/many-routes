@@ -71,7 +71,7 @@ public class UserChallengeService {
 
         Challenge challenge = challengeService.findChallenge(challengeId);
         UserChallenge userChallenge = new UserChallenge(user, challenge);
-        challenge.getSummitList().forEach(summit -> {
+        challenge.getSummitsList().forEach(summit -> {
             UserSummit userSummit = new UserSummit(userChallenge, summit);
             userChallenge.assignUserSummit(userSummit);
         });
@@ -89,7 +89,7 @@ public class UserChallengeService {
 
     public UserChallenge setSummitConquered(UUID userChallengeId, UUID userSummitId, int score) {
         UserChallenge userChallenge = findUserChallengeById(userChallengeId);
-        UserSummit userSummit = userChallenge.getUserSummitList().stream().filter(us -> us.getId().equals(userSummitId)).findFirst()
+        UserSummit userSummit = userChallenge.getUserSummitsList().stream().filter(us -> us.getId().equals(userSummitId)).findFirst()
                 .orElseThrow(() -> {
                     log.warn("User Challenge with id '{}' does not contain User Summit with id '{}'", userChallengeId, userSummitId);
                     return new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -147,7 +147,7 @@ public class UserChallengeService {
     }
 
     private boolean areAllUserSummitsConquered(UserChallenge userChallenge) {
-        return userChallenge.getUserSummitList().stream().allMatch(s -> s.getConqueredAt() != null);
+        return userChallenge.getUserSummitsList().stream().allMatch(s -> s.getConqueredAt() != null);
     }
 
     private void setUserChallengeFinishedTime(UserChallenge userChallenge) {

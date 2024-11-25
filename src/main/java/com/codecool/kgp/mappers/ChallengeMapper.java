@@ -28,7 +28,8 @@ public class ChallengeMapper {
                 fields.contains("name") ? challenge.getName() : null,
                 fields.contains("description") ? challenge.getDescription() : null,
                 fields.contains("status") ? challenge.getStatus() : null,
-                fields.contains("summitList") ? challenge.getSummitList().stream().map(summitMapper::mapEntityToSimpleDto).toList() : null
+                fields.contains("summitsList") && challenge.getSummitsList()!=null ?
+                        challenge.getSummitsList().stream().map(summitMapper::mapEntityToSimpleDto).toList() : null
         );
     }
 
@@ -41,6 +42,6 @@ public class ChallengeMapper {
     }
 
     private List<String> getAllFields() {
-        return List.of("id", "name", "description","status","summitList");
+        return List.of("id", "name", "description","status","summitsList");
     }
 }

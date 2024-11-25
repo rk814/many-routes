@@ -45,7 +45,7 @@ public class UserChallenge {
     }
 
     @OneToMany(mappedBy = "userChallenge", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<UserSummit> userSummitList = new ArrayList<>();
+    private List<UserSummit> userSummitsList = new ArrayList<>();
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -57,7 +57,7 @@ public class UserChallenge {
 
 
     public void assignUserSummit(UserSummit userSummit) {
-        userSummitList.add(userSummit);
+        userSummitsList.add(userSummit);
     }
 
     public void setFinishedAt(LocalDateTime finishedAt) {

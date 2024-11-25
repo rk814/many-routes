@@ -9,7 +9,7 @@ import com.codecool.kgp.entity.enums.Role;
 import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.mappers.UserChallengeMapper;
-import com.codecool.kgp.mockuser.WithMockCustomUser;
+import com.codecool.kgp.config.WithMockCustomUser;
 import com.codecool.kgp.repository.UserChallengeRepository;
 import com.codecool.kgp.repository.UserRepository;
 import com.codecool.kgp.service.CustomUserDetailsService;
@@ -79,9 +79,9 @@ class UserChallengeControllerTest {
         setId(user, UUID.fromString("7b92d376-cc0d-4a1a-bc2e-d8f7c9d5e5a7"));
 
         List<Challenge> challenges = Instancio.ofList(Challenge.class).size(8)
-                .generate(field(Challenge::getSummitList), gen -> gen.collection().minSize(3))
+                .generate(field(Challenge::getSummitsList), gen -> gen.collection().minSize(3))
                 .create();
-        challenges.forEach(ch -> ch.getSummitList().forEach(s -> s.setChallengeList(List.of(ch))));
+        challenges.forEach(ch -> ch.getSummitsList().forEach(s -> s.setChallengesList(List.of(ch))));
         List<UserChallenge> userChallenges = challenges.stream().map(ch -> new UserChallenge(user, ch)).toList();
 
         Mockito.when(userChallengeService.getUserChallenges(user.getId())).thenReturn(userChallenges);
@@ -107,9 +107,9 @@ class UserChallengeControllerTest {
         setId(user, UUID.fromString("7b92d376-cc0d-4a1a-bc2e-d8f7c9d5e5a7"));
 
         List<Challenge> challenges = Instancio.ofList(Challenge.class).size(8)
-                .generate(field(Challenge::getSummitList), gen -> gen.collection().minSize(3))
+                .generate(field(Challenge::getSummitsList), gen -> gen.collection().minSize(3))
                 .create();
-        challenges.forEach(ch -> ch.getSummitList().forEach(s -> s.setChallengeList(List.of(ch))));
+        challenges.forEach(ch -> ch.getSummitsList().forEach(s -> s.setChallengesList(List.of(ch))));
         List<UserChallenge> userChallenges = challenges.stream().map(ch -> new UserChallenge(user, ch)).limit(3).toList();
         userChallenges.forEach(uch -> uch.setFinishedAt(uch.getStartedAt().plusDays(1)));
 
@@ -137,9 +137,9 @@ class UserChallengeControllerTest {
         setId(user, UUID.fromString("7b92d376-cc0d-4a1a-bc2e-d8f7c9d5e5a7"));
 
         List<Challenge> challenges = Instancio.ofList(Challenge.class).size(8)
-                .generate(field(Challenge::getSummitList), gen -> gen.collection().minSize(3))
+                .generate(field(Challenge::getSummitsList), gen -> gen.collection().minSize(3))
                 .create();
-        challenges.forEach(ch -> ch.getSummitList().forEach(s -> s.setChallengeList(List.of(ch))));
+        challenges.forEach(ch -> ch.getSummitsList().forEach(s -> s.setChallengesList(List.of(ch))));
         List<UserChallenge> userChallenges = challenges.stream().map(ch -> new UserChallenge(user, ch)).limit(5).toList();
 
         Mockito.when(userChallengeService.getUncompletedUserChallenges(user.getId())).thenReturn(userChallenges);
@@ -295,9 +295,9 @@ class UserChallengeControllerTest {
         Mockito.when(userChallengeMapper.mapEntityToDto(Mockito.any())).thenAnswer(invocationOnMock -> {
             UserChallenge uch = invocationOnMock.getArgument(0);
             Challenge ch = uch.getChallenge();
-            List<UserSummitDto> userSummitDtos = uch.getUserSummitList().stream().map(us -> {
+            List<UserSummitDto> userSummitDtos = uch.getUserSummitsList().stream().map(us -> {
                 Summit s = us.getSummit();
-                List<ChallengeSimpleDto> challengeSimpleDtos = s.getChallengeList().stream().map(sch -> new ChallengeSimpleDto(sch.getId(), sch.getName(), sch.getStatus())).toList();
+                List<ChallengeSimpleDto> challengeSimpleDtos = s.getChallengesList().stream().map(sch -> new ChallengeSimpleDto(sch.getId(), sch.getName(), sch.getStatus())).toList();
                 return new UserSummitDto(us.getId(), s.getId(), us.getUserChallenge().getId(), us.getConqueredAt(),
                         challengeSimpleDtos, s.getName(), s.getCoordinatesArray(), s.getMountainRange(), s.getMountainChain(),
                         s.getHeight(), s.getDescription(), s.getGuideNotes(), s.getScore(), s.getStatus().toString());

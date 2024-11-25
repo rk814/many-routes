@@ -32,7 +32,7 @@ public class SummitService {
 
     public List<Summit> getAllSummits(Status status) {
         List<Summit> summits = summitRepository.findAllByStatus(status);
-        log.info("{} summitList were found", summits.size());
+        log.info("{} summitsList were found", summits.size());
         return summits;
     }
 

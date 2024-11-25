@@ -18,7 +18,7 @@ public record UserChallengeDto(
         LocalDateTime startedAt,
         LocalDateTime finishedAt,
         Integer score,
-        List<UserSummitDto> userSummitList
+        List<UserSummitDto> userSummitsList
 ) {
 
 }

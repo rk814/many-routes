@@ -1,4 +1,4 @@
-package com.codecool.kgp.mockuser;
+package com.codecool.kgp.config;
 
 
 import org.springframework.security.test.context.support.WithSecurityContext;

@@ -36,15 +36,15 @@ public class SummitController {
     }
 
     @RolesAllowed(ADMIN)
-    @Operation(summary = "Get list of summitList (default ACTIVE)")
+    @Operation(summary = "Get list of summitsList (default ACTIVE)")
     @GetMapping("/")
     public List<SummitDto> getSummits(
             @Parameter(description = "Challenge status")
             @RequestParam(required = false, defaultValue = "ACTIVE") Status status,
-            @Parameter(description = "A comma-separated list of field names to customize the fields returned in the SummitDto response\", example = \"name,id")
+            @Parameter(description = "A comma-separated list of field names to customize the fields returned in the SummitDto response\", example = \"challengeName,id")
             @RequestParam(required = false) List<String> fields
     ) {
-        log.info("Received request for all summitList");
+        log.info("Received request for all summitsList");
         List<Summit> summits = summitService.getAllSummits(status);
         return summits.stream().map(summit -> summitMapper.mapEntityToDto(summit, fields)).toList();
     }

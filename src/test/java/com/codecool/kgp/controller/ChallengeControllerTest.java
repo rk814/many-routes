@@ -8,7 +8,7 @@ import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.Summit;
 import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.mappers.ChallengeMapper;
-import com.codecool.kgp.mockuser.WithMockCustomUser;
+import com.codecool.kgp.config.WithMockCustomUser;
 import com.codecool.kgp.repository.ChallengeRepository;
 import com.codecool.kgp.repository.SummitRepository;
 import com.codecool.kgp.repository.UserRepository;
@@ -142,13 +142,13 @@ class ChallengeControllerTest {
         List<String> fields = List.of("id", "status");
         List<Challenge> challenges = Instancio.ofList(Challenge.class).size(1)
                 .set(field(Challenge::getStatus), Status.ACTIVE)
-                .ignore(field(Challenge::getSummitList))
+                .ignore(field(Challenge::getSummitsList))
                 .ignore(field(Challenge::getName))
                 .ignore(field(Challenge::getDescription))
                 .create();
         ChallengeDto challengeDto = Instancio.of(ChallengeDto.class)
                 .set(field(ChallengeDto::status), Status.ACTIVE)
-                .ignore(field(ChallengeDto::summitList))
+                .ignore(field(ChallengeDto::summitsList))
                 .ignore(field(ChallengeDto::name))
                 .ignore(field(ChallengeDto::description))
                 .create();
@@ -176,7 +176,7 @@ class ChallengeControllerTest {
     @WithMockCustomUser(username = "adam_wanderlust", role = ADMIN, id = "5c39c496-ff63-4c8a-bad4-47d6a97053e7")
     void getChallenges_shouldReturnAllActiveChallengesWithSummitsFields() throws Exception {
         //given:
-        List<String> fields = List.of("summitList");
+        List<String> fields = List.of("summitsList");
         List<Challenge> challenges = Instancio.ofList(Challenge.class).size(1)
                 .set(field(Challenge::getStatus), Status.ACTIVE)
                 .create();
@@ -354,11 +354,11 @@ class ChallengeControllerTest {
     void attachSummit_shouldReturnChallengeWithAddedSummit() throws Exception {
         //given:
         Challenge challenge = Instancio.of(Challenge.class)
-                .setBlank(field(Challenge::getSummitList))
+                .setBlank(field(Challenge::getSummitsList))
                 .create();
         Summit summit = Instancio.create(Summit.class);
         ChallengeDto challengeDto = Instancio.of(ChallengeDto.class)
-                .set(field(ChallengeDto::summitList), List.of(new SummitSimpleDto(summit.getId(), summit.getName(),
+                .set(field(ChallengeDto::summitsList), List.of(new SummitSimpleDto(summit.getId(), summit.getName(),
                         summit.getMountainRange(), summit.getMountainChain(), summit.getHeight(), summit.getStatus().toString())))
                 .create();
         Mockito.when(challengeService.attachSummitToChallenge(summit.getId(), challenge.getId())).thenReturn(challenge);
@@ -393,10 +393,10 @@ class ChallengeControllerTest {
         //given:
         Summit summit = Instancio.create(Summit.class);
         Challenge challenge = Instancio.of(Challenge.class)
-                .set(field(Challenge::getSummitList), List.of(summit))
+                .set(field(Challenge::getSummitsList), List.of(summit))
                 .create();
         ChallengeDto challengeDto = Instancio.of(ChallengeDto.class)
-                .setBlank(field(ChallengeDto::summitList))
+                .setBlank(field(ChallengeDto::summitsList))
                 .create();
         Mockito.when(challengeService.detachSummitFromChallenge(summit.getId(), challenge.getId())).thenReturn(challenge);
         Mockito.when(challengeMapper.mapEntityToDto(challenge)).thenReturn(challengeDto);

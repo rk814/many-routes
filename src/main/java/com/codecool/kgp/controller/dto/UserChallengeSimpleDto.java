@@ -6,7 +6,7 @@ import java.util.UUID;
 public record UserChallengeSimpleDto(
         UUID id,
         UUID userId,
-        String name,
+        String challengeName,
         LocalDateTime startedAt,
         LocalDateTime finishedAt,
         int score

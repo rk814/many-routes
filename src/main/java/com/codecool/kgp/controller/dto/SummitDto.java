@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public record SummitDto(
         UUID id,
-        List<ChallengeSimpleDto> challengeList,
+        List<ChallengeSimpleDto> challengesList,
         String name,
         Double[] coordinates,
         String mountainRange,

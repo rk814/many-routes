@@ -42,15 +42,15 @@ public class Challenge {
     }
 
     @ManyToMany
-    private List<Summit> summitList = new ArrayList<>(); // TODO change it to set
+    private List<Summit> summitsList = new ArrayList<>(); // TODO change it to set
 
 
     public void addSummit(Summit summit) {
-        summitList.add(summit);
+        summitsList.add(summit);
     }
 
     public void removeSummit(Summit summit) {
-        this.summitList = summitList.stream().filter(s -> !s.equals(summit)).toList();
+        this.summitsList = summitsList.stream().filter(s -> !s.equals(summit)).toList();
     }
 
     public void updateChallenge(Challenge challenge) {

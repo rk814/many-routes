@@ -71,8 +71,8 @@ public class Summit {
         this.status = status;
     }
 
-    @ManyToMany(mappedBy = "summitList")
-    private List<Challenge> challengeList = new ArrayList<>(); //TODO change to set
+    @ManyToMany(mappedBy = "summitsList")
+    private List<Challenge> challengesList = new ArrayList<>(); //TODO change to set
 
 
     public Double[] getCoordinatesArray() {
@@ -80,11 +80,11 @@ public class Summit {
     }
 
     public void addChallenge(Challenge challenge) {
-        challengeList.add(challenge);
+        challengesList.add(challenge);
     }
 
     public void removeChallenge(Challenge challenge) {
-        this.challengeList = challengeList.stream().filter(ch -> !ch.equals(challenge)).toList();
+        this.challengesList = challengesList.stream().filter(ch -> !ch.equals(challenge)).toList();
     }
 
     public void updateSummit(Summit summit) {

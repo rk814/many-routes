@@ -29,8 +29,8 @@ class SummitMapperTest {
         return Stream.of(
                 Arguments.of((List<Field>) null),
                 Arguments.of(List.of("id", "name", "guideNotes")),
-                Arguments.of(List.of("id", "name", "description", "status", "challengeList")),
-                Arguments.of(List.of("name", "challengeList"))
+                Arguments.of(List.of("id", "name", "description", "status", "challengesList")),
+                Arguments.of(List.of("name", "challengesList"))
         );
     }
 
@@ -40,7 +40,7 @@ class SummitMapperTest {
         //given:
         Summit summit = Instancio.create(Summit.class);
 
-        List<ChallengeSimpleDto> challengeSimpleDtoList = summit.getChallengeList().stream()
+        List<ChallengeSimpleDto> challengeSimpleDtoList = summit.getChallengesList().stream()
                 .map(ch -> new ChallengeSimpleDto(ch.getId(), ch.getName(), ch.getStatus())).toList();
         SummitDto result = new SummitDto(summit.getId(), challengeSimpleDtoList, summit.getName(), summit.getCoordinatesArray(),
                 summit.getMountainRange(), summit.getMountainChain(), summit.getHeight(), summit.getDescription(),
@@ -52,8 +52,8 @@ class SummitMapperTest {
         //then:
         Assertions.assertThat(actual).extracting("id")
                 .isEqualTo((fields == null || fields.contains("id")) ? result.id() : null);
-        Assertions.assertThat(actual).extracting("challengeList")
-                .isEqualTo((fields == null || fields.contains("challengeList")) ? result.challengeList() : null);
+        Assertions.assertThat(actual).extracting("challengesList")
+                .isEqualTo((fields == null || fields.contains("challengesList")) ? result.challengesList() : null);
         Assertions.assertThat(actual).extracting("name")
                 .isEqualTo((fields == null || fields.contains("name")) ? result.name() : null);
         Assertions.assertThat(actual).extracting("coordinates")
@@ -79,7 +79,7 @@ class SummitMapperTest {
         //given:
         Summit summit = Instancio.create(Summit.class);
 
-        List<ChallengeSimpleDto> challengeSimpleDtoList = summit.getChallengeList().stream()
+        List<ChallengeSimpleDto> challengeSimpleDtoList = summit.getChallengesList().stream()
                 .map(ch -> new ChallengeSimpleDto(ch.getId(), ch.getName(), ch.getStatus())).toList();
         SummitDto result = new SummitDto(summit.getId(), challengeSimpleDtoList, summit.getName(), summit.getCoordinatesArray(),
                 summit.getMountainRange(), summit.getMountainChain(), summit.getHeight(), summit.getDescription(),
@@ -90,7 +90,7 @@ class SummitMapperTest {
 
         //then:
         Assertions.assertThat(actual).extracting("id").isEqualTo(result.id());
-        Assertions.assertThat(actual).extracting("challengeList").isEqualTo(result.challengeList());
+        Assertions.assertThat(actual).extracting("challengesList").isEqualTo(result.challengesList());
         Assertions.assertThat(actual).extracting("name").isEqualTo(result.name());
         Assertions.assertThat(actual).extracting("coordinates").isEqualTo(result.coordinates());
         Assertions.assertThat(actual).extracting("mountainRange").isEqualTo(result.mountainRange());
@@ -107,7 +107,7 @@ class SummitMapperTest {
         //given:
         Summit summit = Instancio.create(Summit.class);
 
-        List<ChallengeSimpleDto> challengeSimpleDtoList = summit.getChallengeList().stream()
+        List<ChallengeSimpleDto> challengeSimpleDtoList = summit.getChallengesList().stream()
                 .map(ch -> new ChallengeSimpleDto(ch.getId(), ch.getName(), ch.getStatus())).toList();
         SummitDto result = new SummitDto(summit.getId(), challengeSimpleDtoList, summit.getName(), summit.getCoordinatesArray(),
                 summit.getMountainRange(), summit.getMountainChain(), summit.getHeight(), summit.getDescription(),

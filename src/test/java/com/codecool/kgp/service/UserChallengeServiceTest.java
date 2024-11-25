@@ -123,7 +123,7 @@ class UserChallengeServiceTest {
         Mockito.when(userService.findUser(user1Id)).thenReturn(user1);
 
         Challenge challenge = Instancio.of(Challenge.class)
-                .generate(field(Challenge::getSummitList), gen -> gen.collection().size(4))
+                .generate(field(Challenge::getSummitsList), gen -> gen.collection().size(4))
                 .create();
         Mockito.when(challengeService.findChallenge(challenge.getId())).thenReturn(challenge);
 
@@ -139,8 +139,8 @@ class UserChallengeServiceTest {
         //then:
         ArgumentCaptor<UserChallenge> userChallengeCaptor = ArgumentCaptor.forClass(UserChallenge.class);
         Mockito.verify(userChallengeRepository).save(userChallengeCaptor.capture());
-        Assertions.assertThat(userChallengeCaptor.getValue().getUserSummitList().size())
-                .isEqualTo(challenge.getSummitList().size());
+        Assertions.assertThat(userChallengeCaptor.getValue().getUserSummitsList().size())
+                .isEqualTo(challenge.getSummitsList().size());
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         Mockito.verify(userService).saveUser(userCaptor.capture());
@@ -210,21 +210,21 @@ class UserChallengeServiceTest {
         UserChallenge userChallenge = Instancio.of(UserChallenge.class)
                 .set(field(UserChallenge::getFinishedAt), null)
                 .set(field(UserChallenge::getScore), 1)
-                .set(field(UserChallenge::getUserSummitList), List.of(
+                .set(field(UserChallenge::getUserSummitsList), List.of(
                         Instancio.of(UserSummit.class).set(field(UserSummit::getConqueredAt), null).create()
                 )).create();
         Mockito.when(userChallengeRepository.findById(userChallenge.getId())).thenReturn(Optional.of(userChallenge));
 
         //when:
         userChallengeService.setSummitConquered(userChallenge.getId(),
-                userChallenge.getUserSummitList().get(0).getId(), score);
+                userChallenge.getUserSummitsList().get(0).getId(), score);
 
         //then:
         ArgumentCaptor<UserChallenge> userChallengeCaptor = ArgumentCaptor.forClass(UserChallenge.class);
         Mockito.verify(userChallengeRepository).save(userChallengeCaptor.capture());
-        Assertions.assertThat(userChallengeCaptor.getValue().getUserSummitList().get(0).getConqueredAt()).isNotNull();
-        Assertions.assertThat(userChallengeCaptor.getValue().getUserSummitList().get(0).getScore())
-                .isEqualTo(userChallenge.getUserSummitList().get(0).getScore());
+        Assertions.assertThat(userChallengeCaptor.getValue().getUserSummitsList().get(0).getConqueredAt()).isNotNull();
+        Assertions.assertThat(userChallengeCaptor.getValue().getUserSummitsList().get(0).getScore())
+                .isEqualTo(userChallenge.getUserSummitsList().get(0).getScore());
         Assertions.assertThat(userChallengeCaptor.getValue().getScore()).isEqualTo(2);
         Assertions.assertThat(userChallengeCaptor.getValue().getFinishedAt()).isNotNull();
     }
@@ -236,7 +236,7 @@ class UserChallengeServiceTest {
         UserChallenge userChallenge = Instancio.of(UserChallenge.class)
                 .set(field(UserChallenge::getFinishedAt), null)
                 .set(field(UserChallenge::getScore), 1)
-                .set(field(UserChallenge::getUserSummitList), Instancio.ofList(UserSummit.class)
+                .set(field(UserChallenge::getUserSummitsList), Instancio.ofList(UserSummit.class)
                         .size(2)
                         .set(field(UserSummit::getConqueredAt), null)
                         .create()
@@ -245,14 +245,14 @@ class UserChallengeServiceTest {
 
         //when:
         userChallengeService.setSummitConquered(userChallenge.getId(),
-                userChallenge.getUserSummitList().get(0).getId(), score);
+                userChallenge.getUserSummitsList().get(0).getId(), score);
 
         //then:
         ArgumentCaptor<UserChallenge> userChallengeCaptor = ArgumentCaptor.forClass(UserChallenge.class);
         Mockito.verify(userChallengeRepository).save(userChallengeCaptor.capture());
-        Assertions.assertThat(userChallengeCaptor.getValue().getUserSummitList().get(0).getConqueredAt()).isNotNull();
-        Assertions.assertThat(userChallengeCaptor.getValue().getUserSummitList().get(0).getScore())
-                .isEqualTo(userChallenge.getUserSummitList().get(0).getScore());
+        Assertions.assertThat(userChallengeCaptor.getValue().getUserSummitsList().get(0).getConqueredAt()).isNotNull();
+        Assertions.assertThat(userChallengeCaptor.getValue().getUserSummitsList().get(0).getScore())
+                .isEqualTo(userChallenge.getUserSummitsList().get(0).getScore());
         Assertions.assertThat(userChallengeCaptor.getValue().getScore()).isEqualTo(2);
         Assertions.assertThat(userChallengeCaptor.getValue().getFinishedAt()).isNull();
     }

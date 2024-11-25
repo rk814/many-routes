@@ -7,10 +7,10 @@ import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.errorhandling.DuplicateEntryException;
 import com.codecool.kgp.repository.ChallengeRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@Transactional
 @Slf4j
+@Transactional
 public class ChallengeService {
 
     private final ChallengeRepository challengeRepository;
@@ -32,15 +32,14 @@ public class ChallengeService {
         this.userChallengeService = userChallengeService;
     }
 
-    @Transactional(propagation = Propagation.NEVER)
     public List<Challenge> getAllChallenges(Status status, List<String> fields) {
-        boolean includeSummitList = fields != null && fields.contains("summitList");
+        boolean includeSummitList = fields != null && fields.contains("summitsList");
         List<Challenge> challenges;
         if (includeSummitList) {
             challenges = challengeRepository.findAllByStatusWithSummits(status);
         } else {
             challenges = challengeRepository.findAllByStatus(status);
-            System.out.println("ssss");
+            Hibernate.initialize(challenges);
         }
         log.info("{} challenges were found", challenges.size());
         return challenges;
@@ -73,8 +72,8 @@ public class ChallengeService {
             log.info("New challenge with id '{}' was saved", challenge.getId());
             return savedChallenge;
         } catch (DataIntegrityViolationException e) {
-            log.warn("Challenge with name '{}' already exists", challenge.getName());
-            throw new DuplicateEntryException("Challenge name must be unique");
+            log.warn("Challenge with challengeName '{}' already exists", challenge.getName());
+            throw new DuplicateEntryException("Challenge challengeName must be unique");
         }
     }
 

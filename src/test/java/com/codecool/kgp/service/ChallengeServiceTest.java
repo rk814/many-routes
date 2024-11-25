@@ -5,7 +5,6 @@ import com.codecool.kgp.entity.Summit;
 import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.errorhandling.DuplicateEntryException;
 import com.codecool.kgp.repository.ChallengeRepository;
-import com.codecool.kgp.repository.SummitRepository;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,7 @@ class ChallengeServiceTest {
     void getAllChallenges_shouldReturnAllChallengesWithSummits() {
         //given:
         Status status = Status.ACTIVE;
-        List<String> fields = List.of("summitList");
+        List<String> fields = List.of("summitsList");
         List<Challenge> challenges = Instancio.ofList(Challenge.class)
                 .set(field(Challenge::getStatus), Status.ACTIVE)
                 .create();
@@ -48,7 +47,7 @@ class ChallengeServiceTest {
         //then:
         Assertions.assertThat(actual).hasSize(challenges.size());
         actual.forEach(a -> Assertions.assertThat(a.getStatus()).isEqualTo(Status.ACTIVE));
-        actual.forEach(a -> Assertions.assertThat(a.getSummitList()).isNotEmpty());
+        actual.forEach(a -> Assertions.assertThat(a.getSummitsList()).isNotEmpty());
     }
 
     @Test
@@ -58,7 +57,7 @@ class ChallengeServiceTest {
         List<String> fields = null;
         List<Challenge> challenges = Instancio.ofList(Challenge.class)
                 .set(field(Challenge::getStatus), Status.ACTIVE)
-                .setBlank(field(Challenge::getSummitList))
+                .setBlank(field(Challenge::getSummitsList))
                 .create();
         Mockito.when(challengeRepository.findAllByStatus(status)).thenReturn(challenges);
 
@@ -68,7 +67,7 @@ class ChallengeServiceTest {
         //then:
         Assertions.assertThat(actual).hasSize(challenges.size());
         actual.forEach(a -> Assertions.assertThat(a.getStatus()).isEqualTo(Status.ACTIVE));
-        actual.forEach(a -> Assertions.assertThat(a.getSummitList()).isEmpty());
+        actual.forEach(a -> Assertions.assertThat(a.getSummitsList()).isEmpty());
     }
 
     @Test
@@ -132,10 +131,10 @@ class ChallengeServiceTest {
     void attachSummitToChallenge_shouldReturnChallengeWithSummit() {
         //given:
         Summit summit = Instancio.of(Summit.class)
-                .setBlank(field(Summit::getChallengeList))
+                .setBlank(field(Summit::getChallengesList))
                 .create();
         Challenge challenge = Instancio.of(Challenge.class)
-                .setBlank(field(Challenge::getSummitList))
+                .setBlank(field(Challenge::getSummitsList))
                 .create();
         Mockito.when(challengeRepository.findById(challenge.getId())).thenReturn(Optional.of(challenge));
         Mockito.when(summitService.getSummit(summit.getId())).thenReturn(summit);
@@ -144,18 +143,18 @@ class ChallengeServiceTest {
         Challenge actual = challengeService.attachSummitToChallenge(summit.getId(), challenge.getId());
 
         //then:
-        Assertions.assertThat(actual).extracting(Challenge::getSummitList).isNotNull();
-        Assertions.assertThat(summit).extracting(Summit::getChallengeList).isNotNull();
+        Assertions.assertThat(actual).extracting(Challenge::getSummitsList).isNotNull();
+        Assertions.assertThat(summit).extracting(Summit::getChallengesList).isNotNull();
     }
 
     @Test
     void attachSummitToChallenge_shouldReturn404() {
         //given:
         Summit summit = Instancio.of(Summit.class)
-                .setBlank(field(Summit::getChallengeList))
+                .setBlank(field(Summit::getChallengesList))
                 .create();
         Challenge challenge = Instancio.of(Challenge.class)
-                .setBlank(field(Challenge::getSummitList))
+                .setBlank(field(Challenge::getSummitsList))
                 .create();
         Mockito.when(challengeRepository.findById(challenge.getId())).thenReturn(Optional.empty());
 
@@ -172,10 +171,10 @@ class ChallengeServiceTest {
     void detachSummitFromChallenge_shouldReturnChallengeWithoutSummit() {
         //given:
         Summit summit = Instancio.of(Summit.class)
-                .setBlank(field(Summit::getChallengeList))
+                .setBlank(field(Summit::getChallengesList))
                 .create();
         Challenge challenge = Instancio.of(Challenge.class)
-                .set(field(Challenge::getSummitList), List.of(summit))
+                .set(field(Challenge::getSummitsList), List.of(summit))
                 .create();
         Mockito.when(challengeRepository.findById(challenge.getId())).thenReturn(Optional.of(challenge));
         Mockito.when(summitService.getSummit(summit.getId())).thenReturn(summit);
@@ -184,9 +183,9 @@ class ChallengeServiceTest {
         Challenge actual = challengeService.detachSummitFromChallenge(summit.getId(), challenge.getId());
 
         //then:
-        Assertions.assertThat(actual).extracting(Challenge::getSummitList, InstanceOfAssertFactories.list(Challenge.class))
+        Assertions.assertThat(actual).extracting(Challenge::getSummitsList, InstanceOfAssertFactories.list(Challenge.class))
                 .isEmpty();
-        Assertions.assertThat(summit).extracting(Summit::getChallengeList, InstanceOfAssertFactories.list(Summit.class))
+        Assertions.assertThat(summit).extracting(Summit::getChallengesList, InstanceOfAssertFactories.list(Summit.class))
                 .isEmpty();
     }
 
@@ -194,10 +193,10 @@ class ChallengeServiceTest {
     void detachSummitFromChallenge_shouldReturn404() {
         //given:
         Summit summit = Instancio.of(Summit.class)
-                .setBlank(field(Summit::getChallengeList))
+                .setBlank(field(Summit::getChallengesList))
                 .create();
         Challenge challenge = Instancio.of(Challenge.class)
-                .set(field(Challenge::getSummitList), List.of(summit))
+                .set(field(Challenge::getSummitsList), List.of(summit))
                 .create();
         Mockito.when(challengeRepository.findById(challenge.getId())).thenReturn(Optional.empty());
 

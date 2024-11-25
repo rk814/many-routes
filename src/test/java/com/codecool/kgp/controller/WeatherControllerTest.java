@@ -1,7 +1,7 @@
 package com.codecool.kgp.controller;
 
 import com.codecool.kgp.config.SpringSecurityConfig;
-import com.codecool.kgp.mockuser.WithMockCustomUser;
+import com.codecool.kgp.config.WithMockCustomUser;
 import com.codecool.kgp.repository.UserRepository;
 import com.codecool.kgp.service.CustomUserDetailsService;
 import com.codecool.kgp.service.WeatherService;

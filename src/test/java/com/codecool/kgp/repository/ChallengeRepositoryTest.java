@@ -40,7 +40,7 @@ class ChallengeRepositoryTest {
         Assertions.assertThat(actual).filteredOn(a -> a.getName().equals("test1-challenge"))
                 .hasSize(1)
                 .first()
-                .satisfies(challenge -> Assertions.assertThat(Hibernate.isInitialized(challenge.getSummitList()))
+                .satisfies(challenge -> Assertions.assertThat(Hibernate.isInitialized(challenge.getSummitsList()))
                         .isFalse());
     }
 
@@ -75,9 +75,9 @@ class ChallengeRepositoryTest {
         Assertions.assertThat(actual).filteredOn(a -> a.getName().equals("test1-challenge"))
                 .hasSize(1)
                 .first()
-                .satisfies(challenge -> Assertions.assertThat(Hibernate.isInitialized(challenge.getSummitList()))
+                .satisfies(challenge -> Assertions.assertThat(Hibernate.isInitialized(challenge.getSummitsList()))
                         .isTrue())
-                .extracting(Challenge::getSummitList, InstanceOfAssertFactories.list(Summit.class))
+                .extracting(Challenge::getSummitsList, InstanceOfAssertFactories.list(Summit.class))
                 .hasSize(2);
     }
 }
