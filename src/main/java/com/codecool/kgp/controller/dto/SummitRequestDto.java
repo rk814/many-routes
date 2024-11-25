@@ -7,7 +7,7 @@ import jakarta.validation.constraints.*;
 public record SummitRequestDto(
 
         @NotBlank(message = "Pole 'nazwa' jest obowiązkowe")
-        @Size(max = 50, message = "Imię może mieć maksymalnie 50 znaków", groups = UserBasic.class)
+        @Size(max = 50, message = "Nazwa może mieć maksymalnie 50 znaków", groups = UserBasic.class)
         @SummitUniqueName
         String name,
 

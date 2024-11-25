@@ -15,6 +15,8 @@ public interface ChallengeRepository extends JpaRepository<Challenge, UUID> {
 
     List<Challenge> findAllByStatus(Status status);
 
+    Optional<Challenge> findByName(String name);
+
     @Query("SELECT ch FROM Challenge ch LEFT JOIN FETCH ch.summitsList WHERE ch.status=:status")
     List<Challenge> findAllByStatusWithSummits(Status status);
 }
