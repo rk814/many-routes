@@ -33,7 +33,7 @@ public class ChallengeService {
     }
 
     public List<Challenge> getAllChallenges(Status status, List<String> fields) {
-        boolean includeSummitList = fields != null && fields.contains("summitsList");
+        boolean includeSummitList = fields.contains("summitsList");
         List<Challenge> challenges;
         if (includeSummitList) {
             challenges = challengeRepository.findAllByStatusWithSummits(status);

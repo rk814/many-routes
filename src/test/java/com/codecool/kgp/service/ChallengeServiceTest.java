@@ -54,7 +54,7 @@ class ChallengeServiceTest {
     void getAllChallenges_shouldReturnAllChallengesWithoutSummitList() {
         //given:
         Status status = Status.ACTIVE;
-        List<String> fields = null;
+        List<String> fields = List.of("id", "name");
         List<Challenge> challenges = Instancio.ofList(Challenge.class)
                 .set(field(Challenge::getStatus), Status.ACTIVE)
                 .setBlank(field(Challenge::getSummitsList))

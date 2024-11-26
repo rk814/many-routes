@@ -54,8 +54,8 @@ public class ChallengeController {
             @Parameter(description = "Challenge status. Available options: 'ACTIVE', 'DEVELOP', 'REMOVED'")
             @RequestParam(required = false, defaultValue = "ACTIVE") Status status,
             @Parameter(description = "A comma-separated list of field names to customize the fields returned in the ChallengeDto response. " +
-                    "If not provided, will return all fields, but summit list ", example = "challengeName,id")
-            @RequestParam(required = false) List<String> fields,
+                    "If not provided, will return all fields, but summit list ", example = "name,id")
+            @RequestParam(required = false, defaultValue = "id, name, description, status") List<String> fields,
             @Parameter(description = "Optional filter for challenges. Available options: 'unstarted' and 'all'.")
             @RequestParam(required = false, defaultValue = "ALL") ChallengeFilter filter) {
 

@@ -33,14 +33,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.codecool.kgp.config.SpringSecurityConfig.ADMIN;
 import static com.codecool.kgp.config.SpringSecurityConfig.USER;
 import static org.instancio.Select.field;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -92,10 +92,10 @@ class ChallengeControllerTest {
         List<ChallengeDto> challengesDto = Instancio.ofList(ChallengeDto.class).size(3)
                 .set(field(ChallengeDto::status), Status.ACTIVE)
                 .create();
-        Mockito.when(challengeService.getAllChallenges(status, fields)).thenReturn(challenges);
+        Mockito.when(challengeService.getAllChallenges(eq(status), any())).thenReturn(challenges);
 
         AtomicInteger counter = new AtomicInteger(0);
-        Mockito.when(challengeMapper.mapEntityToDto(any(Challenge.class), eq(fields))).thenAnswer(invocationOnMock ->
+        Mockito.when(challengeMapper.mapEntityToDto(any(Challenge.class), any())).thenAnswer(invocationOnMock ->
                 challengesDto.get(counter.getAndIncrement())
         );
 
@@ -114,8 +114,8 @@ class ChallengeControllerTest {
                 .andExpect(jsonPath("$[0].description").exists())
                 .andExpect(jsonPath("$[0].summitsList").exists());
 
-        Mockito.verify(challengeService).getAllChallenges(Status.ACTIVE, fields);
-        Mockito.verify(challengeMapper, Mockito.times(3)).mapEntityToDto(any(Challenge.class), eq(fields));
+        Mockito.verify(challengeService).getAllChallenges(eq(Status.ACTIVE), argThat(Objects::nonNull));
+        Mockito.verify(challengeMapper, Mockito.times(3)).mapEntityToDto(any(Challenge.class), argThat(Objects::nonNull));
     }
 
     @ParameterizedTest
@@ -219,8 +219,8 @@ class ChallengeControllerTest {
         ChallengeDto challengeDto = Instancio.of(ChallengeDto.class)
                 .set(field(ChallengeDto::status), Status.ACTIVE).create();
 
-        Mockito.when(challengeService.getUnstartedChallenges(eq(userId), any(Status.class), eq(fields))).thenReturn(challenges);
-        Mockito.when(challengeMapper.mapEntityToDto(any(Challenge.class), eq(fields))).thenReturn(challengeDto);
+        Mockito.when(challengeService.getUnstartedChallenges(eq(userId), any(Status.class), any())).thenReturn(challenges);
+        Mockito.when(challengeMapper.mapEntityToDto(any(Challenge.class), any())).thenReturn(challengeDto);
 
         //when:
         var response = mockMvc.perform(get("/api/v1/challenges/" + "?filter=" + filter));
@@ -229,8 +229,8 @@ class ChallengeControllerTest {
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(8));
         response.andExpect(jsonPath("$[*].status").value(Matchers.everyItem(Matchers.is("ACTIVE"))));
-        Mockito.verify(challengeService).getUnstartedChallenges(userId, Status.ACTIVE, null);
-        Mockito.verify(challengeMapper, Mockito.times(8)).mapEntityToDto(any(Challenge.class), eq(null));
+        Mockito.verify(challengeService).getUnstartedChallenges(eq(userId), eq(Status.ACTIVE), argThat(arg->arg!=null));
+        Mockito.verify(challengeMapper, Mockito.times(8)).mapEntityToDto(any(Challenge.class), argThat(arg->arg!=null));
     }
 
     @Test
@@ -245,8 +245,8 @@ class ChallengeControllerTest {
         ChallengeDto challengeDto = Instancio.of(ChallengeDto.class)
                 .set(field(ChallengeDto::status), Status.REMOVED)
                 .create();
-        Mockito.when(challengeService.getAllChallenges(status, fields)).thenReturn(challenges);
-        Mockito.when(challengeMapper.mapEntityToDto(challenges.get(0), fields)).thenReturn(challengeDto);
+        Mockito.when(challengeService.getAllChallenges(eq(status), any())).thenReturn(challenges);
+        Mockito.when(challengeMapper.mapEntityToDto(eq(challenges.get(0)), any())).thenReturn(challengeDto);
 
         //when:
         var response = mockMvc.perform(get("/api/v1/challenges/?status=REMOVED"));
@@ -256,8 +256,8 @@ class ChallengeControllerTest {
                 .andExpect(jsonPath("$.size()").value(1))
                 .andExpect(jsonPath("$[0].status").value("REMOVED"));
 
-        Mockito.verify(challengeService).getAllChallenges(Status.REMOVED, fields);
-        Mockito.verify(challengeMapper).mapEntityToDto(challenges.get(0), fields);
+        Mockito.verify(challengeService).getAllChallenges(eq(Status.REMOVED), argThat(Objects::nonNull));
+        Mockito.verify(challengeMapper).mapEntityToDto(eq(challenges.get(0)), argThat(Objects::nonNull));
     }
 
     @Test
