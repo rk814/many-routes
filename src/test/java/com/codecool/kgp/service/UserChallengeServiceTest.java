@@ -55,7 +55,7 @@ class UserChallengeServiceTest {
 
         UserChallenge challenge1 = Instancio.create(UserChallenge.class);
         UserChallenge challenge2 = Instancio.create(UserChallenge.class);
-        Mockito.when(userChallengeRepository.findAllByUserId(user1Id)).thenReturn(List.of(challenge1, challenge2));
+        Mockito.when(userChallengeRepository.findAllByUserIdWithAllRelationships(user1Id)).thenReturn(List.of(challenge1, challenge2));
 
         //when:
         List<UserChallenge> actual = userChallengeService.getUserChallenges(user1Id);
@@ -87,7 +87,7 @@ class UserChallengeServiceTest {
                 .set(field(UserChallenge::getFinishedAt), null)
                 .create();
         UserChallenge completedUserChallenge = Instancio.create(UserChallenge.class);
-        Mockito.when(userChallengeRepository.findAllByUserId(user1Id))
+        Mockito.when(userChallengeRepository.findAllByUserIdWithAllRelationships(user1Id))
                 .thenReturn(List.of(uncompletedUserChallenge, completedUserChallenge));
 
         //when:
@@ -106,7 +106,7 @@ class UserChallengeServiceTest {
                 .set(field(UserChallenge::getFinishedAt), null)
                 .create();
         UserChallenge completedUserChallenge = Instancio.create(UserChallenge.class);
-        Mockito.when(userChallengeRepository.findAllByUserId(user1.getId()))
+        Mockito.when(userChallengeRepository.findAllByUserIdWithAllRelationships(user1.getId()))
                 .thenReturn(List.of(uncompletedUserChallenge, completedUserChallenge));
 
         //when:

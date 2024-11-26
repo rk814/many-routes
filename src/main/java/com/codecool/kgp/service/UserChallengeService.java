@@ -35,7 +35,7 @@ public class UserChallengeService {
 
 
     public List<UserChallenge> getUserChallenges(UUID userId) {
-        List<UserChallenge> userChallenges = userChallengeRepository.findAllByUserId(userId);
+        List<UserChallenge> userChallenges = userChallengeRepository.findAllByUserIdWithAllRelationships(userId);
         log.info("Found {} user challenges with id '{}'", userChallenges.size(), userId);
         return userChallenges;
     }
@@ -47,7 +47,7 @@ public class UserChallengeService {
     }
 
     public List<UserChallenge> getCompletedUserChallenges(UUID userId) {
-        List<UserChallenge> userChallenges = userChallengeRepository.findAllByUserId(userId);
+        List<UserChallenge> userChallenges = userChallengeRepository.findAllByUserIdWithAllRelationships(userId);
         List<UserChallenge> completedUserChallenges = userChallenges.stream()
                 .filter(ch -> ch.getFinishedAt() != null).toList();
         log.info("Found {} completed user challenges with id '{}'", completedUserChallenges.size(), userId);
@@ -55,7 +55,7 @@ public class UserChallengeService {
     }
 
     public List<UserChallenge> getUncompletedUserChallenges(UUID userId) {
-        List<UserChallenge> userChallenges = userChallengeRepository.findAllByUserId(userId);
+        List<UserChallenge> userChallenges = userChallengeRepository.findAllByUserIdWithAllRelationships(userId);
         List<UserChallenge> uncompletedUserChallenges = userChallenges.stream()
                 .filter(ch -> ch.getFinishedAt() == null).toList();
         log.info("Found {} active user challenges with id '{}'", uncompletedUserChallenges.size(), userId);

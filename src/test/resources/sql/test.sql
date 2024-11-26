@@ -50,6 +50,9 @@ VALUES ('cfe64228-2975-41af-bf4c-04bf48bc4523',
         TIMESTAMP '2014-03-11 08:23:54',
         30);
 
+INSERT INTO user_summit(id, summit_id, user_challenge_id)
+VALUES (gen_random_uuid(), '6a20c34e-7de5-4216-8238-2e0a1ef45fcc', 'cfe64228-2975-41af-bf4c-04bf48bc4523'),
+       (gen_random_uuid(), 'a4d928ab-d449-4064-904e-c64f19dd00d4', 'cfe64228-2975-41af-bf4c-04bf48bc4523');
 
 --Chris user challenge
 INSERT INTO user_challenge(id, user_id, challenge_id, started_at, score)
