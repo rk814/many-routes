@@ -54,7 +54,7 @@ class WeatherServiceTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    void getCurrentWeather_shouldReturnJson() throws JsonProcessingException {
+    void getCurrentWeather_shouldReturnJson() {
         // given:
         Mockito.when(webClient.get()).thenReturn(requestHeadersUriSpec);
         Mockito.when(requestHeadersUriSpec.uri(Mockito.any(Function.class))).thenReturn(requestHeadersSpec);
@@ -139,7 +139,7 @@ class WeatherServiceTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    void getCurrentAstronomy_shouldReturnJson() throws JsonProcessingException {
+    void getCurrentAstronomy_shouldReturnJson() {
         // given:
         Mockito.when(webClient.get()).thenReturn(requestHeadersUriSpec);
         Mockito.when(requestHeadersUriSpec.uri(Mockito.any(Function.class))).thenReturn(requestHeadersSpec);
@@ -155,6 +155,7 @@ class WeatherServiceTest {
 
         // then:
         Assertions.assertThat(actual).isNotNull();
+
 //        Assertions.assertThat(actual.sunrise()).isEqualTo("5:00AM");
     }
 
@@ -214,6 +215,92 @@ class WeatherServiceTest {
 
         // when:
         Throwable actual = Assertions.catchThrowable(() -> weatherService.getCurrentAstronomy(12.3, 45.6));
+
+        // then:
+        Assertions.assertThat(actual)
+                .isInstanceOf(ResponseStatusException.class)
+                .extracting(ex -> (ResponseStatusException) ex)
+                .extracting(ResponseStatusException::getStatusCode)
+                .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    void getWeatherForecast_shouldReturnJson() {
+        // given:
+        Mockito.when(webClient.get()).thenReturn(requestHeadersUriSpec);
+        Mockito.when(requestHeadersUriSpec.uri(Mockito.any(Function.class))).thenReturn(requestHeadersSpec);
+        Mockito.when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+
+        String json = "{\"msg\":\"Response message\"}";
+        Mockito.when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.just(json));
+
+        // when:
+        JsonObject actual = weatherService.getWeatherForecast(12.3, 45.6, 5);
+
+        // then:
+        Assertions.assertThat(actual).isNotNull();
+
+        Assertions.assertThat(actual).extracting(j->j.getAsJsonObject().get("msg").getAsString())
+                .isEqualTo("Response message");
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    void getWeatherForecast_shouldThrow500_whenExternalServerReturnErrorResponse() {
+        // given:
+        Mockito.when(webClient.get()).thenReturn(requestHeadersUriSpec);
+        Mockito.when(requestHeadersUriSpec.uri(Mockito.any(Function.class))).thenReturn(requestHeadersSpec);
+        Mockito.when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+
+        Mockito.when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.error(
+                new ResponseStatusException(HttpStatus.valueOf(500), "error")));
+
+        // when:
+        Throwable actual = Assertions.catchThrowable(() -> weatherService.getWeatherForecast(12.3, 45.6, 5));
+
+        // then:
+        Assertions.assertThat(actual)
+                .isInstanceOf(ResponseStatusException.class)
+                .extracting(ex -> (ResponseStatusException) ex)
+                .extracting(ResponseStatusException::getStatusCode)
+                .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    void getWeatherForecast_shouldThrow500_whenJsonParseFailed() {
+        // given:
+        Mockito.when(webClient.get()).thenReturn(requestHeadersUriSpec);
+        Mockito.when(requestHeadersUriSpec.uri(Mockito.any(Function.class))).thenReturn(requestHeadersSpec);
+        Mockito.when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+
+        Mockito.when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.error(
+                new JsonParseException("error")));
+
+        // when:
+        Throwable actual = Assertions.catchThrowable(() -> weatherService.getWeatherForecast(12.3, 45.6, 5));
+
+        // then:
+        Assertions.assertThat(actual)
+                .isInstanceOf(ResponseStatusException.class)
+                .extracting(ex -> (ResponseStatusException) ex)
+                .extracting(ResponseStatusException::getStatusCode)
+                .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    void getWeatherForecast_shouldThrow500_whenExternalJsonIsNull() {
+        // given:
+        Mockito.when(webClient.get()).thenReturn(requestHeadersUriSpec);
+        Mockito.when(requestHeadersUriSpec.uri(Mockito.any(Function.class))).thenReturn(requestHeadersSpec);
+        Mockito.when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+
+        Mockito.when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.empty());
+
+        // when:
+        Throwable actual = Assertions.catchThrowable(() -> weatherService.getWeatherForecast(12.3, 45.6, 5));
 
         // then:
         Assertions.assertThat(actual)

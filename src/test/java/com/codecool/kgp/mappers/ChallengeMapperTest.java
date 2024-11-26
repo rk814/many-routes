@@ -117,8 +117,10 @@ class ChallengeMapperTest {
                 Arguments.of(UUID.fromString("8c24db8e-37cb-4c80-90df-b00c2448d134"), "hard", "hard challenge",
                         Status.ACTIVE, Instancio.ofList(Summit.class).size(0).create(), null),
                 Arguments.of(UUID.fromString("3b9649b8-4e49-40f6-9a7e-38e53e9102ba"), "light", "light challenge",
-                        Status.ACTIVE, Instancio.ofList(Summit.class).size(2).create(), List.of("id", "name"))
-        );
+                        Status.ACTIVE, Instancio.ofList(Summit.class).size(2).create(), List.of("id", "name")),
+                Arguments.of(UUID.fromString("3b9649b8-4e49-40f6-9a7e-38e53e9102ba"), null, "light challenge",
+                        Status.ACTIVE, List.of(), List.of("id", "name", "summitsList")
+                ));
     }
 
     @ParameterizedTest
@@ -148,8 +150,7 @@ class ChallengeMapperTest {
                 .isEqualTo((fields == null || fields.contains("description")) ? result.description() : null);
         Assertions.assertThat(actual).extracting("status")
                 .isEqualTo((fields == null || fields.contains("status")) ? result.status() : null);
-        Assertions.assertThat(actual).extracting("summitsList")
-                .isEqualTo((fields == null || fields.contains("summitsList")) ? result.summitsList() : null);
+        Assertions.assertThat(actual).extracting("summitsList").isEqualTo(null);
     }
 
     @ParameterizedTest

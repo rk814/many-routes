@@ -15,6 +15,7 @@ import com.codecool.kgp.repository.UserRepository;
 import com.codecool.kgp.service.CustomUserDetailsService;
 import com.codecool.kgp.service.UserChallengeService;
 import com.codecool.kgp.validators.UserChallengeValidator;
+import io.swagger.v3.core.util.Json;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.instancio.Select.field;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -96,7 +98,7 @@ class UserChallengeControllerTest {
                 .andExpect(jsonPath("$.size()").value(8))
                 .andExpect(jsonPath("$[0].id").value(userChallenges.get(0).getId().toString()));
         Mockito.verify(userChallengeService).getUserChallenges(user.getId());
-        Mockito.verify(userChallengeMapper, Mockito.times(8)).mapEntityToDto(Mockito.any());
+        Mockito.verify(userChallengeMapper, Mockito.times(8)).mapEntityToDto(any());
     }
 
     @Test
@@ -126,7 +128,7 @@ class UserChallengeControllerTest {
                 .andExpect(jsonPath("$[0].finishedAt").isNotEmpty())
                 .andExpect(jsonPath("$[0].finishedAt").value(userChallenges.get(0).getFinishedAt().format(DateTimeFormatter.ISO_DATE_TIME)));
         Mockito.verify(userChallengeService).getCompletedUserChallenges(user.getId());
-        Mockito.verify(userChallengeMapper, Mockito.times(3)).mapEntityToDto(Mockito.any());
+        Mockito.verify(userChallengeMapper, Mockito.times(3)).mapEntityToDto(any());
     }
 
     @Test
@@ -154,12 +156,12 @@ class UserChallengeControllerTest {
                 .andExpect(jsonPath("$[0].id").value(userChallenges.get(0).getId().toString()))
                 .andExpect(jsonPath("$[0].finishedAt").isEmpty());
         Mockito.verify(userChallengeService).getUncompletedUserChallenges(user.getId());
-        Mockito.verify(userChallengeMapper, Mockito.times(5)).mapEntityToDto(Mockito.any());
+        Mockito.verify(userChallengeMapper, Mockito.times(5)).mapEntityToDto(any());
     }
 
     @Test
     @WithMockCustomUser(username = "bella_mystique", id = "7b92d376-cc0d-4a1a-bc2e-d8f7c9d5e5a7")
-    void getChallenges_shouldReturnAllUserChallenges() throws Exception {
+    void getUserChallenges_shouldReturn400() throws Exception {
         // given:
 
         // when:
@@ -167,6 +169,29 @@ class UserChallengeControllerTest {
 
         // then:
         response.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockCustomUser(username = "chris_crescendo", id = "c82f1e44-12a2-4e9b-acd9-5b7a019c6d8c")
+    void getUserChallenge_shouldReturnUserChallenge() throws Exception {
+        // given:
+        User user = new User("chris_crescendo", "crescendo2024", "email", Role.USER);
+        setId(user, UUID.fromString("c82f1e44-12a2-4e9b-acd9-5b7a019c6d8c"));
+
+       Challenge challenge = Instancio.create(Challenge.class);
+        UserChallenge userChallenge = new UserChallenge(user, challenge);
+
+        Mockito.when(userChallengeService.getUserChallenge(userChallenge.getId())).thenReturn(userChallenge);
+        mockMapEntityToDto();
+
+        //when:
+        ResultActions response = mockMvc.perform(get("/api/v1/users/me/user-challenges/" + userChallenge.getId()));
+
+        //then:
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(userChallenge.getId().toString()));
+        Mockito.verify(userChallengeService, Mockito.times(1)).getUserChallenge(userChallenge.getId());
+        Mockito.verify(userChallengeMapper, Mockito.times(1)).mapEntityToDto(userChallenge);
     }
 
     @Test
@@ -292,7 +317,7 @@ class UserChallengeControllerTest {
     }
 
     private void mockMapEntityToDto() {
-        Mockito.when(userChallengeMapper.mapEntityToDto(Mockito.any())).thenAnswer(invocationOnMock -> {
+        Mockito.when(userChallengeMapper.mapEntityToDto(any())).thenAnswer(invocationOnMock -> {
             UserChallenge uch = invocationOnMock.getArgument(0);
             Challenge ch = uch.getChallenge();
             List<UserSummitDto> userSummitDtos = uch.getUserSummitsList().stream().map(us -> {

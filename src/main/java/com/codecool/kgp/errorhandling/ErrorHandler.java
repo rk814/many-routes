@@ -23,6 +23,7 @@ public class ErrorHandler {
         return new ErrorResponseDto(message);
     }
 
+    // todo - check this
     @ExceptionHandler(DuplicateEntryException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponseDto handleDbConflict(DuplicateEntryException e) {

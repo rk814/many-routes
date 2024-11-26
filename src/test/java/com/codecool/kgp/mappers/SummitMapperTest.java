@@ -28,7 +28,7 @@ class SummitMapperTest {
     private static Stream<Arguments> provideFields() {
         return Stream.of(
                 Arguments.of((List<Field>) null),
-                Arguments.of(List.of("id", "name", "guideNotes")),
+                Arguments.of(List.of("id", "guideNotes")),
                 Arguments.of(List.of("id", "name", "description", "status", "challengesList")),
                 Arguments.of(List.of("name", "challengesList"))
         );

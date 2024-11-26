@@ -94,9 +94,6 @@ public class User {
     }
 
     public void assignUserChallenge(UserChallenge userChallenge) {
-        if (this.userChallenges==null) {
-            this.userChallenges = new ArrayList<>();
-        }
         this.userChallenges.add(userChallenge);
     }
 }

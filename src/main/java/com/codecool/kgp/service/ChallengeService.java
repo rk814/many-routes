@@ -118,8 +118,4 @@ public class ChallengeService {
                     return new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge was not found");
                 });
     }
-
-    protected List<Challenge> getAllActiveChallenges() {
-        return getAllChallenges(Status.ACTIVE, null);
-    }
 }

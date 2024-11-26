@@ -6,6 +6,7 @@ import com.codecool.kgp.errorhandling.DuplicateEntryException;
 import com.codecool.kgp.repository.UserChallengeRepository;
 import org.instancio.Instancio;
 import org.assertj.core.api.Assertions;
+import org.instancio.generators.Generators;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -117,7 +119,7 @@ class UserChallengeServiceTest {
     }
 
     @Test
-    void saveUserChallenge_shouldReturnSavedUserChallenge() {
+    void saveUserChallenge_shouldReturnSavedUserChallenge_whenChallengeWasNotStartedJet() {
         //given:
         UUID user1Id = user1.getId();
         Mockito.when(userService.findUser(user1Id)).thenReturn(user1);
@@ -146,6 +148,48 @@ class UserChallengeServiceTest {
         Mockito.verify(userService).saveUser(userCaptor.capture());
         Assertions.assertThat(userCaptor.getValue().getUserChallenges().size()).isEqualTo(1);
         Assertions.assertThat(userCaptor.getValue().getUserChallenges().get(0)).isEqualTo(savedChallenge.get());
+
+        Assertions.assertThat(actual).isEqualTo(savedChallenge.get());
+    }
+
+    @Test
+    void saveUserChallenge_shouldReturnSavedUserChallenge_whenSameChallengeWasFinished() {
+        //given:
+        User user = Instancio.of(User.class)
+                .generate(field(User::getUserChallenges), gen -> gen.collection().size(5))
+                .create();
+
+        Mockito.when(userService.findUser(user.getId())).thenReturn(user);
+
+        Challenge challenge = Instancio.of(Challenge.class)
+                .generate(field(Challenge::getSummitsList), gen -> gen.collection().size(4))
+                .create();
+        Mockito.when(challengeService.findChallenge(challenge.getId())).thenReturn(challenge);
+
+        UserChallenge finishedUserChallenge = Instancio.of(UserChallenge.class)
+                .set(field(UserChallenge::getChallenge), challenge)
+                .generate(field(UserChallenge::getFinishedAt), gen -> gen.temporal().localDateTime().past())
+                .create();
+        user.assignUserChallenge(finishedUserChallenge);
+
+        AtomicReference<UserChallenge> savedChallenge = new AtomicReference<>();
+        Mockito.when(userChallengeRepository.save(Mockito.any(UserChallenge.class))).thenAnswer(invocationOnMock -> {
+            UserChallenge userChallenge = invocationOnMock.getArgument(0);
+            savedChallenge.set(userChallenge);
+            return userChallenge;
+        });
+        //when:
+        UserChallenge actual = userChallengeService.saveUserChallenge(user.getId(), challenge.getId());
+
+        //then:
+        ArgumentCaptor<UserChallenge> userChallengeCaptor = ArgumentCaptor.forClass(UserChallenge.class);
+        Mockito.verify(userChallengeRepository).save(userChallengeCaptor.capture());
+        Assertions.assertThat(userChallengeCaptor.getValue().getUserSummitsList().size())
+                .isEqualTo(challenge.getSummitsList().size());
+
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        Mockito.verify(userService).saveUser(userCaptor.capture());
+        Assertions.assertThat(userCaptor.getValue().getUserChallenges().size()).isEqualTo(7);
 
         Assertions.assertThat(actual).isEqualTo(savedChallenge.get());
     }
@@ -255,6 +299,49 @@ class UserChallengeServiceTest {
                 .isEqualTo(userChallenge.getUserSummitsList().get(0).getScore());
         Assertions.assertThat(userChallengeCaptor.getValue().getScore()).isEqualTo(2);
         Assertions.assertThat(userChallengeCaptor.getValue().getFinishedAt()).isNull();
+    }
+
+    @Test
+    void setSummitConquered_shouldReturn404() {
+        //given:
+        int score = 1;
+        UserChallenge userChallenge = Instancio.of(UserChallenge.class)
+                .set(field(UserChallenge::getFinishedAt), null)
+                .setBlank(field(UserChallenge::getUserSummitsList))
+                .create();
+        UUID userSummitId = UUID.randomUUID();
+        Mockito.when(userChallengeRepository.findById(userChallenge.getId())).thenReturn(Optional.of(userChallenge));
+
+        //when:
+        Throwable actual = Assertions.catchThrowable(() -> userChallengeService.setSummitConquered(userChallenge.getId(), userSummitId, score));
+
+        //then:
+        Assertions.assertThat(actual).isInstanceOf(ResponseStatusException.class)
+                .hasMessageContaining("nie istnieje");
+    }
+
+    @Test
+    void setSummitConquered_shouldReturn409() {
+        //given:
+        int score = 1;
+        UserChallenge userChallenge = Instancio.of(UserChallenge.class)
+                .generate(field(UserChallenge::getFinishedAt), gen->gen.temporal().localDateTime())
+                .set(field(UserChallenge::getUserSummitsList), Instancio.ofList(UserSummit.class)
+                        .size(2)
+                        .generate(field(UserSummit::getConqueredAt), gen->gen.temporal().localDateTime())
+                        .create()
+                ).create();
+        Mockito.when(userChallengeRepository.findById(userChallenge.getId())).thenReturn(Optional.of(userChallenge));
+
+        //when:
+        Throwable actual = Assertions.catchThrowable(() -> userChallengeService.setSummitConquered(userChallenge.getId(),
+                userChallenge.getUserSummitsList().get(0).getId(), score));
+
+        //then:
+        Assertions.assertThat(actual).isInstanceOf(ResponseStatusException.class)
+                .hasMessageContaining("zakończone")
+                .extracting(ex-> ((ResponseStatusException) ex).getStatusCode())
+                .isEqualTo(HttpStatus.CONFLICT);
     }
 
     @Test

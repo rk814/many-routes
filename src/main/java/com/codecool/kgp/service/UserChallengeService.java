@@ -40,9 +40,9 @@ public class UserChallengeService {
         return userChallenges;
     }
 
-    public UserChallenge getUserChallenge(UUID userId) {
-        UserChallenge userChallenge = findUserChallengeById(userId);
-        log.info("User challenge with id '{}' was found", userId);
+    public UserChallenge getUserChallenge(UUID userChallengeId) {
+        UserChallenge userChallenge = findUserChallengeById(userChallengeId);
+        log.info("User challenge with id '{}' was found", userChallengeId);
         return userChallenge;
     }
 
@@ -155,7 +155,7 @@ public class UserChallengeService {
             userChallenge.setFinishedAt(LocalDateTime.now());
         } catch (IllegalStateException e) {
             log.warn("User challenge with id '{}' was already completed", userChallenge.getId());
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "To wyzwanie zostało już wcześniej zakończone");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "To wyzwanie zostało już wcześniej zakończone");
         }
     }
 }

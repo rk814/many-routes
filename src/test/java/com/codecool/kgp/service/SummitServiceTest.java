@@ -1,8 +1,10 @@
 package com.codecool.kgp.service;
 
+import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.Summit;
 import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.repository.SummitRepository;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.instancio.Instancio;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -99,6 +101,39 @@ class SummitServiceTest {
     }
 
     @Test
+    void removeChallenge_shouldRemoveChallenge_whenChallengeIsPresentOnList() {
+        //given:
+        Challenge challenge = Instancio.create(Challenge.class);
+        Summit summit = Instancio.of(Summit.class)
+                .set(field(Summit::getChallengesList), List.of(challenge))
+                .create();
+
+        //when:
+        summit.removeChallenge(challenge);
+
+        //then:
+        Assertions.assertThat(summit).extracting(Summit::getChallengesList, InstanceOfAssertFactories.list(Challenge.class))
+                .isEmpty();
+    }
+
+    @Test
+    void removeChallenge_shouldDoNothing_whenChallengeIsNotPresentOnList() {
+        //given:
+        Challenge challenge = Instancio.create(Challenge.class);
+        Summit summit = Instancio.of(Summit.class)
+                .generate(field(Summit::getChallengesList), gen -> gen.collection().size(3))
+                .create();
+
+        //when:
+        summit.removeChallenge(challenge);
+
+        //then:
+        Assertions.assertThat(summit).extracting(Summit::getChallengesList, InstanceOfAssertFactories.list(Challenge.class))
+                .doesNotContain(challenge)
+                .size().isEqualTo(3);
+    }
+
+    @Test
     void updateSummit_shouldThrow404() {
         //given:
         UUID id = UUID.randomUUID();
@@ -133,7 +168,7 @@ class SummitServiceTest {
         Mockito.when(summitRepository.findById(id)).thenReturn(Optional.empty());
 
         //when & then:
-        Assertions.assertThatThrownBy(()->summitService.deleteSummit(id))
+        Assertions.assertThatThrownBy(() -> summitService.deleteSummit(id))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("not found")
                 .extracting("status").isEqualTo(HttpStatus.NOT_FOUND);

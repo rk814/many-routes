@@ -248,6 +248,27 @@ class UserServiceTest {
     }
 
     @Test
+    void softDeleteUser_shouldDeleteUser_whenUserContainsNullFields() {
+        //given:
+        User user = new User(null, null, null, null);
+        Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+        //when:
+        userService.softDeleteUser(user.getId());
+
+        //then:
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        Mockito.verify(userRepository).save(userCaptor.capture());
+        Assertions.assertThat(userCaptor.getValue().getName()).isNull();
+        Assertions.assertThat(userCaptor.getValue().getLogin()).isNull();
+        Assertions.assertThat(userCaptor.getValue().getHashPassword()).isNull();
+        Assertions.assertThat(userCaptor.getValue().getPhone()).isNull();
+        Assertions.assertThat(userCaptor.getValue().getEmail()).isNull();
+        Assertions.assertThat(userCaptor.getValue().getNewsletter()).isEqualTo(false);
+        Assertions.assertThat(userCaptor.getValue().getDeletedAt()).isNotNull();
+    }
+
+    @Test
     void softDeleteUser_shouldReturn404() {
         //given:
         UUID id = UUID.randomUUID();

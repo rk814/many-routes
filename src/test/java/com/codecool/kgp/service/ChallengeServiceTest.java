@@ -2,10 +2,12 @@ package com.codecool.kgp.service;
 
 import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.Summit;
+import com.codecool.kgp.entity.UserChallenge;
 import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.errorhandling.DuplicateEntryException;
 import com.codecool.kgp.repository.ChallengeRepository;
 import org.assertj.core.api.InstanceOfAssertFactories;
+import org.hamcrest.Matchers;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -68,6 +70,33 @@ class ChallengeServiceTest {
         Assertions.assertThat(actual).hasSize(challenges.size());
         actual.forEach(a -> Assertions.assertThat(a.getStatus()).isEqualTo(Status.ACTIVE));
         actual.forEach(a -> Assertions.assertThat(a.getSummitsList()).isEmpty());
+    }
+
+    @Test
+    void getUnstartedChallenges_shouldReturnAllUnstartedChallengesWithoutSummitList() {
+        //given:
+        UUID userId = UUID.randomUUID();
+        Status status = Status.ACTIVE;
+        List<String> fields = List.of("id", "name");
+        List<Challenge> challenges = Instancio.ofList(Challenge.class)
+                .size(3)
+                .set(field(Challenge::getStatus), Status.ACTIVE)
+                .setBlank(field(Challenge::getSummitsList))
+                .create();
+        List<UserChallenge> userChallenges = Instancio.ofList(UserChallenge.class)
+                .size(1)
+                .set(field(UserChallenge::getChallenge), challenges.get(0))
+                .create();
+        Mockito.when(challengeRepository.findAllByStatus(status)).thenReturn(challenges);
+        Mockito.when(userChallengeService.getUserChallenges(userId)).thenReturn(userChallenges);
+
+        //when:
+        List<Challenge> actual = challengeService.getUnstartedChallenges(userId, status, fields);
+
+        //then:
+        Assertions.assertThat(actual).hasSize(2);
+        Assertions.assertThat(actual).extracting(Challenge::getStatus).containsOnly(Status.ACTIVE);
+        Assertions.assertThat(actual).flatExtracting(Challenge::getSummitsList).isEmpty();
     }
 
     @Test
@@ -228,8 +257,8 @@ class ChallengeServiceTest {
         //then:
         Assertions.assertThat(actual).isEqualTo(challengeFromDb);
 
-       Mockito.verify(challengeRepository).findById(id);
-       Mockito.verify(challengeRepository).save(challengeFromDb);
+        Mockito.verify(challengeRepository).findById(id);
+        Mockito.verify(challengeRepository).save(challengeFromDb);
     }
 
     @Test

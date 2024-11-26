@@ -4,8 +4,13 @@ import com.codecool.kgp.controller.dto.UserRequestDto;
 import com.codecool.kgp.entity.User;
 import com.codecool.kgp.entity.geography.Coordinates;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.instancio.Instancio;
+import org.instancio.InstancioClassApi;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.instancio.Select.field;
 
@@ -15,7 +20,7 @@ class UserTest {
     void getCoordinatesArray_shouldReturnArrayWithDoubles() {
         //given:
         User testUser = new User();
-        testUser.setCoordinates(new Coordinates(1.0,2.0));
+        testUser.setCoordinates(new Coordinates(1.0, 2.0));
 
         //when:
         Double[] actual = testUser.getCoordinatesArray();
@@ -40,13 +45,13 @@ class UserTest {
     void updateUser_shouldUpdateUser() {
         //given:
         User user = Instancio.of(User.class)
-                .set(field(User::getName),"Adam")
-                .set(field(User::getEmail),"adam@mail.com")
+                .set(field(User::getName), "Adam")
+                .set(field(User::getEmail), "adam@mail.com")
                 .set(field(User::getPhone), "+00 111 222 333")
                 .set(field(User::getNewsletter), true)
                 .create();
         UserRequestDto userRequestDto = Instancio.of(UserRequestDto.class)
-                .set(field(UserRequestDto::name),"Bogdan")
+                .set(field(UserRequestDto::name), "Bogdan")
                 .set(field(UserRequestDto::email), "bogdan@mail.com")
                 .set(field(UserRequestDto::phone), "+99 123 456 789")
                 .set(field(UserRequestDto::newsletter), false)
@@ -70,13 +75,22 @@ class UserTest {
                 .as("Longitude value is not correct").isEqualTo(userRequestDto.longitude());
     }
 
-    @Test
-    void updateUser_shouldSetCoordinatesToNull() {
+    @ParameterizedTest
+    @CsvSource(value = {
+            "null, null",
+            "12.2, null",
+            "null, 12.2"
+    }
+    )
+    void updateUser_shouldSetCoordinatesToNull(String value1, String value2) {
         //given:
+        Double latitude = value1.equals("null") ? null : Double.valueOf(value1);
+        Double longitude = value2.equals("null") ? null : Double.valueOf(value2);
+
         User user = Instancio.create(User.class);
         UserRequestDto userRequestDto = Instancio.of(UserRequestDto.class)
-                .set(field(UserRequestDto::latitude), null)
-                .set(field(UserRequestDto::longitude), null)
+                .set(field(UserRequestDto::latitude), latitude)
+                .set(field(UserRequestDto::longitude), longitude)
                 .create();
 
         //when:
@@ -84,5 +98,23 @@ class UserTest {
 
         //then:
         Assertions.assertThat(user.getCoordinates()).isNull();
+    }
+
+    @Test
+    void assignUserChallenge_shouldAssignUserChallenge() {
+        //given:
+        User user = Instancio.of(User.class)
+                .set(field(User::getUserChallenges), Instancio.ofList(UserChallenge.class).size(4).create())
+                .create();
+        UserChallenge userChallenge = Instancio.create(UserChallenge.class);
+
+        //when:
+        user.assignUserChallenge(userChallenge);
+
+        //then:
+        Assertions.assertThat(user).extracting(User::getUserChallenges, InstanceOfAssertFactories.list(UserChallenge.class))
+                .isNotEmpty()
+                .contains(userChallenge)
+                .size().isEqualTo(5);
     }
 }

@@ -85,24 +85,24 @@ public class UserService {
     }
 
     private void obfuscatePiData(User user) {
-        user.setHashPassword("*".repeat(user.getHashPassword().length()));
-        user.setNewsletter(false);
-
+        if (user.getHashPassword()!=null) {
+            user.setHashPassword("*".repeat(user.getHashPassword().length()));
+        }
         if (user.getLogin() != null) {
             user.setLogin("*".repeat(user.getLogin().length()));
         }
-
         if (user.getName() != null) {
             user.setName("*".repeat(user.getName().length()));
         }
-
         if (user.getPhone() != null) {
             user.setPhone("*".repeat(user.getPhone().length()));
         }
-
-        int charPos = user.getEmail().indexOf("@");
-        String randomPrefix = "deleted-" + UUID.randomUUID();
-        user.setEmail(randomPrefix + user.getEmail().substring(charPos));
+        if (user.getEmail() != null) {
+            String randomPrefix = "deleted-" + UUID.randomUUID();
+            int charPos = user.getEmail().indexOf("@");
+            user.setEmail(randomPrefix + user.getEmail().substring(charPos));
+        }
+        user.setNewsletter(false);
 
         user.setDeletedAt(LocalDateTime.now());
     }

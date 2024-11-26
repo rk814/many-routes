@@ -28,7 +28,7 @@ public class ChallengeMapper {
                 fields.contains("name") ? challenge.getName() : null,
                 fields.contains("description") ? challenge.getDescription() : null,
                 fields.contains("status") ? challenge.getStatus() : null,
-                fields.contains("summitsList") && challenge.getSummitsList()!=null ?
+                fields.contains("summitsList") && !challenge.getSummitsList().isEmpty() ?
                         challenge.getSummitsList().stream().map(summitMapper::mapEntityToSimpleDto).toList() : null
         );
     }

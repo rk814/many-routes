@@ -6,6 +6,7 @@ import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.controller.dto.jwt.JwtTokenResponseDto;
 import com.codecool.kgp.entity.User;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,7 @@ public class JwtTokenService {
         return extractClaims(jwtToken).getSubject();
     }
 
-    public boolean validateToken(String jwtToken, UserDetails userDetails) {
+    public boolean validateToken(String jwtToken, UserDetails userDetails) throws ExpiredJwtException {
         boolean isExpired = getExpirationDateFromToken(jwtToken).before(new Date());
         return !isExpired;
     }
@@ -56,9 +57,9 @@ public class JwtTokenService {
                 .compact();
     }
 
-    public UUID getUserIdFromToken(String jwtToken) {
-        return (UUID) extractClaims(jwtToken).get("user-id");
-    }
+//    public UUID getUserIdFromToken(String jwtToken) {
+//        return (UUID) extractClaims(jwtToken).get("user-id");
+//    }
 
     private Date getExpirationDateFromToken(String jwtToken) {
         return extractClaims(jwtToken).getExpiration();
