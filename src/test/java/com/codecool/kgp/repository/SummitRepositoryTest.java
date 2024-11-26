@@ -3,6 +3,7 @@ package com.codecool.kgp.repository;
 import com.codecool.kgp.entity.Summit;
 import com.codecool.kgp.entity.enums.Status;
 import org.assertj.core.api.Assertions;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -71,5 +72,22 @@ class SummitRepositoryTest {
         //then:
         Assertions.assertThat(actual.size()).isEqualTo(expectedSize);
         Assertions.assertThat(actual).extracting(Summit::getName).doesNotContain("summit1", "summit2");
+    }
+
+    @Test
+    void findAllByStatusWithChallenges_shouldReadAllSummitsWithChallenges() {
+        //given:
+        Status status = Status.ACTIVE;
+
+        //when:
+        List<Summit> actual = testedRepository.findAllByStatusWithChallenges(status);
+
+        //then:
+        Assertions.assertThat(actual).isNotEmpty();
+        Assertions.assertThat(actual).extracting(Summit::getName).containsAnyOf("summit1", "summit2");
+        Assertions.assertThat(actual)
+                .filteredOn(s -> s.getName().equals("summit1"))
+                .first().extracting(Summit::getChallengesList).isNotNull();
+        Assertions.assertThat(actual).extracting(Summit::getStatus).containsOnly(Status.ACTIVE);
     }
 }

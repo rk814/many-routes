@@ -3,6 +3,7 @@ package com.codecool.kgp.repository;
 import com.codecool.kgp.entity.Summit;
 import com.codecool.kgp.entity.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,4 +16,7 @@ public interface SummitRepository extends JpaRepository<Summit, UUID> {
     Optional<Summit> findByName(String name);
 
     List<Summit> findAllByStatus(Status status);
+
+    @Query("SELECT s FROM Summit s LEFT JOIN FETCH s.challengesList ch WHERE s.status=:status")
+    List<Summit> findAllByStatusWithChallenges(Status status);
 }

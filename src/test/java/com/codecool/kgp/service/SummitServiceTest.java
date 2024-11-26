@@ -56,7 +56,7 @@ class SummitServiceTest {
         List<Summit> summitList = Instancio.ofList(Summit.class).size(4)
                 .set(field(Summit::getStatus), status).create();
 
-        Mockito.when(summitRepository.findAllByStatus(status)).thenReturn(summitList);
+        Mockito.when(summitRepository.findAllByStatusWithChallenges(status)).thenReturn(summitList);
 
         //when:
         List<Summit> actual = summitService.getAllSummits(status);
