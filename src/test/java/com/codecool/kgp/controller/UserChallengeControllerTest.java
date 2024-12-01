@@ -15,7 +15,6 @@ import com.codecool.kgp.repository.UserRepository;
 import com.codecool.kgp.service.CustomUserDetailsService;
 import com.codecool.kgp.service.UserChallengeService;
 import com.codecool.kgp.validators.UserChallengeValidator;
-import io.swagger.v3.core.util.Json;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,7 +31,9 @@ import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.instancio.Select.field;
 import static org.mockito.ArgumentMatchers.any;
@@ -80,15 +81,14 @@ class UserChallengeControllerTest {
         User user = new User("bella_mystique", "password", "email", Role.USER);
         setId(user, UUID.fromString("7b92d376-cc0d-4a1a-bc2e-d8f7c9d5e5a7"));
 
-        List<Challenge> challenges = Instancio.ofList(Challenge.class).size(8)
-                .generate(field(Challenge::getSummitsList), gen -> gen.collection().minSize(3))
+        Set<Challenge> challenges = Instancio.ofSet(Challenge.class).size(8)
+                .generate(field(Challenge::getSummitsSet), gen -> gen.collection().minSize(3))
                 .create();
-        challenges.forEach(ch -> ch.getSummitsList().forEach(s -> s.setChallengesList(List.of(ch))));
+        challenges.forEach(ch -> ch.getSummitsSet().forEach(s -> s.setChallengesSet(Set.of(ch))));
         List<UserChallenge> userChallenges = challenges.stream().map(ch -> new UserChallenge(user, ch)).toList();
 
         Mockito.when(userChallengeService.getUserChallenges(user.getId())).thenReturn(userChallenges);
         mockMapEntityToDto();
-
 
         // when:
         ResultActions response = mockMvc.perform(get("/api/v1/users/me/user-challenges/" + query));
@@ -108,10 +108,10 @@ class UserChallengeControllerTest {
         User user = new User("bella_mystique", "password", "email", Role.USER);
         setId(user, UUID.fromString("7b92d376-cc0d-4a1a-bc2e-d8f7c9d5e5a7"));
 
-        List<Challenge> challenges = Instancio.ofList(Challenge.class).size(8)
-                .generate(field(Challenge::getSummitsList), gen -> gen.collection().minSize(3))
+        Set<Challenge> challenges = Instancio.ofSet(Challenge.class).size(8)
+                .generate(field(Challenge::getSummitsSet), gen -> gen.collection().minSize(3))
                 .create();
-        challenges.forEach(ch -> ch.getSummitsList().forEach(s -> s.setChallengesList(List.of(ch))));
+        challenges.forEach(ch -> ch.getSummitsSet().forEach(s -> s.setChallengesSet(Set.of(ch))));
         List<UserChallenge> userChallenges = challenges.stream().map(ch -> new UserChallenge(user, ch)).limit(3).toList();
         userChallenges.forEach(uch -> uch.setFinishedAt(uch.getStartedAt().plusDays(1)));
 
@@ -138,10 +138,10 @@ class UserChallengeControllerTest {
         User user = new User("bella_mystique", "password", "email", Role.USER);
         setId(user, UUID.fromString("7b92d376-cc0d-4a1a-bc2e-d8f7c9d5e5a7"));
 
-        List<Challenge> challenges = Instancio.ofList(Challenge.class).size(8)
-                .generate(field(Challenge::getSummitsList), gen -> gen.collection().minSize(3))
+        Set<Challenge> challenges = Instancio.ofSet(Challenge.class).size(8)
+                .generate(field(Challenge::getSummitsSet), gen -> gen.collection().minSize(3))
                 .create();
-        challenges.forEach(ch -> ch.getSummitsList().forEach(s -> s.setChallengesList(List.of(ch))));
+        challenges.forEach(ch -> ch.getSummitsSet().forEach(s -> s.setChallengesSet(Set.of(ch))));
         List<UserChallenge> userChallenges = challenges.stream().map(ch -> new UserChallenge(user, ch)).limit(5).toList();
 
         Mockito.when(userChallengeService.getUncompletedUserChallenges(user.getId())).thenReturn(userChallenges);
@@ -178,7 +178,7 @@ class UserChallengeControllerTest {
         User user = new User("chris_crescendo", "crescendo2024", "email", Role.USER);
         setId(user, UUID.fromString("c82f1e44-12a2-4e9b-acd9-5b7a019c6d8c"));
 
-       Challenge challenge = Instancio.create(Challenge.class);
+        Challenge challenge = Instancio.create(Challenge.class);
         UserChallenge userChallenge = new UserChallenge(user, challenge);
 
         Mockito.when(userChallengeService.getUserChallenge(userChallenge.getId())).thenReturn(userChallenge);
@@ -254,8 +254,8 @@ class UserChallengeControllerTest {
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("$.userId").value(userId.toString()))
                 .andExpect(jsonPath("$.challengeId").value(conquerorChallengeId.toString()))
-                .andExpect(jsonPath("$.userSummitsList.size()").value(1))
-                .andExpect(jsonPath("$.userSummitsList[0].conqueredAt").isNotEmpty())
+                .andExpect(jsonPath("$.userSummitsSet.size()").value(1))
+                .andExpect(jsonPath("$.userSummitsSet[0].conqueredAt").isNotEmpty())
                 .andExpect(jsonPath("$.score").value(score));
         Mockito.verify(userChallengeValidator).validateScore(UserSummit.class, userSummit.getId(), score);
         Mockito.verify(userChallengeService).setSummitConquered(userChallenge.getId(), userSummit.getId(), score);
@@ -320,14 +320,15 @@ class UserChallengeControllerTest {
         Mockito.when(userChallengeMapper.mapEntityToDto(any())).thenAnswer(invocationOnMock -> {
             UserChallenge uch = invocationOnMock.getArgument(0);
             Challenge ch = uch.getChallenge();
-            List<UserSummitDto> userSummitDtos = uch.getUserSummitsList().stream().map(us -> {
+            Set<UserSummitDto> userSummitDto = uch.getUserSummitsSet().stream().map(us -> {
                 Summit s = us.getSummit();
-                List<ChallengeSimpleDto> challengeSimpleDtos = s.getChallengesList().stream().map(sch -> new ChallengeSimpleDto(sch.getId(), sch.getName(), sch.getStatus())).toList();
+                Set<ChallengeSimpleDto> challengeSimpleDto = s.getChallengesSet().stream()
+                        .map(sch -> new ChallengeSimpleDto(sch.getId(), sch.getName(), sch.getStatus())).collect(Collectors.toSet());
                 return new UserSummitDto(us.getId(), s.getId(), us.getUserChallenge().getId(), us.getConqueredAt(),
-                        challengeSimpleDtos, s.getName(), s.getCoordinatesArray(), s.getMountainRange(), s.getMountainChain(),
+                        challengeSimpleDto, s.getName(), s.getCoordinatesArray(), s.getMountainRange(), s.getMountainChain(),
                         s.getHeight(), s.getDescription(), s.getGuideNotes(), s.getScore(), s.getStatus().toString());
+            }).collect(Collectors.toSet());
 
-            }).toList();
             return new UserChallengeDto(
                     uch.getId(),
                     uch.getUser().getId(),
@@ -338,7 +339,8 @@ class UserChallengeControllerTest {
                     uch.getStartedAt(),
                     uch.getFinishedAt(),
                     uch.getScore(),
-                    userSummitDtos);
+                    userSummitDto
+            );
         });
     }
 }

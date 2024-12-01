@@ -14,6 +14,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByLogin(String login);
 
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.userChallenges uc LEFT JOIN FETCH uc.challenge")
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.userChallengesSet uc LEFT JOIN FETCH uc.challenge")
     List<User> findAllWithChallenges();
 }

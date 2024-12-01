@@ -12,9 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -71,8 +70,8 @@ public class Summit {
         this.status = status;
     }
 
-    @ManyToMany(mappedBy = "summitsList")
-    private List<Challenge> challengesList = new ArrayList<>(); //TODO change to set
+    @ManyToMany(mappedBy = "summitsSet")
+    private Set<Challenge> challengesSet = new HashSet<>();
 
 
     public Double[] getCoordinatesArray() {
@@ -80,11 +79,11 @@ public class Summit {
     }
 
     public void addChallenge(Challenge challenge) {
-        challengesList.add(challenge);
+        challengesSet.add(challenge);
     }
 
     public void removeChallenge(Challenge challenge) {
-        this.challengesList = challengesList.stream().filter(ch -> !ch.equals(challenge)).toList();
+        this.challengesSet = challengesSet.stream().filter(ch -> !ch.equals(challenge)).collect(Collectors.toSet());
     }
 
     public void updateSummit(Summit summit) {

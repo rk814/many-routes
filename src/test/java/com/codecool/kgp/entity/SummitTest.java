@@ -52,7 +52,7 @@ class SummitTest {
         summit.addChallenge(challenge);
 
         //then:
-        Assertions.assertThat(summit).extracting(Summit::getChallengesList, InstanceOfAssertFactories.list(Challenge.class))
+        Assertions.assertThat(summit).extracting(Summit::getChallengesSet, InstanceOfAssertFactories.iterable(Challenge.class))
                 .contains(challenge);
     }
 
@@ -60,15 +60,15 @@ class SummitTest {
     void removeChallenge() {
         //given:
         Summit summit = Instancio.of(Summit.class)
-                .set(field(Summit::getChallengesList), Instancio.ofList(Challenge.class).size(1).create())
+                .set(field(Summit::getChallengesSet), Instancio.ofSet(Challenge.class).size(1).create())
                 .create();
-        Challenge challenge = summit.getChallengesList().get(0);
+        Challenge challenge = summit.getChallengesSet().stream().findFirst().orElse(null);
 
         //when:
         summit.removeChallenge(challenge);
 
         //then:
-        Assertions.assertThat(summit).extracting(Summit::getChallengesList, InstanceOfAssertFactories.list(Challenge.class))
+        Assertions.assertThat(summit).extracting(Summit::getChallengesSet, InstanceOfAssertFactories.iterable(Challenge.class))
                 .isEmpty();
     }
 

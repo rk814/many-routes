@@ -58,7 +58,7 @@ public class ChallengeIntegrationTest {
                 .jsonPath("$[?(@.name=='Conqueror')]").exists()
                 .jsonPath("$[*].status").value(everyItem(is("ACTIVE")))
                 .jsonPath("$").value(hasItem(hasEntry("id", "8b7935ab-5e22-485b-ae18-7e5ad88b005e")))
-                .jsonPath("$").value(not(hasKey("summitsList")));
+                .jsonPath("$").value(not(hasKey("summitsSet")));
     }
 
     @Test
@@ -75,14 +75,14 @@ public class ChallengeIntegrationTest {
                 .jsonPath("$[?(@.name=='Conqueror')]").exists()
                 .jsonPath("$[*].status").value(everyItem(is("ACTIVE")))
                 .jsonPath("$").value(hasItem(hasEntry("id", "8b7935ab-5e22-485b-ae18-7e5ad88b005e")))
-                .jsonPath("$").value(not(hasKey("summitsList")));
+                .jsonPath("$").value(not(hasKey("summitsSet")));
     }
 
     @Test
     void getChallenges_shouldReturnAllChallengesWithSummitsList_whenSummitListFieldRequest() {
         // when & then:
         webTestClient.get()
-                .uri("/api/v1/challenges/?fields=id,name,summitsList")
+                .uri("/api/v1/challenges/?fields=id,name,summitsSet")
                 .header("Authorization", "Bearer " + token)
                 .exchange()
                 .expectStatus().isOk()
@@ -92,6 +92,6 @@ public class ChallengeIntegrationTest {
                 .jsonPath("$[?(@.name=='Conqueror')]").exists()
                 .jsonPath("$[*].status").value(everyItem(is("ACTIVE")))
                 .jsonPath("$").value(hasItem(hasEntry("id", "8b7935ab-5e22-485b-ae18-7e5ad88b005e")))
-                .jsonPath("$").value(hasItem(hasKey("summitsList")));
+                .jsonPath("$").value(hasItem(hasKey("summitsSet")));
     }
 }

@@ -7,7 +7,6 @@ import com.codecool.kgp.entity.enums.Status;
 import com.codecool.kgp.errorhandling.DuplicateEntryException;
 import com.codecool.kgp.repository.ChallengeRepository;
 import org.assertj.core.api.InstanceOfAssertFactories;
-import org.hamcrest.Matchers;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.instancio.Select.field;
@@ -37,7 +37,7 @@ class ChallengeServiceTest {
     void getAllChallenges_shouldReturnAllChallengesWithSummits() {
         //given:
         Status status = Status.ACTIVE;
-        List<String> fields = List.of("summitsList");
+        List<String> fields = List.of("summitsSet");
         List<Challenge> challenges = Instancio.ofList(Challenge.class)
                 .set(field(Challenge::getStatus), Status.ACTIVE)
                 .create();
@@ -49,7 +49,7 @@ class ChallengeServiceTest {
         //then:
         Assertions.assertThat(actual).hasSize(challenges.size());
         actual.forEach(a -> Assertions.assertThat(a.getStatus()).isEqualTo(Status.ACTIVE));
-        actual.forEach(a -> Assertions.assertThat(a.getSummitsList()).isNotEmpty());
+        actual.forEach(a -> Assertions.assertThat(a.getSummitsSet()).isNotEmpty());
     }
 
     @Test
@@ -59,7 +59,7 @@ class ChallengeServiceTest {
         List<String> fields = List.of("id", "name");
         List<Challenge> challenges = Instancio.ofList(Challenge.class)
                 .set(field(Challenge::getStatus), Status.ACTIVE)
-                .setBlank(field(Challenge::getSummitsList))
+                .setBlank(field(Challenge::getSummitsSet))
                 .create();
         Mockito.when(challengeRepository.findAllByStatus(status)).thenReturn(challenges);
 
@@ -69,7 +69,7 @@ class ChallengeServiceTest {
         //then:
         Assertions.assertThat(actual).hasSize(challenges.size());
         actual.forEach(a -> Assertions.assertThat(a.getStatus()).isEqualTo(Status.ACTIVE));
-        actual.forEach(a -> Assertions.assertThat(a.getSummitsList()).isEmpty());
+        actual.forEach(a -> Assertions.assertThat(a.getSummitsSet()).isEmpty());
     }
 
     @Test
@@ -81,7 +81,7 @@ class ChallengeServiceTest {
         List<Challenge> challenges = Instancio.ofList(Challenge.class)
                 .size(3)
                 .set(field(Challenge::getStatus), Status.ACTIVE)
-                .setBlank(field(Challenge::getSummitsList))
+                .setBlank(field(Challenge::getSummitsSet))
                 .create();
         List<UserChallenge> userChallenges = Instancio.ofList(UserChallenge.class)
                 .size(1)
@@ -96,7 +96,7 @@ class ChallengeServiceTest {
         //then:
         Assertions.assertThat(actual).hasSize(2);
         Assertions.assertThat(actual).extracting(Challenge::getStatus).containsOnly(Status.ACTIVE);
-        Assertions.assertThat(actual).flatExtracting(Challenge::getSummitsList).isEmpty();
+        Assertions.assertThat(actual).flatExtracting(Challenge::getSummitsSet).isEmpty();
     }
 
     @Test
@@ -160,10 +160,10 @@ class ChallengeServiceTest {
     void attachSummitToChallenge_shouldReturnChallengeWithSummit() {
         //given:
         Summit summit = Instancio.of(Summit.class)
-                .setBlank(field(Summit::getChallengesList))
+                .setBlank(field(Summit::getChallengesSet))
                 .create();
         Challenge challenge = Instancio.of(Challenge.class)
-                .setBlank(field(Challenge::getSummitsList))
+                .setBlank(field(Challenge::getSummitsSet))
                 .create();
         Mockito.when(challengeRepository.findById(challenge.getId())).thenReturn(Optional.of(challenge));
         Mockito.when(summitService.getSummit(summit.getId())).thenReturn(summit);
@@ -172,18 +172,18 @@ class ChallengeServiceTest {
         Challenge actual = challengeService.attachSummitToChallenge(summit.getId(), challenge.getId());
 
         //then:
-        Assertions.assertThat(actual).extracting(Challenge::getSummitsList).isNotNull();
-        Assertions.assertThat(summit).extracting(Summit::getChallengesList).isNotNull();
+        Assertions.assertThat(actual).extracting(Challenge::getSummitsSet).isNotNull();
+        Assertions.assertThat(summit).extracting(Summit::getChallengesSet).isNotNull();
     }
 
     @Test
     void attachSummitToChallenge_shouldReturn404() {
         //given:
         Summit summit = Instancio.of(Summit.class)
-                .setBlank(field(Summit::getChallengesList))
+                .setBlank(field(Summit::getChallengesSet))
                 .create();
         Challenge challenge = Instancio.of(Challenge.class)
-                .setBlank(field(Challenge::getSummitsList))
+                .setBlank(field(Challenge::getSummitsSet))
                 .create();
         Mockito.when(challengeRepository.findById(challenge.getId())).thenReturn(Optional.empty());
 
@@ -200,10 +200,10 @@ class ChallengeServiceTest {
     void detachSummitFromChallenge_shouldReturnChallengeWithoutSummit() {
         //given:
         Summit summit = Instancio.of(Summit.class)
-                .setBlank(field(Summit::getChallengesList))
+                .setBlank(field(Summit::getChallengesSet))
                 .create();
         Challenge challenge = Instancio.of(Challenge.class)
-                .set(field(Challenge::getSummitsList), List.of(summit))
+                .set(field(Challenge::getSummitsSet), Set.of(summit))
                 .create();
         Mockito.when(challengeRepository.findById(challenge.getId())).thenReturn(Optional.of(challenge));
         Mockito.when(summitService.getSummit(summit.getId())).thenReturn(summit);
@@ -212,9 +212,9 @@ class ChallengeServiceTest {
         Challenge actual = challengeService.detachSummitFromChallenge(summit.getId(), challenge.getId());
 
         //then:
-        Assertions.assertThat(actual).extracting(Challenge::getSummitsList, InstanceOfAssertFactories.list(Challenge.class))
+        Assertions.assertThat(actual).extracting(Challenge::getSummitsSet, InstanceOfAssertFactories.iterable(Challenge.class))
                 .isEmpty();
-        Assertions.assertThat(summit).extracting(Summit::getChallengesList, InstanceOfAssertFactories.list(Summit.class))
+        Assertions.assertThat(summit).extracting(Summit::getChallengesSet, InstanceOfAssertFactories.iterable(Summit.class))
                 .isEmpty();
     }
 
@@ -222,10 +222,10 @@ class ChallengeServiceTest {
     void detachSummitFromChallenge_shouldReturn404() {
         //given:
         Summit summit = Instancio.of(Summit.class)
-                .setBlank(field(Summit::getChallengesList))
+                .setBlank(field(Summit::getChallengesSet))
                 .create();
         Challenge challenge = Instancio.of(Challenge.class)
-                .set(field(Challenge::getSummitsList), List.of(summit))
+                .set(field(Challenge::getSummitsSet), Set.of(summit))
                 .create();
         Mockito.when(challengeRepository.findById(challenge.getId())).thenReturn(Optional.empty());
 

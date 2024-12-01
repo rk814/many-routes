@@ -29,8 +29,8 @@ class UserRepositoryTest {
         Assertions.assertThat(actual).hasSize(3)
                 .filteredOn(user -> user.getName().equals("Adam"))
                 .singleElement()
-                .satisfies(adam -> Assertions.assertThat(adam.getUserChallenges()).isNotEmpty())
-                .extracting(User::getUserChallenges, InstanceOfAssertFactories.list(UserChallenge.class))
+                .satisfies(adam -> Assertions.assertThat(adam.getUserChallengesSet()).isNotEmpty())
+                .extracting(User::getUserChallengesSet, InstanceOfAssertFactories.iterable(UserChallenge.class))
                 .first()
                 .satisfies(uch -> Assertions.assertThat(uch.getChallenge()).isNotNull());
     }

@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.codecool.kgp.config.SpringSecurityConfig.ADMIN;
 import static com.codecool.kgp.config.SpringSecurityConfig.USER;
@@ -61,10 +62,10 @@ class UserControllerTest {
         //given:
         List<User> users = Instancio.ofList(User.class)
                 .size(2)
-                .setBlank(field(User::getUserChallenges))
-                .set(field(User::getUserChallenges), Instancio.ofList(UserChallenge.class).size(1).create())
+                .setBlank(field(User::getUserChallengesSet))
+                .set(field(User::getUserChallengesSet), Instancio.ofSet(UserChallenge.class).size(1).create())
                 .create();
-        users.forEach(user -> user.getUserChallenges().get(0).setUser(user));
+        users.forEach(user -> user.getUserChallengesSet().stream().findFirst().ifPresent(uch-> uch.setUser(user)));
 
         Mockito.when(userService.getUsers()).thenReturn(users);
         users.forEach(this::mockUserMapper);
@@ -86,7 +87,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[0].createAt").value(users.get(0).getCreatedAt().format(DateTimeFormatter.ISO_DATE_TIME)))
                 .andExpect(jsonPath("$[0].deleteAt").value(users.get(0).getDeletedAt().format(DateTimeFormatter.ISO_DATE_TIME)))
                 .andExpect(jsonPath("$[0].role").value(users.get(0).getRole().toString()))
-                .andExpect(jsonPath("$[0].userChallengesListSimplified").isNotEmpty());
+                .andExpect(jsonPath("$[0].userChallengesSetSimplified").isNotEmpty());
     }
 
     @Test
@@ -94,9 +95,10 @@ class UserControllerTest {
     void getUserById_shouldReturnUser() throws Exception {
         //given:
         User user = Instancio.of(User.class)
-                .set(field(User::getUserChallenges), Instancio.ofList(UserChallenge.class).size(1).create()).create();
+                .set(field(User::getUserChallengesSet), Instancio.ofSet(UserChallenge.class).size(1).create())
+                .create();
 
-        user.getUserChallenges().get(0).setUser(user);
+        user.getUserChallengesSet().stream().findFirst().ifPresent(uch->uch.setUser(user));
 
         Mockito.when(userService.getUser(user.getId())).thenReturn(user);
         mockUserMapper(user);
@@ -117,7 +119,7 @@ class UserControllerTest {
                 )
                 .andExpect(jsonPath("$.deleteAt").value(user.getDeletedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                 .andExpect(jsonPath("$.role").value(user.getRole().toString()))
-                .andExpect(jsonPath("$.userChallengesListSimplified").isNotEmpty());
+                .andExpect(jsonPath("$.userChallengesSetSimplified").isNotEmpty());
     }
 
     @Test
@@ -126,9 +128,9 @@ class UserControllerTest {
         //given:
         UUID id = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
         User user = Instancio.of(User.class)
-                .set(field(User::getUserChallenges), Instancio.ofList(UserChallenge.class).size(1).create()).create();
+                .set(field(User::getUserChallengesSet), Instancio.ofSet(UserChallenge.class).size(1).create()).create();
 
-        user.getUserChallenges().get(0).setUser(user);
+        user.getUserChallengesSet().stream().findFirst().ifPresent(uch->uch.setUser(user));
 
         Mockito.when(userService.getUser(id)).thenReturn(user);
         mockUserMapper(user);
@@ -148,7 +150,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.createAt").value(user.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                 .andExpect(jsonPath("$.deleteAt").value(user.getDeletedAt().format(DateTimeFormatter.ISO_DATE_TIME)))
                 .andExpect(jsonPath("$.role").value(user.getRole().toString()))
-                .andExpect(jsonPath("$.userChallengesListSimplified").isNotEmpty());
+                .andExpect(jsonPath("$.userChallengesSetSimplified").isNotEmpty());
     }
 
     @Test
@@ -174,7 +176,7 @@ class UserControllerTest {
         UUID id = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
         UserRequestDto dto = Instancio.of(UserRequestDto.class).create();
         User updatedUser = Instancio.of(User.class)
-                .set(field(User::getUserChallenges), Instancio.ofList(UserChallenge.class).size(1).create()).create();
+                .set(field(User::getUserChallengesSet), Instancio.ofSet(UserChallenge.class).size(1).create()).create();
 
         Mockito.when(userService.updateUser(id, dto)).thenReturn(updatedUser);
         mockUserMapper(updatedUser);
@@ -196,7 +198,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.createAt").value(updatedUser.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                 .andExpect(jsonPath("$.deleteAt").value(updatedUser.getDeletedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                 .andExpect(jsonPath("$.role").value(updatedUser.getRole().toString()))
-                .andExpect(jsonPath("$.userChallengesListSimplified").isNotEmpty());
+                .andExpect(jsonPath("$.userChallengesSetSimplified").isNotEmpty());
         ArgumentCaptor<UserRequestDto> captor = ArgumentCaptor.forClass(UserRequestDto.class);
         Mockito.verify(userService).updateUser(Mockito.eq(id), captor.capture());
         Assertions.assertEquals(captor.getValue(), dto);
@@ -271,14 +273,14 @@ class UserControllerTest {
                 user.getCreatedAt(),
                 user.getDeletedAt(),
                 user.getRole().toString(),
-                user.getUserChallenges().stream().map(uch -> new UserChallengeSimpleDto(
+                user.getUserChallengesSet().stream().map(uch -> new UserChallengeSimpleDto(
                         uch.getId(),
                         uch.getUser().getId(),
                         uch.getChallenge().getName(),
                         uch.getStartedAt(),
                         uch.getFinishedAt(),
                         uch.getScore()
-                )).toList()
-        ));
+                )).collect(Collectors.toSet()))
+        );
     }
 }

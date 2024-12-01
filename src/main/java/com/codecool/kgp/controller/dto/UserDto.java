@@ -1,6 +1,6 @@
 package com.codecool.kgp.controller.dto;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public record UserDto(
@@ -14,6 +14,6 @@ public record UserDto(
         LocalDateTime createAt,
         LocalDateTime deleteAt,
         String role,
-        List<UserChallengeSimpleDto> userChallengesListSimplified
+        Set<UserChallengeSimpleDto> userChallengesSetSimplified
 ) {
 }

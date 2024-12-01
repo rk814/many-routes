@@ -6,6 +6,7 @@ import com.codecool.kgp.entity.Challenge;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class ChallengeMapper {
@@ -28,8 +29,8 @@ public class ChallengeMapper {
                 fields.contains("name") ? challenge.getName() : null,
                 fields.contains("description") ? challenge.getDescription() : null,
                 fields.contains("status") ? challenge.getStatus() : null,
-                fields.contains("summitsList") && !challenge.getSummitsList().isEmpty() ?
-                        challenge.getSummitsList().stream().map(summitMapper::mapEntityToSimpleDto).toList() : null
+                fields.contains("summitsSet") && !challenge.getSummitsSet().isEmpty() ?
+                        challenge.getSummitsSet().stream().map(summitMapper::mapEntityToSimpleDto).collect(Collectors.toSet()) : null
         );
     }
 
@@ -42,6 +43,6 @@ public class ChallengeMapper {
     }
 
     private List<String> getAllFields() {
-        return List.of("id", "name", "description","status","summitsList");
+        return List.of("id", "name", "description","status","summitsSet");
     }
 }

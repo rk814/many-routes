@@ -40,7 +40,7 @@ class UserMapperTest {
                 .set(field(User::getCoordinates), new Coordinates(51.5074, -0.1278)) // Coordinates for London
                 .set(field(User::getPhone), "+44 7700 900123")
                 .set(field(User::getNewsletter), true)
-                .setBlank(field(User::getUserChallenges))
+                .setBlank(field(User::getUserChallengesSet))
                 .generate(field(User::getCreatedAt), gen->gen.temporal().localDateTime().past())
                 .generate(field(User::getDeletedAt), gen->gen.temporal().localDateTime())
                 .set(field(User::getRole), Role.USER)

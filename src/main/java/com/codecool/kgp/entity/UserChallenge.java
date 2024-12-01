@@ -6,9 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -45,7 +43,7 @@ public class UserChallenge {
     }
 
     @OneToMany(mappedBy = "userChallenge", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<UserSummit> userSummitsList = new ArrayList<>();
+    private Set<UserSummit> userSummitsSet = new HashSet<>();
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -57,7 +55,7 @@ public class UserChallenge {
 
 
     public void assignUserSummit(UserSummit userSummit) {
-        userSummitsList.add(userSummit);
+        userSummitsSet.add(userSummit);
     }
 
     public void setFinishedAt(LocalDateTime finishedAt) {

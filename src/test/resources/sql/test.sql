@@ -38,7 +38,7 @@ INSERT INTO summit(id, name, height, score, status)
 VALUES ('6a20c34e-7de5-4216-8238-2e0a1ef45fcc', 'summit1', 1, 11, 'ACTIVE'),
        ('a4d928ab-d449-4064-904e-c64f19dd00d4', 'summit2', 2, 22, 'ACTIVE');
 
-INSERT INTO challenge_summits_list(challenges_list_id, summits_list_id)
+INSERT INTO challenge_summits_set(challenges_set_id, summits_set_id)
 VALUES ('8b7935ab-5e22-485b-ae18-7e5ad88b005e', '6a20c34e-7de5-4216-8238-2e0a1ef45fcc'),
        ('8b7935ab-5e22-485b-ae18-7e5ad88b005e', 'a4d928ab-d449-4064-904e-c64f19dd00d4');
 

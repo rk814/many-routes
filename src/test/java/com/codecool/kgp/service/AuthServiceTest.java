@@ -16,19 +16,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Role;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static com.codecool.kgp.entity.enums.Role.USER;
 import static org.instancio.Select.field;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
 
@@ -63,9 +61,9 @@ class AuthServiceTest {
         Mockito.when(userMapper.mapEntityToDto(newUser)).thenAnswer(invocation ->
                 {
                     User user = invocation.getArgument(0);
-                    List<UserChallengeSimpleDto> userChallengesDto = user.getUserChallenges().stream()
+                    Set<UserChallengeSimpleDto> userChallengesDto = user.getUserChallengesSet().stream()
                             .map(uch -> new UserChallengeSimpleDto(uch.getId(), user.getId(), uch.getChallenge().getName(),
-                                    uch.getStartedAt(), uch.getFinishedAt(), uch.getScore())).toList();
+                                    uch.getStartedAt(), uch.getFinishedAt(), uch.getScore())).collect(Collectors.toSet());
                     result.set(new UserDto(user.getId(), user.getLogin(), user.getName(), user.getEmail(),
                             user.getCoordinatesArray(), user.getPhone(), user.getNewsletter(), user.getCreatedAt(),
                             user.getDeletedAt(), user.getRole().toString(), userChallengesDto));

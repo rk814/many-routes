@@ -12,6 +12,7 @@ import com.codecool.kgp.repository.SummitRepository;
 import com.codecool.kgp.repository.UserRepository;
 import com.codecool.kgp.service.CustomUserDetailsService;
 import com.codecool.kgp.service.SummitService;
+import org.hamcrest.Matchers;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,6 +33,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.codecool.kgp.config.SpringSecurityConfig.ADMIN;
@@ -115,7 +117,7 @@ class SummitControllerTest {
         );
         Mockito.when(summitMapper.mapEntityToDto(any(Summit.class), eq(fields))).thenAnswer(invocationOnMock -> {
             Summit summit = invocationOnMock.getArgument(0);
-            return new SummitDto(summit.getId(), summit.getChallengesList().stream().map(ch -> new ChallengeSimpleDto(ch.getId(), ch.getName(), ch.getStatus())).toList(),
+            return new SummitDto(summit.getId(), summit.getChallengesSet().stream().map(ch -> new ChallengeSimpleDto(ch.getId(), ch.getName(), ch.getStatus())).collect(Collectors.toSet()),
                     summit.getName(), summit.getCoordinatesArray(), summit.getMountainRange(), summit.getMountainChain(), summit.getHeight(),
                     summit.getDescription(), summit.getGuideNotes(), summit.getScore(), summit.getStatus().name());
         });
@@ -142,7 +144,7 @@ class SummitControllerTest {
         );
         Mockito.when(summitMapper.mapEntityToDto(any(Summit.class), eq(fields))).thenAnswer(invocationOnMock -> {
             Summit summit = invocationOnMock.getArgument(0);
-            return new SummitDto(summit.getId(), summit.getChallengesList().stream().map(ch -> new ChallengeSimpleDto(ch.getId(), ch.getName(), ch.getStatus())).toList(),
+            return new SummitDto(summit.getId(), summit.getChallengesSet().stream().map(ch -> new ChallengeSimpleDto(ch.getId(), ch.getName(), ch.getStatus())).collect(Collectors.toSet()),
                     summit.getName(), summit.getCoordinatesArray(), summit.getMountainRange(), summit.getMountainChain(), summit.getHeight(),
                     summit.getDescription(), summit.getGuideNotes(), summit.getScore(), summit.getStatus().name());
         });
@@ -199,12 +201,11 @@ class SummitControllerTest {
     @WithMockUser(roles = ADMIN)
     void getSummit_shouldReturnRequestSummit() throws Exception {
         //given:
-        int challengeListSize = 5;
         Summit summit = Instancio.of(Summit.class)
-                .generate(field(Summit::getChallengesList), gen -> gen.collection().size(challengeListSize))
+                .generate(field(Summit::getChallengesSet), gen -> gen.collection().size(5))
                 .create();
         SummitDto summitDto = Instancio.of(SummitDto.class)
-                .generate(field(SummitDto::challengesList), gen -> gen.collection().size(challengeListSize))
+                .generate(field(SummitDto::challengesSet), gen -> gen.collection().size(5))
                 .create();
         Mockito.when(summitService.getSummit(summit.getId())).thenReturn(summit);
         Mockito.when(summitMapper.mapEntityToDto(summit)).thenReturn(summitDto);
@@ -220,8 +221,9 @@ class SummitControllerTest {
                 .andExpect(jsonPath("$.height").value(summitDto.height()))
                 .andExpect(jsonPath("$.coordinates[0]").value(summitDto.coordinates()[0]))
                 .andExpect(jsonPath("$.coordinates[1]").value(summitDto.coordinates()[1]))
-                .andExpect(jsonPath("$.challengesList.size()").value(challengeListSize))
-                .andExpect(jsonPath("$.challengesList[0].id").value(summitDto.challengesList().get(0).id().toString()));
+                .andExpect(jsonPath("$.challengesSet.size()").value(5))
+                .andExpect(jsonPath("$.challengesSet[*].id")
+                        .value(Matchers.hasItem(summitDto.challengesSet().iterator().next().id().toString())));
     }
 
     @Test
@@ -253,7 +255,7 @@ class SummitControllerTest {
         Mockito.when(summitMapper.mapRequestDtoToEntity(any(SummitRequestDto.class))).thenReturn(summit);
         Mockito.when(summitService.addNewSummit(summit))
                 .thenReturn(summit);
-        SummitDto responseDto = new SummitDto(summit.getId(), summit.getChallengesList().stream().map(ch -> new ChallengeSimpleDto(ch.getId(), ch.getName(), ch.getStatus())).toList(),
+        SummitDto responseDto = new SummitDto(summit.getId(), summit.getChallengesSet().stream().map(ch -> new ChallengeSimpleDto(ch.getId(), ch.getName(), ch.getStatus())).collect(Collectors.toSet()),
                 name, new Double[]{latitude, longitude}, mountainRange, mountainChain, height, description, guideNotes, score, status);
         Mockito.when(summitMapper.mapEntityToDto(summit)).thenReturn(responseDto);
 
@@ -302,7 +304,7 @@ class SummitControllerTest {
 
         SummitRequestDto summitRequestDto = Instancio.of(SummitRequestDto.class).create();
         Summit updatedSummit = Instancio.of(Summit.class).create();
-        SummitDto summitDto = new SummitDto(summit.getId(), summit.getChallengesList().stream().map(ch -> new ChallengeSimpleDto(ch.getId(), ch.getName(), ch.getStatus())).toList(),
+        SummitDto summitDto = new SummitDto(summit.getId(), summit.getChallengesSet().stream().map(ch -> new ChallengeSimpleDto(ch.getId(), ch.getName(), ch.getStatus())).collect(Collectors.toSet()),
                 name, new Double[]{latitude, longitude}, mountainRange, mountainChain, height, description, guideNotes, score, status);
 
         Mockito.when(summitMapper.mapRequestDtoToEntity(any(SummitRequestDto.class))).thenReturn(summit);

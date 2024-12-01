@@ -1,11 +1,11 @@
 package com.codecool.kgp.controller.dto;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public record SummitDto(
         UUID id,
-        List<ChallengeSimpleDto> challengesList,
+        Set<ChallengeSimpleDto> challengesSet,
         String name,
         Double[] coordinates,
         String mountainRange,

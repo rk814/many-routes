@@ -6,9 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -42,15 +41,15 @@ public class Challenge {
     }
 
     @ManyToMany
-    private List<Summit> summitsList = new ArrayList<>(); // TODO change it to set
+    private Set<Summit> summitsSet = new HashSet<>();
 
 
     public void addSummit(Summit summit) {
-        summitsList.add(summit);
+        summitsSet.add(summit);
     }
 
     public void removeSummit(Summit summit) {
-        this.summitsList = summitsList.stream().filter(s -> !s.equals(summit)).toList();
+        this.summitsSet = summitsSet.stream().filter(s -> !s.equals(summit)).collect(Collectors.toSet());
     }
 
     public void updateChallenge(Challenge challenge) {

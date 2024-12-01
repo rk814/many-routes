@@ -1,9 +1,7 @@
 package com.codecool.kgp.service;
 
 import com.codecool.kgp.entity.UserChallenge;
-import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.controller.dto.UserRequestDto;
-import com.codecool.kgp.mappers.UserMapper;
 import com.codecool.kgp.entity.User;
 import com.codecool.kgp.repository.UserRepository;
 import org.slf4j.Logger;
@@ -15,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -45,7 +43,7 @@ public class UserService {
 
     public int getUserScore(UUID id) {
         User user = findUser(id);
-        List<UserChallenge> userChallenges = user.getUserChallenges();
+        Set<UserChallenge> userChallenges = user.getUserChallengesSet();
         int score = userChallenges.stream().mapToInt(UserChallenge::getScore).sum();
         log.info("User with id '{}' has score of value {}", id, score);
         return score;

@@ -33,7 +33,7 @@ public class SummitService {
     public List<Summit> getAllSummits(Status status) {
 //        List<Summit> summits = summitRepository.findAllByStatus(status);
         List<Summit> summits = summitRepository.findAllByStatusWithChallenges(status);
-        log.info("{} summitsList were found", summits.size());
+        log.info("{} summitsSet were found", summits.size());
         return summits;
     }
 

@@ -1,6 +1,7 @@
 package com.codecool.kgp.integrationtests;
 
 import com.codecool.kgp.config.WebSignInClient;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -78,8 +79,8 @@ public class UserIntegrationTest {
                 .jsonPath("$.login").isEqualTo("chris_crescendo")
                 .jsonPath("$.name").isEqualTo("Chris")
                 .jsonPath("$.email").isEqualTo("chris@musicworld.com")
-                .jsonPath("$.userChallengesListSimplified").isNotEmpty()
-                .jsonPath("$.userChallengesListSimplified[0].challengeName").isEqualTo("test2-challenge");
+                .jsonPath("$.userChallengesSetSimplified").isNotEmpty()
+                .jsonPath("$.userChallengesSetSimplified[*].challengeName").value(Matchers.contains("test2-challenge"));
     }
 
     @Test
@@ -94,7 +95,7 @@ public class UserIntegrationTest {
                 .jsonPath("$.login").isEqualTo("adam_wanderlust")
                 .jsonPath("$.name").isEqualTo("Adam")
                 .jsonPath("$.email").isEqualTo("adam@adventureworld.com")
-                .jsonPath("$.userChallengesListSimplified").isNotEmpty()
-                .jsonPath("$.userChallengesListSimplified[0].challengeName").isEqualTo("Conqueror");
+                .jsonPath("$.userChallengesSetSimplified").isNotEmpty()
+                .jsonPath("$.userChallengesSetSimplified[*].challengeName").value(Matchers.hasItem("Conqueror"));
     }
 }

@@ -1,7 +1,7 @@
 package com.codecool.kgp.controller.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public record UserSummitDto(
@@ -11,7 +11,7 @@ public record UserSummitDto(
         LocalDateTime conqueredAt,
 
         // merge data form Summit
-        List<ChallengeSimpleDto> challangesList,
+        Set<ChallengeSimpleDto> challangesSet,
         String name,
         Double[] coordinates,
         String mountainRange,

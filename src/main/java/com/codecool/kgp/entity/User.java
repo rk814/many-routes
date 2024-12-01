@@ -13,9 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -74,7 +72,7 @@ public class User {
     }
 
     @OneToMany(mappedBy = "user", orphanRemoval = true)
-    private List<UserChallenge> userChallenges = new ArrayList<>();
+    private Set<UserChallenge> userChallengesSet = new HashSet<>();
 
 
     public Double[] getCoordinatesArray() {
@@ -94,6 +92,6 @@ public class User {
     }
 
     public void assignUserChallenge(UserChallenge userChallenge) {
-        this.userChallenges.add(userChallenge);
+        this.userChallengesSet.add(userChallenge);
     }
 }

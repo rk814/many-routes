@@ -13,7 +13,7 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, UU
 
     List<UserChallenge> findAllByUserId(UUID id);
 
-    @Query("SELECT uch FROM UserChallenge uch LEFT JOIN FETCH uch.userSummitsList us LEFT JOIN FETCH uch.challenge" +
+    @Query("SELECT uch FROM UserChallenge uch LEFT JOIN FETCH uch.userSummitsSet us LEFT JOIN FETCH uch.challenge" +
             " LEFT JOIN FETCH us.summit WHERE uch.user.id=:id")
     List<UserChallenge> findAllByUserIdWithAllRelationships(UUID id);
 }

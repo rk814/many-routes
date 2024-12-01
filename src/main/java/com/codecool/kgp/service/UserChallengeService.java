@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -64,14 +65,14 @@ public class UserChallengeService {
 
     public UserChallenge saveUserChallenge(UUID userId, UUID challengeId) {
         User user = userService.findUser(userId);
-        if (isTheChallengeActive(challengeId, user.getUserChallenges())) {
+        if (isTheChallengeActive(challengeId, user.getUserChallengesSet())) {
             log.warn("User with id '{}' attempted to start the challenge with id '{}' already active", userId, challengeId);
             throw new DuplicateEntryException("To wyzwanie jest już rozpoczęte");
         }
 
         Challenge challenge = challengeService.findChallenge(challengeId);
         UserChallenge userChallenge = new UserChallenge(user, challenge);
-        challenge.getSummitsList().forEach(summit -> {
+        challenge.getSummitsSet().forEach(summit -> {
             UserSummit userSummit = new UserSummit(userChallenge, summit);
             userChallenge.assignUserSummit(userSummit);
         });
@@ -89,7 +90,7 @@ public class UserChallengeService {
 
     public UserChallenge setSummitConquered(UUID userChallengeId, UUID userSummitId, int score) {
         UserChallenge userChallenge = findUserChallengeById(userChallengeId);
-        UserSummit userSummit = userChallenge.getUserSummitsList().stream().filter(us -> us.getId().equals(userSummitId)).findFirst()
+        UserSummit userSummit = userChallenge.getUserSummitsSet().stream().filter(us -> us.getId().equals(userSummitId)).findFirst()
                 .orElseThrow(() -> {
                     log.warn("User Challenge with id '{}' does not contain User Summit with id '{}'", userChallengeId, userSummitId);
                     return new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -136,7 +137,7 @@ public class UserChallengeService {
                 });
     }
 
-    private boolean isTheChallengeActive(UUID challengeId, List<UserChallenge> userChallenges) {
+    private boolean isTheChallengeActive(UUID challengeId, Set<UserChallenge> userChallenges) {
         return userChallenges.stream().anyMatch(ch -> ch.getChallenge().getId() == challengeId && ch.getFinishedAt() == null);
     }
 
@@ -147,7 +148,7 @@ public class UserChallengeService {
     }
 
     private boolean areAllUserSummitsConquered(UserChallenge userChallenge) {
-        return userChallenge.getUserSummitsList().stream().allMatch(s -> s.getConqueredAt() != null);
+        return userChallenge.getUserSummitsSet().stream().allMatch(s -> s.getConqueredAt() != null);
     }
 
     private void setUserChallengeFinishedTime(UserChallenge userChallenge) {

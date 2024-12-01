@@ -8,13 +8,11 @@ import com.codecool.kgp.entity.UserSummit;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.instancio.Instancio;
-import org.instancio.InstancioCollectionsApi;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.instancio.Select.field;
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserChallengeMapperTest {
 
@@ -24,7 +22,7 @@ class UserChallengeMapperTest {
     void mapEntityToDto_shouldMapEntityToDto() {
         //given:
         UserChallenge userChallenge = Instancio.of(UserChallenge.class)
-                .ignore(field(UserChallenge::getUserSummitsList))
+                .ignore(field(UserChallenge::getUserSummitsSet))
                 .create();
 
         List<UserSummit> userSummits = Instancio.ofList(UserSummit.class)
@@ -41,7 +39,7 @@ class UserChallengeMapperTest {
         //then:
         Assertions.assertThat(actual).isNotNull();
         Assertions.assertThat(actual).extracting(UserChallengeDto::id).isEqualTo(userChallenge.getId());
-        Assertions.assertThat(actual).extracting(UserChallengeDto::userSummitsList, InstanceOfAssertFactories.list(UserSummitDto.class))
+        Assertions.assertThat(actual).extracting(UserChallengeDto::userSummitsSet, InstanceOfAssertFactories.iterable(UserSummitDto.class))
                 .size().isEqualTo(3);
     }
 

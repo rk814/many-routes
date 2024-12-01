@@ -6,7 +6,8 @@ import com.codecool.kgp.entity.UserChallenge;
 import com.codecool.kgp.entity.UserSummit;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class UserChallengeMapper {
@@ -24,7 +25,7 @@ public class UserChallengeMapper {
                 userChallenge.getStartedAt(),
                 userChallenge.getFinishedAt(),
                 userChallenge.getScore(),
-                getSummitListDto(userChallenge.getUserSummitsList())
+                getSummitSetDto(userChallenge.getUserSummitsSet())
         );
     }
 
@@ -39,8 +40,8 @@ public class UserChallengeMapper {
         );
     }
 
-    private List<UserSummitDto> getSummitListDto(List<UserSummit> userSummitList) {
-        return userSummitList.stream().map(s -> {
+    private Set<UserSummitDto> getSummitSetDto(Set<UserSummit> userSummitSet) {
+        return userSummitSet.stream().map(s -> {
                     Summit summit = s.getSummit();
                     return new UserSummitDto(
                             s.getId(),
@@ -48,11 +49,11 @@ public class UserChallengeMapper {
                             s.getUserChallenge().getId(),
                             s.getConqueredAt(),
 
-                            summit.getChallengesList().stream().map(ch -> new ChallengeSimpleDto(
+                            summit.getChallengesSet().stream().map(ch -> new ChallengeSimpleDto(
                                     ch.getId(),
                                     ch.getName(),
                                     ch.getStatus()
-                            )).toList(),
+                            )).collect(Collectors.toSet()),
                             summit.getName(),
                             summit.getCoordinatesArray(),
                             summit.getMountainRange(),
@@ -64,7 +65,7 @@ public class UserChallengeMapper {
                             summit.getStatus().name()
                     );
                 }
-        ).toList();
+        ).collect(Collectors.toSet());
     }
 
 }

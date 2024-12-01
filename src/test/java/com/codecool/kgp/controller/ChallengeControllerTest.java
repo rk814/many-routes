@@ -15,7 +15,6 @@ import com.codecool.kgp.repository.UserRepository;
 import com.codecool.kgp.service.ChallengeService;
 import com.codecool.kgp.service.CustomUserDetailsService;
 import com.google.gson.Gson;
-import org.apache.catalina.core.ApplicationContext;
 import org.hamcrest.Matchers;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
@@ -34,6 +33,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -112,7 +112,7 @@ class ChallengeControllerTest {
                 .andExpect(jsonPath("$[0].name").exists())
                 .andExpect(jsonPath("$[0].status").exists())
                 .andExpect(jsonPath("$[0].description").exists())
-                .andExpect(jsonPath("$[0].summitsList").exists());
+                .andExpect(jsonPath("$[0].summitsSet").exists());
 
         Mockito.verify(challengeService).getAllChallenges(eq(Status.ACTIVE), argThat(Objects::nonNull));
         Mockito.verify(challengeMapper, Mockito.times(3)).mapEntityToDto(any(Challenge.class), argThat(Objects::nonNull));
@@ -143,13 +143,13 @@ class ChallengeControllerTest {
         List<String> fields = List.of("id", "status");
         List<Challenge> challenges = Instancio.ofList(Challenge.class).size(1)
                 .set(field(Challenge::getStatus), Status.ACTIVE)
-                .ignore(field(Challenge::getSummitsList))
+                .ignore(field(Challenge::getSummitsSet))
                 .ignore(field(Challenge::getName))
                 .ignore(field(Challenge::getDescription))
                 .create();
         ChallengeDto challengeDto = Instancio.of(ChallengeDto.class)
                 .set(field(ChallengeDto::status), Status.ACTIVE)
-                .ignore(field(ChallengeDto::summitsList))
+                .ignore(field(ChallengeDto::summitsSet))
                 .ignore(field(ChallengeDto::name))
                 .ignore(field(ChallengeDto::description))
                 .create();
@@ -177,7 +177,7 @@ class ChallengeControllerTest {
     @WithMockCustomUser(username = "adam_wanderlust", role = ADMIN, id = "5c39c496-ff63-4c8a-bad4-47d6a97053e7")
     void getChallenges_shouldReturnAllActiveChallengesWithSummitsFields() throws Exception {
         //given:
-        List<String> fields = List.of("summitsList");
+        List<String> fields = List.of("summitsSet");
         List<Challenge> challenges = Instancio.ofList(Challenge.class).size(1)
                 .set(field(Challenge::getStatus), Status.ACTIVE)
                 .create();
@@ -196,7 +196,7 @@ class ChallengeControllerTest {
         //then:
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(1))
-                .andExpect(jsonPath("$[0].summitsList").exists())
+                .andExpect(jsonPath("$[0].summitsSet").exists())
                 .andExpect(jsonPath("$[0].id").doesNotExist())
                 .andExpect(jsonPath("$[0].status").doesNotExist())
                 .andExpect(jsonPath("$[0].name").doesNotExist())
@@ -355,11 +355,11 @@ class ChallengeControllerTest {
     void attachSummit_shouldReturnChallengeWithAddedSummit() throws Exception {
         //given:
         Challenge challenge = Instancio.of(Challenge.class)
-                .setBlank(field(Challenge::getSummitsList))
+                .setBlank(field(Challenge::getSummitsSet))
                 .create();
         Summit summit = Instancio.create(Summit.class);
         ChallengeDto challengeDto = Instancio.of(ChallengeDto.class)
-                .set(field(ChallengeDto::summitsList), List.of(new SummitSimpleDto(summit.getId(), summit.getName(),
+                .set(field(ChallengeDto::summitsSet), Set.of(new SummitSimpleDto(summit.getId(), summit.getName(),
                         summit.getMountainRange(), summit.getMountainChain(), summit.getHeight(), summit.getStatus().toString())))
                 .create();
         Mockito.when(challengeService.attachSummitToChallenge(summit.getId(), challenge.getId())).thenReturn(challenge);
@@ -371,8 +371,8 @@ class ChallengeControllerTest {
 
         //then:
         response.andExpect(status().isOk())
-                .andExpect(jsonPath("$.summitsList.size()").value(1))
-                .andExpect(jsonPath("$.summitsList[0].id").value(summit.getId().toString()));
+                .andExpect(jsonPath("$.summitsSet.size()").value(1))
+                .andExpect(jsonPath("$.summitsSet[*].id").value(Matchers.containsInAnyOrder(summit.getId().toString())));
 
         verify(challengeService).attachSummitToChallenge(summit.getId(), challenge.getId());
     }
@@ -394,10 +394,10 @@ class ChallengeControllerTest {
         //given:
         Summit summit = Instancio.create(Summit.class);
         Challenge challenge = Instancio.of(Challenge.class)
-                .set(field(Challenge::getSummitsList), List.of(summit))
+                .set(field(Challenge::getSummitsSet), Set.of(summit))
                 .create();
         ChallengeDto challengeDto = Instancio.of(ChallengeDto.class)
-                .setBlank(field(ChallengeDto::summitsList))
+                .setBlank(field(ChallengeDto::summitsSet))
                 .create();
         Mockito.when(challengeService.detachSummitFromChallenge(summit.getId(), challenge.getId())).thenReturn(challenge);
         Mockito.when(challengeMapper.mapEntityToDto(challenge)).thenReturn(challengeDto);
@@ -408,7 +408,7 @@ class ChallengeControllerTest {
 
         //then:
         response.andExpect(status().isOk())
-                .andExpect(jsonPath("$.summitsList").isEmpty());
+                .andExpect(jsonPath("$.summitsSet").isEmpty());
 
         verify(challengeService).detachSummitFromChallenge(summit.getId(), challenge.getId());
     }

@@ -60,9 +60,9 @@ class UserChallengeRepositoryTest {
                 .satisfies(uch -> {
                     Assertions.assertThat(uch.getScore()).isEqualTo(30);
                     Assertions.assertThat(uch.getChallenge().getId()).isEqualTo(UUID.fromString("4c39c496-ff63-4c8a-bad4-47d6a97053e7"));
-                    Assertions.assertThat(uch.getUserSummitsList()).isNotEmpty();
+                    Assertions.assertThat(uch.getUserSummitsSet()).isNotEmpty();
                 })
-                .extracting(UserChallenge::getUserSummitsList, InstanceOfAssertFactories.list(UserSummit.class))
+                .extracting(UserChallenge::getUserSummitsSet, InstanceOfAssertFactories.iterable(UserSummit.class))
                 .extracting(us->us.getSummit().getName())
                 .contains("summit1", "summit2");
     }

@@ -17,6 +17,6 @@ public interface SummitRepository extends JpaRepository<Summit, UUID> {
 
     List<Summit> findAllByStatus(Status status);
 
-    @Query("SELECT s FROM Summit s LEFT JOIN FETCH s.challengesList ch WHERE s.status=:status")
+    @Query("SELECT s FROM Summit s LEFT JOIN FETCH s.challengesSet ch WHERE s.status=:status")
     List<Summit> findAllByStatusWithChallenges(Status status);
 }

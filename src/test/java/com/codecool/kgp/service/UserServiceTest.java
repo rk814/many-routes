@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.instancio.Select.field;
@@ -155,9 +156,9 @@ class UserServiceTest {
         UUID id = UUID.randomUUID();
         User user = Instancio.of(User.class)
                 .set(field(User::getId), id)
-                .setBlank(field(User::getUserChallenges))
+                .setBlank(field(User::getUserChallengesSet))
                 .create();
-        user.setUserChallenges(List.of(
+        user.setUserChallengesSet(Set.of(
                 Instancio.of(UserChallenge.class)
                         .set(field(UserChallenge::getScore), 10)
                         .create(),
@@ -180,7 +181,7 @@ class UserServiceTest {
         UUID id = UUID.randomUUID();
         User user = Instancio.of(User.class)
                 .set(field(User::getId), id)
-                .setBlank(field(User::getUserChallenges))
+                .setBlank(field(User::getUserChallengesSet))
                 .create();
         Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(user));
 

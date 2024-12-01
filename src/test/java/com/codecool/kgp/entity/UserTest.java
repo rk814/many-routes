@@ -1,16 +1,13 @@
 package com.codecool.kgp.entity;
 
 import com.codecool.kgp.controller.dto.UserRequestDto;
-import com.codecool.kgp.entity.User;
 import com.codecool.kgp.entity.geography.Coordinates;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.instancio.Instancio;
-import org.instancio.InstancioClassApi;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.instancio.Select.field;
 
@@ -104,7 +101,7 @@ class UserTest {
     void assignUserChallenge_shouldAssignUserChallenge() {
         //given:
         User user = Instancio.of(User.class)
-                .set(field(User::getUserChallenges), Instancio.ofList(UserChallenge.class).size(4).create())
+                .set(field(User::getUserChallengesSet), Instancio.ofSet(UserChallenge.class).size(4).create())
                 .create();
         UserChallenge userChallenge = Instancio.create(UserChallenge.class);
 
@@ -112,7 +109,7 @@ class UserTest {
         user.assignUserChallenge(userChallenge);
 
         //then:
-        Assertions.assertThat(user).extracting(User::getUserChallenges, InstanceOfAssertFactories.list(UserChallenge.class))
+        Assertions.assertThat(user).extracting(User::getUserChallengesSet, InstanceOfAssertFactories.iterable(UserChallenge.class))
                 .isNotEmpty()
                 .contains(userChallenge)
                 .size().isEqualTo(5);

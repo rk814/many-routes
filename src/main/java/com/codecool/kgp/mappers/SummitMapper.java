@@ -10,6 +10,7 @@ import com.codecool.kgp.entity.geography.Coordinates;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -24,12 +25,12 @@ public class SummitMapper {
 
         return new SummitDto(
                 fields.contains("id") ? summit.getId() : null,
-                fields.contains("challengesList") ?
-                        summit.getChallengesList().stream().map(ch -> new ChallengeSimpleDto(
+                fields.contains("challengesSet") ?
+                        summit.getChallengesSet().stream().map(ch -> new ChallengeSimpleDto(
                                 ch.getId(),
                                 ch.getName(),
                                 ch.getStatus()
-                        )).toList() : null,
+                        )).collect(Collectors.toSet()) : null,
                 fields.contains("name") ? summit.getName() : null,
                 fields.contains("coordinates") ? summit.getCoordinatesArray() : null,
                 fields.contains("mountainRange") ? summit.getMountainRange() : null,
@@ -69,7 +70,7 @@ public class SummitMapper {
 
     private List<String> getAllFields() {
         List<String> fields;
-        fields = List.of("id", "challengesList", "name", "coordinates", "mountainRange", "mountainChain", "height", "description", "guideNotes", "score", "status");
+        fields = List.of("id", "challengesSet", "name", "coordinates", "mountainRange", "mountainChain", "height", "description", "guideNotes", "score", "status");
         return fields;
     }
 }

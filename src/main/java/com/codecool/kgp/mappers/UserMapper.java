@@ -2,13 +2,13 @@ package com.codecool.kgp.mappers;
 
 import com.codecool.kgp.controller.dto.UserChallengeSimpleDto;
 import com.codecool.kgp.entity.UserChallenge;
-import com.codecool.kgp.entity.enums.Role;
 import com.codecool.kgp.controller.dto.UserDto;
-import com.codecool.kgp.controller.dto.UserRequestDto;
 import com.codecool.kgp.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class UserMapper {
@@ -32,11 +32,11 @@ public class UserMapper {
                 user.getCreatedAt(),
                 user.getDeletedAt(),
                 user.getRole().name(),
-                getUserChallengeDtoList(user.getUserChallenges())
+                getUserChallengeDtoList(user.getUserChallengesSet())
         );
     }
 
-    private List<UserChallengeSimpleDto> getUserChallengeDtoList(List<UserChallenge> userChallenges) {
-        return userChallenges.stream().map(userChallengeMapper::mapEntityToSimpleDto).toList();
+    private Set<UserChallengeSimpleDto> getUserChallengeDtoList(Set<UserChallenge> userChallenges) {
+        return userChallenges.stream().map(userChallengeMapper::mapEntityToSimpleDto).collect(Collectors.toSet());
     }
 }

@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 
 import static org.instancio.Select.field;
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserChallengeTest {
 
@@ -16,7 +15,7 @@ class UserChallengeTest {
     void assignUserSummit_shouldAddSummit() {
         //given:
         UserChallenge userChallenge = Instancio.of(UserChallenge.class)
-                .ignore(field(UserChallenge::getUserSummitsList))
+                .ignore(field(UserChallenge::getUserSummitsSet))
                 .create();
         UserSummit userSummit = Instancio.create(UserSummit.class);
 
@@ -24,7 +23,7 @@ class UserChallengeTest {
         userChallenge.assignUserSummit(userSummit);
 
         //then:
-        Assertions.assertThat(userChallenge).extracting(UserChallenge::getUserSummitsList, InstanceOfAssertFactories.list(UserSummit.class))
+        Assertions.assertThat(userChallenge).extracting(UserChallenge::getUserSummitsSet, InstanceOfAssertFactories.iterable(UserSummit.class))
                 .isNotEmpty()
                 .containsExactly(userSummit);
     }

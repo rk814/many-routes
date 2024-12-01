@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.instancio.Select.field;
@@ -105,14 +106,14 @@ class SummitServiceTest {
         //given:
         Challenge challenge = Instancio.create(Challenge.class);
         Summit summit = Instancio.of(Summit.class)
-                .set(field(Summit::getChallengesList), List.of(challenge))
+                .set(field(Summit::getChallengesSet), Set.of(challenge))
                 .create();
 
         //when:
         summit.removeChallenge(challenge);
 
         //then:
-        Assertions.assertThat(summit).extracting(Summit::getChallengesList, InstanceOfAssertFactories.list(Challenge.class))
+        Assertions.assertThat(summit).extracting(Summit::getChallengesSet, InstanceOfAssertFactories.iterable(Challenge.class))
                 .isEmpty();
     }
 
@@ -121,14 +122,14 @@ class SummitServiceTest {
         //given:
         Challenge challenge = Instancio.create(Challenge.class);
         Summit summit = Instancio.of(Summit.class)
-                .generate(field(Summit::getChallengesList), gen -> gen.collection().size(3))
+                .generate(field(Summit::getChallengesSet), gen -> gen.collection().size(3))
                 .create();
 
         //when:
         summit.removeChallenge(challenge);
 
         //then:
-        Assertions.assertThat(summit).extracting(Summit::getChallengesList, InstanceOfAssertFactories.list(Challenge.class))
+        Assertions.assertThat(summit).extracting(Summit::getChallengesSet, InstanceOfAssertFactories.iterable(Challenge.class))
                 .doesNotContain(challenge)
                 .size().isEqualTo(3);
     }

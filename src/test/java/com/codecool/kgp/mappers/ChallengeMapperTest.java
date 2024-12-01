@@ -20,7 +20,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -41,11 +43,11 @@ class ChallengeMapperTest {
                 Arguments.of(UUID.fromString("8c24db8e-37cb-4c80-90df-b00c2448d134"), "hard", "hard challenge",
                         Status.ACTIVE, Instancio.ofList(Summit.class).size(3).create(), null),
                 Arguments.of(UUID.fromString("3b9649b8-4e49-40f6-9a7e-38e53e9102ba"), "light", "light challenge",
-                        Status.ACTIVE, Instancio.ofList(Summit.class).size(2).create(), List.of("id", "name", "summitsList")),
+                        Status.ACTIVE, Instancio.ofList(Summit.class).size(2).create(), List.of("id", "name", "summitsSet")),
                 Arguments.of(UUID.fromString("f31ff492-4959-4637-a2cc-98779f365eed"), "old", "old challenge",
-                        Status.REMOVED, Instancio.ofList(Summit.class).size(1).create(), List.of("id", "name", "description", "status", "summitsList")),
+                        Status.REMOVED, Instancio.ofList(Summit.class).size(1).create(), List.of("id", "name", "description", "status", "summitsSet")),
                 Arguments.of(UUID.fromString("225bd451-1f2d-44fe-8141-7fc98d283dbb"), "xxx", "surprise",
-                        Status.DEVELOP, Instancio.ofList(Summit.class).size(1).create(), List.of("name", "summitsList"))
+                        Status.DEVELOP, Instancio.ofList(Summit.class).size(1).create(), List.of("name", "summitsSet"))
         );
     }
 
@@ -62,10 +64,11 @@ class ChallengeMapperTest {
         idField.set(challenge, id);
 
         SummitSimpleDto dummySummitDto = Instancio.create(SummitSimpleDto.class);
-        List<SummitSimpleDto> dummySummitDtoList = IntStream.range(0, summits.size()).mapToObj(i -> dummySummitDto).toList();
+        Set<SummitSimpleDto> dummySummitDtoSet = IntStream.range(0, summits.size())
+                .mapToObj(i -> dummySummitDto).collect(Collectors.toSet());
         Mockito.when(summitMapper.mapEntityToSimpleDto(any(Summit.class)))
                 .thenReturn(dummySummitDto);
-        ChallengeDto result = new ChallengeDto(id, name, description, status, dummySummitDtoList);
+        ChallengeDto result = new ChallengeDto(id, name, description, status, dummySummitDtoSet);
 
         //when:
         ChallengeDto actual = challengeMapper.mapEntityToDto(challenge);
@@ -75,7 +78,7 @@ class ChallengeMapperTest {
         Assertions.assertThat(actual).extracting("name").isEqualTo(result.name());
         Assertions.assertThat(actual).extracting("description").isEqualTo(result.description());
         Assertions.assertThat(actual).extracting("status").isEqualTo(result.status());
-        Assertions.assertThat(actual).extracting("summitsList").isEqualTo(result.summitsList());
+        Assertions.assertThat(actual).extracting("summitsSet").isEqualTo(result.summitsSet());
     }
 
     @ParameterizedTest
@@ -91,10 +94,11 @@ class ChallengeMapperTest {
         idField.set(challenge, id);
 
         SummitSimpleDto dummySummitDto = Instancio.create(SummitSimpleDto.class);
-        List<SummitSimpleDto> dummySummitDtoList = IntStream.range(0, summits.size()).mapToObj(i -> dummySummitDto).toList();
+        Set<SummitSimpleDto> dummySummitDtoSet = IntStream.range(0, summits.size())
+                .mapToObj(i -> dummySummitDto).collect(Collectors.toSet());
         Mockito.when(summitMapper.mapEntityToSimpleDto(any(Summit.class)))
                 .thenReturn(dummySummitDto);
-        ChallengeDto result = new ChallengeDto(id, name, description, status, dummySummitDtoList);
+        ChallengeDto result = new ChallengeDto(id, name, description, status, dummySummitDtoSet);
 
         //when:
         ChallengeDto actual = challengeMapper.mapEntityToDto(challenge, fields);
@@ -108,8 +112,8 @@ class ChallengeMapperTest {
                 .isEqualTo((fields == null || fields.contains("description")) ? result.description() : null);
         Assertions.assertThat(actual).extracting("status")
                 .isEqualTo((fields == null || fields.contains("status")) ? result.status() : null);
-        Assertions.assertThat(actual).extracting("summitsList")
-                .isEqualTo((fields == null || fields.contains("summitsList")) ? result.summitsList() : null);
+        Assertions.assertThat(actual).extracting("summitsSet")
+                .isEqualTo((fields == null || fields.contains("summitsSet")) ? result.summitsSet() : null);
     }
 
     private static Stream<Arguments> provideChallengesWithoutSummits() {
@@ -119,7 +123,7 @@ class ChallengeMapperTest {
                 Arguments.of(UUID.fromString("3b9649b8-4e49-40f6-9a7e-38e53e9102ba"), "light", "light challenge",
                         Status.ACTIVE, Instancio.ofList(Summit.class).size(2).create(), List.of("id", "name")),
                 Arguments.of(UUID.fromString("3b9649b8-4e49-40f6-9a7e-38e53e9102ba"), null, "light challenge",
-                        Status.ACTIVE, List.of(), List.of("id", "name", "summitsList")
+                        Status.ACTIVE, List.of(), List.of("id", "name", "summitsSet")
                 ));
     }
 
@@ -135,8 +139,9 @@ class ChallengeMapperTest {
         idField.set(challenge, id);
 
         SummitSimpleDto dummySummitDto = Instancio.create(SummitSimpleDto.class);
-        List<SummitSimpleDto> dummySummitDtoList = IntStream.range(0, summits.size()).mapToObj(i -> dummySummitDto).toList();
-        ChallengeDto result = new ChallengeDto(id, name, description, status, dummySummitDtoList);
+        Set<SummitSimpleDto> dummySummitDtoSet = IntStream.range(0, summits.size())
+                .mapToObj(i -> dummySummitDto).collect(Collectors.toSet());
+        ChallengeDto result = new ChallengeDto(id, name, description, status, dummySummitDtoSet);
 
         //when:
         ChallengeDto actual = challengeMapper.mapEntityToDto(challenge, fields);
@@ -150,7 +155,7 @@ class ChallengeMapperTest {
                 .isEqualTo((fields == null || fields.contains("description")) ? result.description() : null);
         Assertions.assertThat(actual).extracting("status")
                 .isEqualTo((fields == null || fields.contains("status")) ? result.status() : null);
-        Assertions.assertThat(actual).extracting("summitsList").isEqualTo(null);
+        Assertions.assertThat(actual).extracting("summitsSet").isEqualTo(null);
     }
 
     @ParameterizedTest
