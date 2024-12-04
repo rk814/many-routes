@@ -5,6 +5,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 psd/
+application-secrets.yml
 
 ### STS ###
 .apt_generated

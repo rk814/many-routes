@@ -92,7 +92,7 @@ Additional functionalities like pictures uploading, adding comments, and other u
 
 ## Run
 To run the application: 
-Configure the database connection in application.yml.  
+Configure the database connection and key (secrets) using application-template-secrets.yml.  
 Add sample data from sql/sample.sql  
 Build and run the application with the following commands:  
 
