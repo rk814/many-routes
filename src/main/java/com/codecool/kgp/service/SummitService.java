@@ -2,8 +2,10 @@ package com.codecool.kgp.service;
 
 import com.codecool.kgp.entity.Summit;
 import com.codecool.kgp.entity.enums.Status;
+import com.codecool.kgp.errorhandling.DuplicateEntryException;
 import com.codecool.kgp.repository.SummitRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,9 +40,14 @@ public class SummitService {
     }
 
     public Summit addNewSummit(Summit summit) {
-        Summit summitFromDb = summitRepository.save(summit);
-        log.info("New summit with id '{}' was saved", summit.getId());
-        return summitFromDb;
+        try {
+            Summit summitFromDb = summitRepository.save(summit);
+            log.info("New summit with id '{}' was saved", summit.getId());
+            return summitFromDb;
+        } catch (DataIntegrityViolationException e) {
+            log.warn("Summit with summitName '{}' already exists", summit.getName());
+            throw new DuplicateEntryException("Summit summitName must be unique");
+        }
     }
 
     public Summit updateSummit(UUID summitId, Summit summit) {

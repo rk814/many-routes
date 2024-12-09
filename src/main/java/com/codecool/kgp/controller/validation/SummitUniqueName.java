@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SummitUniqueName {
-    String message() default "Ta nazwa jest już zajęta";
+    String message() default "Miejsce o tej nazwie już istnieje";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

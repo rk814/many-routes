@@ -3,12 +3,14 @@ package com.codecool.kgp.service;
 import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.Summit;
 import com.codecool.kgp.entity.enums.Status;
+import com.codecool.kgp.errorhandling.DuplicateEntryException;
 import com.codecool.kgp.repository.SummitRepository;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.instancio.Instancio;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -83,6 +85,22 @@ class SummitServiceTest {
         //then:
         Assertions.assertThat(actual).isEqualTo(summit);
         Mockito.verify(summitRepository).save(summit);
+    }
+
+    @Test
+    void addNewSummit_shouldThrowDuplicateEntryException() {
+        //given:
+        Summit summit = Instancio.create(Summit.class);
+
+        Mockito.when(summitRepository.save(summit)).thenThrow(new DataIntegrityViolationException("exception"));
+
+        //when:
+        Throwable actual = Assertions.catchThrowable(() -> summitService.addNewSummit(summit));
+
+        //then:
+        Assertions.assertThat(actual).isInstanceOf(DuplicateEntryException.class)
+                        .hasMessageContaining("unique");
+        Mockito.verify(summitRepository, Mockito.times(1)).save(summit);
     }
 
     @Test

@@ -174,7 +174,14 @@ class UserControllerTest {
     void updateUser_shouldUpdateUser() throws Exception {
         //given:
         UUID id = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
-        UserRequestDto dto = Instancio.of(UserRequestDto.class).create();
+        UserRequestDto dto = new UserRequestDto(
+                "test@email.com",
+                "new user",
+                "+48123456789",
+                true,
+                12.99,
+                -3.88
+        );
         User updatedUser = Instancio.of(User.class)
                 .set(field(User::getUserChallengesSet), Instancio.ofSet(UserChallenge.class).size(1).create()).create();
 
@@ -202,6 +209,29 @@ class UserControllerTest {
         ArgumentCaptor<UserRequestDto> captor = ArgumentCaptor.forClass(UserRequestDto.class);
         Mockito.verify(userService).updateUser(Mockito.eq(id), captor.capture());
         Assertions.assertEquals(captor.getValue(), dto);
+    }
+
+    @Test
+    @WithMockCustomUser(username = "user", role = USER, id = "123e4567-e89b-12d3-a456-426614174000")
+    void updateUser_shouldUpdateReturn404() throws Exception {
+        //given:
+        UUID id = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+        UserRequestDto dto = new UserRequestDto(
+                "",
+                "new user",
+                "+48123456789",
+                true,
+                12.99,
+                -3.88
+        );
+
+        //when:
+        var response = mockMvc.perform(put("/api/v1/users/me")
+                .contentType("application/json")
+                .content(gson.toJson(dto)));
+
+        //then:
+        response.andExpect(status().isNotFound());
     }
 
     @Test

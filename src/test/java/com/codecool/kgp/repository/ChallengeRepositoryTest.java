@@ -10,9 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @DataJpaTest
@@ -79,5 +81,21 @@ class ChallengeRepositoryTest {
                         .isTrue())
                 .extracting(Challenge::getSummitsSet, InstanceOfAssertFactories.iterable(Summit.class))
                 .hasSize(2);
+    }
+
+    @Test
+    void save_shouldThrowDataIntegrityViolationException_whenChallengeWithThatNameAlreadyExists(){
+        //given:
+        Challenge challenge = new Challenge("Conqueror", "Super hard challenge", Status.ACTIVE);
+
+        //when:
+        Throwable actual = Assertions.catchThrowable(() -> {
+                    testedRepository.save(challenge);
+                    testedRepository.flush();
+                }
+        );
+
+        //then:
+        Assertions.assertThat(actual).isInstanceOf(DataIntegrityViolationException.class);
     }
 }

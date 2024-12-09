@@ -229,8 +229,8 @@ class ChallengeControllerTest {
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(8));
         response.andExpect(jsonPath("$[*].status").value(Matchers.everyItem(Matchers.is("ACTIVE"))));
-        Mockito.verify(challengeService).getUnstartedChallenges(eq(userId), eq(Status.ACTIVE), argThat(arg->arg!=null));
-        Mockito.verify(challengeMapper, Mockito.times(8)).mapEntityToDto(any(Challenge.class), argThat(arg->arg!=null));
+        Mockito.verify(challengeService).getUnstartedChallenges(eq(userId), eq(Status.ACTIVE), argThat(arg -> arg != null));
+        Mockito.verify(challengeMapper, Mockito.times(8)).mapEntityToDto(any(Challenge.class), argThat(arg -> arg != null));
     }
 
     @Test
@@ -315,7 +315,11 @@ class ChallengeControllerTest {
     @WithMockUser(roles = ADMIN)
     void addChallenge_shouldReturnNewAddedChallenge() throws Exception {
         //given:
-        ChallengeRequestDto requestDto = Instancio.create(ChallengeRequestDto.class);
+        ChallengeRequestDto requestDto = new ChallengeRequestDto(
+                "test name",
+                "test description",
+                Status.ACTIVE
+        );
         Challenge challenge = Instancio.create(Challenge.class);
         Challenge savedChallenge = Instancio.create(Challenge.class);
         ChallengeDto dto = Instancio.create(ChallengeDto.class);
@@ -339,7 +343,11 @@ class ChallengeControllerTest {
     @WithMockUser(roles = USER)
     void addChallenge_shouldReturn403() throws Exception {
         //given:
-        ChallengeRequestDto requestDto = Instancio.create(ChallengeRequestDto.class);
+        ChallengeRequestDto requestDto = new ChallengeRequestDto(
+                "test name",
+                "test description",
+                Status.ACTIVE
+        );
 
         //when:
         var response = mockMvc.perform(post("/api/v1/challenges/add-new")
@@ -348,6 +356,25 @@ class ChallengeControllerTest {
 
         //then:
         response.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = USER)
+    void addChallenge_shouldReturn404() throws Exception {
+        //given:
+        ChallengeRequestDto requestDto = new ChallengeRequestDto(
+                "",
+                "test description",
+                Status.ACTIVE
+        );
+
+        //when:
+        var response = mockMvc.perform(post("/api/v1/challenges/add-new")
+                .contentType("application/json")
+                .content(gson.toJson(requestDto)));
+
+        //then:
+        response.andExpect(status().isNotFound());
     }
 
     @Test
@@ -429,7 +456,11 @@ class ChallengeControllerTest {
     void updateChallenge_shouldReturnUpdatedChallenge() throws Exception {
         //given:
         Challenge oldChallenge = Instancio.create(Challenge.class);
-        ChallengeRequestDto requestDto = Instancio.create(ChallengeRequestDto.class);
+        ChallengeRequestDto requestDto = new ChallengeRequestDto(
+                "test name",
+                "test description",
+                Status.ACTIVE
+        );
         Challenge requestedUpdate = new Challenge(requestDto.name(), requestDto.description(), requestDto.status());
         Challenge updatedChallenge = Instancio.of(Challenge.class)
                 .set(field(Challenge::getId), oldChallenge.getId())
@@ -468,7 +499,11 @@ class ChallengeControllerTest {
     void updateChallenge_shouldReturn403() throws Exception {
         //given:
         UUID id = UUID.randomUUID();
-        ChallengeRequestDto requestDto = Instancio.create(ChallengeRequestDto.class);
+        ChallengeRequestDto requestDto = new ChallengeRequestDto(
+                "test name",
+                "test description",
+                Status.ACTIVE
+        );
 
         //when:
         var response = mockMvc.perform(put("/api/v1/challenges/" + id)
@@ -477,6 +512,26 @@ class ChallengeControllerTest {
 
         //then:
         response.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = ADMIN)
+    void updateChallenge_shouldReturn404() throws Exception {
+        //given:
+        UUID id = UUID.randomUUID();
+        ChallengeRequestDto requestDto = new ChallengeRequestDto(
+                "",
+                "test description",
+                Status.ACTIVE
+        );
+
+        //when:
+        var response = mockMvc.perform(put("/api/v1/challenges/" + id)
+                .contentType("application/json")
+                .content(gson.toJson(requestDto)));
+
+        //then:
+        response.andExpect(status().isNotFound());
     }
 
     @Test

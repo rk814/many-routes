@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ChallengeUniqueName {
-    String message() default "Ta nazwa jest już zajęta";
+    String message() default "Wyzwanie o tej samej nazwie już istnieje";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

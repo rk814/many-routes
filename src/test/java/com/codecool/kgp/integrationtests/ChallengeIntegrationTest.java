@@ -1,6 +1,9 @@
 package com.codecool.kgp.integrationtests;
 
 import com.codecool.kgp.config.WebSignInClient;
+import com.codecool.kgp.entity.Challenge;
+import com.codecool.kgp.entity.enums.Status;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -93,5 +97,23 @@ public class ChallengeIntegrationTest {
                 .jsonPath("$[*].status").value(everyItem(is("ACTIVE")))
                 .jsonPath("$").value(hasItem(hasEntry("id", "8b7935ab-5e22-485b-ae18-7e5ad88b005e")))
                 .jsonPath("$").value(hasItem(hasKey("summitsSet")));
+    }
+
+    @Test
+    void addChallenge_shouldReturn409_whenTryToSaveChallengeWithSameNameAsInDb(){
+        //given:
+        Challenge challenge = new Challenge("Conqueror", "Some exciting description.", Status.ACTIVE);
+
+        //when&then:
+        webTestClient.post()
+                .uri("api/v1/challenges/add-new")
+                .header("Authorization", "Bearer " + token)
+                .bodyValue(challenge)
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.CONFLICT)
+                .expectBody()
+                .jsonPath("$").isNotEmpty()
+                .jsonPath("$.message").exists()
+                .jsonPath("$.message").value(Matchers.containsString("już istnieje"));
     }
 }

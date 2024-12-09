@@ -12,10 +12,7 @@ import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -37,7 +34,7 @@ public class WeatherController {
     }
 
 
-    @RequestMapping("/get-current-weather")
+    @GetMapping(value = "/current-weather", produces = "application/json")
     @Operation(summary = "Get current weather on the given location")
     @RolesAllowed({USER, ADMIN})
     public JsonObject getCurrentWeather(
@@ -52,7 +49,7 @@ public class WeatherController {
         return weatherService.getCurrentWeather(latitude, longitude);
     }
 
-    @RequestMapping("/get-weather-forecast")
+    @GetMapping(value = "/weather-forecast", produces = "application/json")
     @Operation(summary = "Get weather forecast on the given location")
     @RolesAllowed({USER, ADMIN})
     public JsonObject getForecast(
@@ -68,7 +65,7 @@ public class WeatherController {
         return weatherService.getWeatherForecast(latitude, longitude, days);
     }
 
-    @RequestMapping("/get-current-astronomy")
+    @GetMapping(value = "/current-astronomy", produces = "application/json")
     @Operation(summary = "Get current astronomy on the given location")
     @RolesAllowed({USER, ADMIN})
     public AstronomyDto getAstronomy(

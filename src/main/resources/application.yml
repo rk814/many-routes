@@ -11,3 +11,8 @@ spring:
 #    locations: db/migration/postgres
 server:
   port: 8080
+springdoc:
+  default-consumes-media-type: "application/json"
+  default-produces-media-type: "application/json"
+  swagger-ui:
+    operationsSorter: "method"
