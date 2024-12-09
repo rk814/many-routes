@@ -41,7 +41,7 @@ class WeatherControllerTest {
         double longitude = 45.6;
 
         // when:
-        ResultActions response = mockMvc.perform(get("/api/v1/weather/get-current-weather")
+        ResultActions response = mockMvc.perform(get("/api/v1/weather/current-weather")
                 .param("latitude", String.valueOf(latitude))
                 .param("longitude", String.valueOf(longitude)));
 
@@ -59,7 +59,7 @@ class WeatherControllerTest {
         int days = 3;
 
         // when:
-        ResultActions response = mockMvc.perform(get("/api/v1/weather/get-weather-forecast")
+        ResultActions response = mockMvc.perform(get("/api/v1/weather/weather-forecast")
                 .param("latitude", String.valueOf(latitude))
                 .param("longitude", String.valueOf(longitude))
                 .param("days", String.valueOf(days)));
@@ -78,7 +78,7 @@ class WeatherControllerTest {
 
 
         // when:
-        ResultActions response = mockMvc.perform(get("/api/v1/weather/get-current-astronomy")
+        ResultActions response = mockMvc.perform(get("/api/v1/weather/current-astronomy")
                 .param("latitude", String.valueOf(latitude))
                 .param("longitude", String.valueOf(longitude)));
 
@@ -96,7 +96,7 @@ class WeatherControllerTest {
 
 
         // when:
-        ResultActions response = mockMvc.perform(get("/api/v1/weather/get-current-astronomy")
+        ResultActions response = mockMvc.perform(get("/api/v1/weather/current-astronomy")
                 .param("latitude", latitude)
                 .param("longitude", String.valueOf(longitude)));
 
