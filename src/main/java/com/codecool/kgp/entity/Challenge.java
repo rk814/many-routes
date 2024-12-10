@@ -14,10 +14,11 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
+@Table(name = "challenge")
 public class Challenge {
 
     @Id
-    private final UUID id = UUID.randomUUID();
+    private UUID id = UUID.randomUUID();
 
     @NotBlank
     @EqualsAndHashCode.Include
@@ -41,6 +42,10 @@ public class Challenge {
     }
 
     @ManyToMany
+    @JoinTable(name = "challenge_summit",
+            joinColumns = @JoinColumn(name = "challenge_id"),
+            inverseJoinColumns = @JoinColumn(name = "summit_id")
+    )
     private Set<Summit> summitsSet = new HashSet<>();
 
 

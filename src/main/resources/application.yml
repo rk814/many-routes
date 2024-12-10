@@ -7,8 +7,8 @@ spring:
       ddl-auto: validate
     show-sql: true
     open-in-view: false
-#  flyway:
-#    locations: db/migration/postgres
+  flyway:
+    locations: db/migration
 server:
   port: 8080
 springdoc:

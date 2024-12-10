@@ -15,7 +15,7 @@
     <description>El Proyecto Grande</description>
     <properties>
         <java.version>17</java.version>
-        <flyway.version>10.15.2</flyway.version>
+        <flyway.version>11.0.1</flyway.version>
         <jjwt.version>0.12.6</jjwt.version>
     </properties>
 
@@ -77,18 +77,17 @@
             <artifactId>postgresql</artifactId>
             <version>42.7.3</version>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.flywaydb</groupId>-->
-        <!--            <artifactId>flyway-core</artifactId>-->
-        <!--            <version>${flyway.version}</version>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.flywaydb</groupId>-->
-        <!--            <artifactId>flyway-database-postgresql</artifactId>-->
-        <!--            <version>${flyway.version}</version>-->
-        <!--            <scope>runtime</scope>-->
-        <!--        </dependency>-->
-        <!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>${flyway.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+            <version>${flyway.version}</version>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId> <!--swagger-->

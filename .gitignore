@@ -6,6 +6,7 @@ target/
 !**/src/test/**/target/
 psd/
 application-secrets.yml
+.jpb/
 
 ### STS ###
 .apt_generated

@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class Summit {
 
     @Id
-    private final UUID id = UUID.randomUUID();
+    private UUID id = UUID.randomUUID();
 
     @NotBlank
     @EqualsAndHashCode.Include
