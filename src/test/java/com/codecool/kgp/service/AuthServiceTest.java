@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import static com.codecool.kgp.entity.enums.Role.ADMIN;
 import static com.codecool.kgp.entity.enums.Role.USER;
 import static org.instancio.Select.field;
 import static org.mockito.ArgumentMatchers.any;
@@ -100,6 +101,59 @@ class AuthServiceTest {
 
         //when:
         Throwable actual = Assertions.catchThrowable(()-> authService.registerNewUser(dto));
+
+        //then:
+        Assertions.assertThat(actual).isInstanceOf(DuplicateEntryException.class)
+                .hasMessageContaining("już");
+    }
+
+    @Test
+    void registerNewAdmin_shouldSaveNewAdmin() {
+        //given:
+        RegistrationRequestDto dto = Instancio.create(RegistrationRequestDto.class);
+        User newUser = Instancio.of(User.class)
+                .generate(field(User::getCreatedAt), gen->gen.temporal().localDateTime().past())
+                .create();
+        String hashPassword = "$2a$10$iUmwmDFunQg08R/FuzhAyelka9UhHLCWGsojFiKQgN7UkBpPt4qdK";
+        Mockito.when(passwordEncoder.encode(dto.password())).thenReturn(hashPassword);
+        Mockito.when(userRepository.save(any())).thenReturn(newUser);
+        AtomicReference<UserDto> result = new AtomicReference<>();
+        Mockito.when(userMapper.mapEntityToDto(newUser)).thenAnswer(invocation ->
+                {
+                    User user = invocation.getArgument(0);
+                    Set<UserChallengeSimpleDto> userChallengesDto = user.getUserChallengesSet().stream()
+                            .map(uch -> new UserChallengeSimpleDto(uch.getId(), user.getId(), uch.getChallenge().getName(),
+                                    uch.getStartedAt(), uch.getFinishedAt(), uch.getScore())).collect(Collectors.toSet());
+                    result.set(new UserDto(user.getId(), user.getLogin(), user.getName(), user.getEmail(),
+                            user.getCoordinatesArray(), user.getPhone(), user.getNewsletter(), user.getCreatedAt(),
+                            user.getDeletedAt(), user.getRole().toString(), userChallengesDto));
+                    return result.get();
+                }
+        );
+
+        //when:
+        authService.registerNewAdmin(dto);
+
+        //then:
+        ArgumentCaptor<String> passwordCaptor = ArgumentCaptor.forClass(String.class);
+        Mockito.verify(passwordEncoder).encode(passwordCaptor.capture());
+        Assertions.assertThat(passwordCaptor.getValue()).isEqualTo(dto.password());
+        ArgumentCaptor<User> saveCaptor = ArgumentCaptor.forClass(User.class);
+        Mockito.verify(userRepository).save(saveCaptor.capture());
+        Assertions.assertThat(saveCaptor.getValue().getLogin()).isEqualTo(dto.login());
+        Assertions.assertThat(saveCaptor.getValue().getHashPassword()).isEqualTo(hashPassword);
+        Assertions.assertThat(saveCaptor.getValue().getEmail()).isEqualTo(dto.email());
+        Assertions.assertThat(saveCaptor.getValue().getRole()).isEqualTo(ADMIN);
+    }
+
+    @Test
+    void registerNewAdmin_shouldThrowDuplicateEntryException() {
+        //given:
+        RegistrationRequestDto dto = Instancio.create(RegistrationRequestDto.class);
+        Mockito.when(userRepository.save(any())).thenThrow(new DataIntegrityViolationException("Duplication!"));
+
+        //when:
+        Throwable actual = Assertions.catchThrowable(()-> authService.registerNewAdmin(dto));
 
         //then:
         Assertions.assertThat(actual).isInstanceOf(DuplicateEntryException.class)

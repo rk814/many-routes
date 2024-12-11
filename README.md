@@ -103,3 +103,6 @@ Build and run the application with the following commands:
 `mvn clean package`  
 
 `mvn exec:java -Dexec.mainClass="com.codecool.kgp.KgpBackendApplication"`
+
+After starting application with fresh date base, admin user will be initialized with default credentials:
+`login: admin` `password: admin`
