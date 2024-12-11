@@ -93,8 +93,13 @@ Additional functionalities like pictures uploading, adding comments, and other u
 ## Run
 To run the application: 
 Configure the database connection and key (secrets) using application-template-secrets.yml.  
-Add sample data from sql/sample.sql  
+Add sample data from one sql files:
+
+`sql\crown_of_polish_mountains.sql`  
+`sql\mounds_of_crocow.sql`
+
 Build and run the application with the following commands:  
 
-`mvn clean install`  
+`mvn clean package`  
+
 `mvn exec:java -Dexec.mainClass="com.codecool.kgp.KgpBackendApplication"`
