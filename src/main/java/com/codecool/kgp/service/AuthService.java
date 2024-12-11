@@ -28,11 +28,20 @@ public class AuthService {
     }
 
     public UserDto registerNewUser(RegistrationRequestDto dto) {
+        return register(dto, Role.USER);
+    }
+
+    public void registerNewAdmin(RegistrationRequestDto dto) {
+        register(dto, Role.ADMIN);
+    }
+
+
+    private UserDto register(RegistrationRequestDto dto, Role role) {
         User user = new User(
                 dto.login(),
                 passwordEncoder.encode(dto.password()),
                 dto.email(),
-                Role.USER
+                role
         );
 
         try {
