@@ -10,7 +10,7 @@ TRUNCATE TABLE user_challenge;
 TRUNCATE TABLE challenge_summit;
 TRUNCATE TABLE summit;
 TRUNCATE TABLE challenge;
-TRUNCATE TABLE actor;
+TRUNCATE TABLE actor CASCADE;
 
 
 DROP TABLE IF EXISTS flyway_schema_history CASCADE;
