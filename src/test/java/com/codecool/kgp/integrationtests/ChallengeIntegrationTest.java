@@ -13,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import static org.hamcrest.Matchers.*;
@@ -21,7 +20,6 @@ import static org.hamcrest.Matchers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = "/sql/test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
-@TestPropertySource(properties = {"spring.datasource.url = jdbc:h2:mem:testdb1;MODE=PostgreSQL;", "server.port=0"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ChallengeIntegrationTest {

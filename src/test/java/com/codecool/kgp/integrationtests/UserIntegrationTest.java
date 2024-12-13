@@ -11,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -19,7 +18,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = "/sql/test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
-@TestPropertySource(properties = {"spring.datasource.url = jdbc:h2:mem:testdb2;MODE=PostgreSQL;", "server.port=0"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserIntegrationTest {
