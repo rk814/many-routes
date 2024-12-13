@@ -1,6 +1,7 @@
 package com.codecool.kgp.controller;
 
 
+import com.codecool.kgp.config.swagger.ApiGeneralResponses;
 import com.codecool.kgp.controller.dto.weather.AstronomyDto;
 import com.codecool.kgp.entity.CustomUserDetails;
 import com.codecool.kgp.service.WeatherService;
@@ -35,7 +36,8 @@ public class WeatherController {
 
 
     @GetMapping(value = "/current-weather", produces = "application/json")
-    @Operation(summary = "Get current weather on the given location")
+    @Operation(summary = "Retrieve current weather on the given location")
+    @ApiGeneralResponses
     @RolesAllowed({USER, ADMIN})
     public JsonObject getCurrentWeather(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -50,7 +52,8 @@ public class WeatherController {
     }
 
     @GetMapping(value = "/weather-forecast", produces = "application/json")
-    @Operation(summary = "Get weather forecast on the given location")
+    @Operation(summary = "Retrieve weather forecast on the given location")
+    @ApiGeneralResponses
     @RolesAllowed({USER, ADMIN})
     public JsonObject getForecast(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -66,7 +69,8 @@ public class WeatherController {
     }
 
     @GetMapping(value = "/current-astronomy", produces = "application/json")
-    @Operation(summary = "Get current astronomy on the given location")
+    @Operation(summary = "Retrieve current astronomy on the given location")
+    @ApiGeneralResponses
     @RolesAllowed({USER, ADMIN})
     public AstronomyDto getAstronomy(
             @AuthenticationPrincipal UserDetails userDetails,

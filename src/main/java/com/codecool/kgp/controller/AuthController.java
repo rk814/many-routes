@@ -1,11 +1,17 @@
 package com.codecool.kgp.controller;
 
+import com.codecool.kgp.errorhandling.ErrorResponseDto;
 import com.codecool.kgp.service.JwtTokenService;
 import com.codecool.kgp.controller.dto.jwt.JwtTokenRequestDto;
 import com.codecool.kgp.controller.dto.jwt.JwtTokenResponseDto;
 import com.codecool.kgp.service.AuthService;
 import com.codecool.kgp.controller.dto.RegistrationRequestDto;
 import com.codecool.kgp.controller.dto.UserDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,6 +35,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Login user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Request has succeeded"),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+    })
     public JwtTokenResponseDto login(@Valid @RequestBody JwtTokenRequestDto dto) {
         log.info("Received request for sign in with login '{}'", dto.login());
 
@@ -41,6 +53,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @Operation(summary = "Register user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Request has succeeded"),
+            @ApiResponse(responseCode = "409", description = "Name conflict",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+    })
     public UserDto registerUser(@Valid @RequestBody RegistrationRequestDto dto) {
         log.info("Received request for user registration with login '{}'", dto.login());
         return authService.registerNewUser(dto);

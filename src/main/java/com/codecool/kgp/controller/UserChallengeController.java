@@ -1,5 +1,8 @@
 package com.codecool.kgp.controller;
 
+import com.codecool.kgp.config.swagger.ApiCreateResponses;
+import com.codecool.kgp.config.swagger.ApiGeneralResponses;
+import com.codecool.kgp.config.swagger.ApiRetrieveUpdateDeleteResponses;
 import com.codecool.kgp.entity.CustomUserDetails;
 import com.codecool.kgp.entity.UserChallenge;
 import com.codecool.kgp.entity.UserSummit;
@@ -7,6 +10,7 @@ import com.codecool.kgp.entity.enums.UserChallengeFilter;
 import com.codecool.kgp.mappers.UserChallengeMapper;
 import com.codecool.kgp.service.UserChallengeService;
 import com.codecool.kgp.validators.UserChallengeValidator;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +48,8 @@ public class UserChallengeController {
     }
 
     @GetMapping("/")
+    @Operation(summary = "Retrieve all user challenges")
+    @ApiGeneralResponses
     @RolesAllowed({USER})
     public List<UserChallengeDto> getUserChallenges(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -62,6 +68,8 @@ public class UserChallengeController {
     }
 
     @GetMapping("/{userChallengeId}")
+    @Operation(summary = "Retrieve user challenge")
+    @ApiRetrieveUpdateDeleteResponses
     @RolesAllowed({USER})
     public UserChallengeDto getUserChallenge(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID userChallengeId) {
         CustomUserDetails cud = (CustomUserDetails) userDetails;
@@ -72,6 +80,8 @@ public class UserChallengeController {
     }
 
     @PostMapping(value = "/add-new/{challengeId}")
+    @Operation(summary = "Create new user challenge")
+    @ApiCreateResponses
     @RolesAllowed({USER})
     public UserChallengeDto addUserChallenge(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID challengeId) {
         CustomUserDetails cud = (CustomUserDetails) userDetails;
@@ -82,6 +92,8 @@ public class UserChallengeController {
     }
 
     @PostMapping(value = "/{userChallengeId}/user-summits/{userSummitId}/conquer/{score}")
+    @Operation(summary = "Mark user summit as conquer")
+    @ApiRetrieveUpdateDeleteResponses
     @RolesAllowed({USER})
     public UserChallengeDto conquerSummit(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID userChallengeId,
                                           @PathVariable UUID userSummitId, @PathVariable int score) {
@@ -94,6 +106,8 @@ public class UserChallengeController {
     }
 
     @PatchMapping("/{userChallengeId}/update-score/{score}")
+    @Operation(summary = "Update user challenge")
+    @ApiRetrieveUpdateDeleteResponses
     @RolesAllowed({USER})
     public void updateUserChallengeScore(@AuthenticationPrincipal UserDetails userDetails,
                                          @PathVariable UUID userChallengeId, @PathVariable Integer score) {
@@ -105,6 +119,8 @@ public class UserChallengeController {
     }
 
     @DeleteMapping("/{userChallengeId}")
+    @Operation(summary = "Delete user challenge")
+    @ApiRetrieveUpdateDeleteResponses
     @RolesAllowed({USER})
     public void deleteUserChallenge(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID userChallengeId) {
         CustomUserDetails cud = (CustomUserDetails) userDetails;
@@ -112,5 +128,4 @@ public class UserChallengeController {
         log.info("Received request to delete user challenge with id '{}' for user with id '{}'", userChallengeId, userId);
         userChallengeService.deleteUserChallenge(userChallengeId);
     }
-    // TODO soft delete
 }

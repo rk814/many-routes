@@ -1,15 +1,21 @@
 package com.codecool.kgp.controller;
 
+import com.codecool.kgp.config.swagger.ApiCreateResponses;
+import com.codecool.kgp.config.swagger.ApiGeneralResponses;
+import com.codecool.kgp.config.swagger.ApiRetrieveUpdateDeleteResponses;
 import com.codecool.kgp.controller.dto.ChallengeDto;
 import com.codecool.kgp.controller.dto.ChallengeRequestDto;
 import com.codecool.kgp.entity.enums.ChallengeFilter;
 import com.codecool.kgp.entity.Challenge;
 import com.codecool.kgp.entity.CustomUserDetails;
 import com.codecool.kgp.entity.enums.Status;
+import com.codecool.kgp.errorhandling.ErrorResponseDto;
 import com.codecool.kgp.mappers.ChallengeMapper;
 import com.codecool.kgp.service.ChallengeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.annotation.security.RolesAllowed;
@@ -42,12 +48,9 @@ public class ChallengeController {
     }
 
 
-    @Operation(summary = "Get list of challenges (default ACTIVE)")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "List of Challenges found"),
-            @ApiResponse(responseCode = "400", description = "Invalid status supplied")
-    })
-    @GetMapping(value = "/", produces = "application/json")
+    @GetMapping(value = "/")
+    @Operation(summary = "Retrieve list of challenges (default ACTIVE)")
+    @ApiGeneralResponses
     @RolesAllowed({ADMIN, USER})
     public List<ChallengeDto> getChallenges(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -73,6 +76,8 @@ public class ChallengeController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Receive challenge")
+    @ApiRetrieveUpdateDeleteResponses
     @RolesAllowed({ADMIN, USER})
     public ChallengeDto getChallenge(@PathVariable UUID id) {
         log.info("Received request for the challenge with id '{}'", id);
@@ -81,6 +86,8 @@ public class ChallengeController {
     }
 
     @PostMapping("/add-new")
+    @Operation(summary = "Create new challenge")
+    @ApiCreateResponses
     @RolesAllowed({ADMIN})
     public ChallengeDto addChallenge(@RequestBody @Valid ChallengeRequestDto dto) {
         log.info("Received request for a new challenge");
@@ -90,6 +97,8 @@ public class ChallengeController {
     }
 
     @PostMapping("/{id}/attach-summit/{summitId}")
+    @Operation(summary = "Attach summit to challenge")
+    @ApiRetrieveUpdateDeleteResponses
     @RolesAllowed({ADMIN})
     public ChallengeDto attachSummit(@PathVariable UUID id, @PathVariable UUID summitId) {
         log.info("Received request for attach summit with id '{}' to challenge with id '{}'", summitId, id);
@@ -98,6 +107,8 @@ public class ChallengeController {
     }
 
     @PostMapping("/{id}/detach-summit/{summitId}")
+    @Operation(summary = "Detach summit from challenge")
+    @ApiRetrieveUpdateDeleteResponses
     @RolesAllowed({ADMIN})
     public ChallengeDto detachSummit(@PathVariable UUID id, @PathVariable UUID summitId) {
         log.info("Received request for detach summit with id '{}' to challenge with id '{}'", summitId, id);
@@ -106,6 +117,8 @@ public class ChallengeController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update challenge")
+    @ApiRetrieveUpdateDeleteResponses
     @RolesAllowed({ADMIN})
     public ChallengeDto updateChallenge(@PathVariable UUID id, @RequestBody @Valid ChallengeRequestDto dto) {
         log.info("Received request for update challenge with id '{}'", id);
@@ -115,6 +128,8 @@ public class ChallengeController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete challenge")
+    @ApiRetrieveUpdateDeleteResponses
     @RolesAllowed({ADMIN})
     public void deleteChallenge(@PathVariable UUID id) {
         log.info("Received request for delete challenge with id '{}'", id);

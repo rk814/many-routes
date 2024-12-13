@@ -1,11 +1,14 @@
 package com.codecool.kgp.controller;
 
+import com.codecool.kgp.config.swagger.ApiGeneralResponses;
+import com.codecool.kgp.config.swagger.ApiRetrieveUpdateDeleteResponses;
 import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.controller.dto.UserRequestDto;
 import com.codecool.kgp.entity.CustomUserDetails;
 import com.codecool.kgp.entity.User;
 import com.codecool.kgp.mappers.UserMapper;
 import com.codecool.kgp.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
@@ -40,6 +43,8 @@ public class UserController {
 
 
     @GetMapping("/")
+    @Operation(summary = "Retrieve all users")
+    @ApiGeneralResponses
     @RolesAllowed({ADMIN})
     public List<UserDto> getUsers() {
         log.info("Received request for all users");
@@ -47,7 +52,9 @@ public class UserController {
         return users.stream().map(userMapper::mapEntityToDto).toList();
     }
 
-    @GetMapping("/{id}") // in use
+    @GetMapping("/{id}")
+    @Operation(summary = "Retrieve user by id")
+    @ApiRetrieveUpdateDeleteResponses
     @RolesAllowed(ADMIN)
     public UserDto getUser(@PathVariable UUID id) {
         log.info("Received request for user with id '{}'", id);
@@ -55,7 +62,9 @@ public class UserController {
         return userMapper.mapEntityToDto(user);
     }
 
-    @GetMapping("/me") // in use
+    @GetMapping("/me")
+    @Operation(summary = "Retrieve user")
+    @ApiGeneralResponses
     @RolesAllowed({USER, ADMIN})
     public UserDto getUser(@AuthenticationPrincipal UserDetails userDetails) {
         CustomUserDetails cud = (CustomUserDetails) userDetails;
@@ -65,7 +74,9 @@ public class UserController {
         return userMapper.mapEntityToDto(user);
     }
 
-    @GetMapping("/me/score") // in use
+    @GetMapping("/me/score")
+    @Operation(summary = "Retrieve user score")
+    @ApiGeneralResponses
     @RolesAllowed({USER, ADMIN})
     public int getUserScore(@AuthenticationPrincipal UserDetails userDetails) {
         CustomUserDetails cud = (CustomUserDetails) userDetails;
@@ -74,7 +85,9 @@ public class UserController {
         return userService.getUserScore(id);
     }
 
-    @PutMapping("/me") // in use
+    @PutMapping("/me")
+    @Operation(summary = "Update user")
+    @ApiGeneralResponses
     @RolesAllowed({USER, ADMIN})
     public UserDto updateUser(@AuthenticationPrincipal UserDetails userDetails, @Valid @RequestBody UserRequestDto dto) {
         CustomUserDetails cud = (CustomUserDetails) userDetails;
@@ -84,8 +97,10 @@ public class UserController {
         return userMapper.mapEntityToDto(user);
     }
 
-    @RolesAllowed({USER, ADMIN})
     @DeleteMapping("/me")
+    @Operation(summary = "Delete user")
+    @ApiGeneralResponses
+    @RolesAllowed({USER, ADMIN})
     public void deleteUser(@AuthenticationPrincipal UserDetails userDetails,
                            @Parameter(description = "If true, user will be hard deleted")
                            @RequestParam(required = false, defaultValue = "false") boolean hardDelete) {
@@ -95,8 +110,10 @@ public class UserController {
         deleteOrSoftDeleteUser(id, hardDelete);
     }
 
-    @RolesAllowed(ADMIN)
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete user by id")
+    @ApiRetrieveUpdateDeleteResponses
+    @RolesAllowed(ADMIN)
     public void deleteUser(@PathVariable UUID id,
                            @Parameter(description = "If true, user will be hard deleted")
                            @RequestParam(required = false, defaultValue = "false") boolean hardDelete) {

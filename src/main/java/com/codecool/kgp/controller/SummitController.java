@@ -1,5 +1,8 @@
 package com.codecool.kgp.controller;
 
+import com.codecool.kgp.config.swagger.ApiCreateResponses;
+import com.codecool.kgp.config.swagger.ApiGeneralResponses;
+import com.codecool.kgp.config.swagger.ApiRetrieveUpdateDeleteResponses;
 import com.codecool.kgp.controller.dto.SummitDto;
 import com.codecool.kgp.controller.dto.SummitRequestDto;
 import com.codecool.kgp.entity.Summit;
@@ -35,9 +38,10 @@ public class SummitController {
         this.summitMapper = summitMapper;
     }
 
-    @RolesAllowed(ADMIN)
-    @Operation(summary = "Get list of summitsSet (default ACTIVE)")
     @GetMapping("/")
+    @Operation(summary = "Retrieve list of summits (default ACTIVE)")
+    @ApiGeneralResponses
+    @RolesAllowed(ADMIN)
     public List<SummitDto> getSummits(
             @Parameter(description = "Challenge status")
             @RequestParam(required = false, defaultValue = "ACTIVE") Status status,
@@ -50,6 +54,8 @@ public class SummitController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Retrieve summit")
+    @ApiRetrieveUpdateDeleteResponses
     @RolesAllowed({ADMIN, USER})
     public SummitDto getSummit(@PathVariable UUID id) {
         log.info("Received request for summit with id '{}'", id);
@@ -58,6 +64,8 @@ public class SummitController {
     }
 
     @PostMapping("/add-new")
+    @Operation(summary = "Create new summit")
+    @ApiCreateResponses
     @RolesAllowed(ADMIN)
     public SummitDto addSummit(@RequestBody @Valid SummitRequestDto dto) {
         log.info("Received request for new summit");
@@ -67,6 +75,8 @@ public class SummitController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update summit")
+    @ApiRetrieveUpdateDeleteResponses
     @RolesAllowed(ADMIN)
     public SummitDto updateSummit(@PathVariable UUID id, @RequestBody @Valid SummitRequestDto dto) {
         log.info("Received request for summit update with id '{}'", id);
@@ -76,6 +86,8 @@ public class SummitController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete summit")
+    @ApiRetrieveUpdateDeleteResponses
     @RolesAllowed(ADMIN)
     public void deleteSummit(@PathVariable UUID id) {
         log.info("Received request for summit delete with id '{}'", id);
