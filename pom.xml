@@ -8,11 +8,11 @@
         <version>3.3.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.codecool</groupId>
-    <artifactId>kgp-backend</artifactId>
+    <groupId>pl.manyroutes</groupId>
+    <artifactId>many-routes</artifactId>
     <version>0.1.0-SNAPSHOT</version>
-    <name>kgp</name>
-    <description>El Proyecto Grande</description>
+    <name>many-routes</name>
+    <description>Many Routes Api</description>
     <properties>
         <java.version>17</java.version>
         <flyway.version>11.0.1</flyway.version>

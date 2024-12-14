@@ -2,10 +2,10 @@
 
 <configuration>
     <!--        <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" />-->
-    <conversionRule conversionWord="customHighlight" converterClass="com.codecool.kgp.config.LogbackCustomHighlight"/>
+    <conversionRule conversionWord="customHighlight" converterClass="pl.manyroutes.config.LogbackCustomHighlight"/>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-    <property name="DIR" value="${user.home}/logs/got"/>
-    <property name="FILE" value="got"/>
+    <property name="DIR" value="${user.home}/logs/many-routes"/>
+    <property name="FILE" value="many-routes"/>
 
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -42,12 +42,12 @@
         </rollingPolicy>
     </appender>
 
-    <logger name="com.codecool.kgp.service" level="INFO" additivity="false">
+    <logger name="pl.manyroutes.service" level="INFO" additivity="false">
         <appender-ref ref="File"/>
         <appender-ref ref="ConsoleBold"/>
     </logger>
 
-    <logger name="com.codecool.kgp.controller" level="INFO" additivity="false">
+    <logger name="pl.manyroutes.controller" level="INFO" additivity="false">
         <appender-ref ref="File"/>
         <appender-ref ref="ConsoleBold"/>
     </logger>
