@@ -16,9 +16,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @ApiGeneralResponses
 @ApiResponses(value = {
-        @ApiResponse(responseCode = "400", description = "Endpoint not found or invalid Id type",
+        @ApiResponse(responseCode = "400", description = "A required parameter is either missing or has an incorrect type",
                 content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))),
-        @ApiResponse(responseCode = "404", description = "Id not found",
+        @ApiResponse(responseCode = "404", description = "Data not found",
                 content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))
         )
 })
