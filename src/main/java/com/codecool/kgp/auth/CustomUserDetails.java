@@ -1,4 +1,4 @@
-package com.codecool.kgp.entity;
+package com.codecool.kgp.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

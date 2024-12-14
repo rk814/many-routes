@@ -1,6 +1,6 @@
 package com.codecool.kgp.config;
 
-import com.codecool.kgp.entity.CustomUserDetails;
+import com.codecool.kgp.auth.CustomUserDetails;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;

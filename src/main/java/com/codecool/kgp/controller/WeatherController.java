@@ -3,9 +3,8 @@ package com.codecool.kgp.controller;
 
 import com.codecool.kgp.config.swagger.ApiGeneralResponses;
 import com.codecool.kgp.controller.dto.weather.AstronomyDto;
-import com.codecool.kgp.entity.CustomUserDetails;
+import com.codecool.kgp.auth.CustomUserDetails;
 import com.codecool.kgp.service.WeatherService;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.JsonObject;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

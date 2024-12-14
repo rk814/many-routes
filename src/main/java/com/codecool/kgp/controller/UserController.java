@@ -4,7 +4,7 @@ import com.codecool.kgp.config.swagger.ApiGeneralResponses;
 import com.codecool.kgp.config.swagger.ApiRetrieveUpdateDeleteResponses;
 import com.codecool.kgp.controller.dto.UserDto;
 import com.codecool.kgp.controller.dto.UserRequestDto;
-import com.codecool.kgp.entity.CustomUserDetails;
+import com.codecool.kgp.auth.CustomUserDetails;
 import com.codecool.kgp.entity.User;
 import com.codecool.kgp.mappers.UserMapper;
 import com.codecool.kgp.service.UserService;

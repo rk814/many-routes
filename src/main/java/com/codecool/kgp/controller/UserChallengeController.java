@@ -3,7 +3,7 @@ package com.codecool.kgp.controller;
 import com.codecool.kgp.config.swagger.ApiCreateResponses;
 import com.codecool.kgp.config.swagger.ApiGeneralResponses;
 import com.codecool.kgp.config.swagger.ApiRetrieveUpdateDeleteResponses;
-import com.codecool.kgp.entity.CustomUserDetails;
+import com.codecool.kgp.auth.CustomUserDetails;
 import com.codecool.kgp.entity.UserChallenge;
 import com.codecool.kgp.entity.UserSummit;
 import com.codecool.kgp.entity.enums.UserChallengeFilter;
