@@ -71,6 +71,26 @@ class WeatherControllerTest {
 
     @Test
     @WithMockCustomUser(username = "adam_wanderlust", role = ADMIN, id = "5c39c496-ff63-4c8a-bad4-47d6a97053e7")
+    void getWeatherForecast_shouldReturn400_whenDaysParameterIsNotInValidRange() throws Exception {
+        // given:
+        double latitude = 12.3;
+        double longitude = 45.6;
+        int days = 8; // max 7
+
+        // when:
+        ResultActions response = mockMvc.perform(get("/api/v1/weather/weather-forecast")
+                .param("latitude", String.valueOf(latitude))
+                .param("longitude", String.valueOf(longitude))
+                .param("days", String.valueOf(days)));
+
+        //then:
+        response.andExpect(status().isBadRequest());
+        Mockito.verify(weatherService, Mockito.times(0))
+                .getWeatherForecast(any(Double.class),any(Double.class), any(Integer.class));
+    }
+
+    @Test
+    @WithMockCustomUser(username = "adam_wanderlust", role = ADMIN, id = "5c39c496-ff63-4c8a-bad4-47d6a97053e7")
     void getCurrentAstronomy_shouldReturnJson() throws Exception {
         // given:
         double latitude = 12.3;
@@ -89,7 +109,7 @@ class WeatherControllerTest {
 
     @Test
     @WithMockCustomUser(username = "adam_wanderlust", role = ADMIN, id = "5c39c496-ff63-4c8a-bad4-47d6a97053e7")
-    void getCurrentAstronomy_shouldReturn400() throws Exception {
+    void getCurrentAstronomy_shouldReturn400_whenParameterTypeDoseNotMatch() throws Exception {
         // given:
         String latitude = "xx.x";
         double longitude = 45.6;
@@ -98,6 +118,22 @@ class WeatherControllerTest {
         // when:
         ResultActions response = mockMvc.perform(get("/api/v1/weather/current-astronomy")
                 .param("latitude", latitude)
+                .param("longitude", String.valueOf(longitude)));
+
+        //then:
+        response.andExpect(status().isBadRequest());
+        Mockito.verify(weatherService, Mockito.times(0)).getCurrentAstronomy(any(Double.class), any(Double.class));
+    }
+
+    @Test
+    @WithMockCustomUser(username = "adam_wanderlust", role = ADMIN, id = "5c39c496-ff63-4c8a-bad4-47d6a97053e7")
+    void getCurrentAstronomy_shouldReturn400_whenRequiredParameterIsObsolete() throws Exception {
+        // given:
+        double longitude = 45.6;
+
+
+        // when:
+        ResultActions response = mockMvc.perform(get("/api/v1/weather/current-astronomy")
                 .param("longitude", String.valueOf(longitude)));
 
         //then:

@@ -9,6 +9,8 @@ import com.google.gson.JsonObject;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -57,9 +59,9 @@ public class WeatherController {
     public JsonObject getForecast(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam double latitude,
-            @RequestParam double longitude, //todo check ?
-            @Parameter(description = "Number of days for the forecast. Maximum 7 days.") //todo check
-            @RequestParam int days
+            @RequestParam double longitude,
+            @Parameter(description = "Number of days for the forecast. Maximum 7 days.")
+            @RequestParam @Min(value = 1, message = "Min value is 1") @Max(value = 7, message = "Max value is 7") int days
     ) {
         CustomUserDetails cud = (CustomUserDetails) userDetails;
         UUID userId = cud.getUserId();
