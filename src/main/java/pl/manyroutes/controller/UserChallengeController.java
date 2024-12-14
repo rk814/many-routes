@@ -5,11 +5,10 @@ import pl.manyroutes.config.swagger.ApiGeneralResponses;
 import pl.manyroutes.config.swagger.ApiRetrieveUpdateDeleteResponses;
 import pl.manyroutes.auth.CustomUserDetails;
 import pl.manyroutes.entity.UserChallenge;
-import pl.manyroutes.entity.UserSummit;
 import pl.manyroutes.entity.enums.UserChallengeFilter;
 import pl.manyroutes.mappers.UserChallengeMapper;
 import pl.manyroutes.service.UserChallengeService;
-import pl.manyroutes.validators.UserChallengeValidator;
+import pl.manyroutes.validators.ValidScore;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.security.RolesAllowed;
@@ -34,14 +33,11 @@ public class UserChallengeController {
 
     private final UserChallengeService userChallengeService;
 
-    private final UserChallengeValidator userChallengeValidator;
-
     private final UserChallengeMapper userChallengeMapper;
 
 
-    public UserChallengeController(UserChallengeService userChallengeService, UserChallengeValidator userChallengeValidator, UserChallengeMapper userChallengeMapper) {
+    public UserChallengeController(UserChallengeService userChallengeService, UserChallengeMapper userChallengeMapper) {
         this.userChallengeService = userChallengeService;
-        this.userChallengeValidator = userChallengeValidator;
         this.userChallengeMapper = userChallengeMapper;
 
     }
@@ -95,11 +91,10 @@ public class UserChallengeController {
     @ApiRetrieveUpdateDeleteResponses
     @RolesAllowed({SpringSecurityConfig.USER})
     public UserChallengeDto conquerSummit(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID userChallengeId,
-                                          @PathVariable UUID userSummitId, @PathVariable int score) {
+                                          @PathVariable UUID userSummitId, @PathVariable @ValidScore int score) {
         CustomUserDetails cud = (CustomUserDetails) userDetails;
         UUID userId = cud.getUserId();
         log.info("Received request to conquer user summit with id '{}' and id '{}'", userSummitId, userId);
-        userChallengeValidator.validateScore(UserSummit.class, userSummitId, score);
         UserChallenge userChallenge = userChallengeService.setSummitConquered(userChallengeId, userSummitId, score);
         return userChallengeMapper.mapEntityToDto(userChallenge);
     }
@@ -109,11 +104,10 @@ public class UserChallengeController {
     @ApiRetrieveUpdateDeleteResponses
     @RolesAllowed({SpringSecurityConfig.USER})
     public void updateUserChallengeScore(@AuthenticationPrincipal UserDetails userDetails,
-                                         @PathVariable UUID userChallengeId, @PathVariable Integer score) {
+                                         @PathVariable UUID userChallengeId, @PathVariable @ValidScore Integer score) {
         CustomUserDetails cud = (CustomUserDetails) userDetails;
         UUID userId = cud.getUserId();
         log.info("Received request to update score of user challenge with id '{}' for user with id '{}'", userChallengeId, userId);
-        userChallengeValidator.validateScore(UserChallenge.class, userChallengeId, score);
         userChallengeService.setUserChallengeScore(userChallengeId, score);
     }
 

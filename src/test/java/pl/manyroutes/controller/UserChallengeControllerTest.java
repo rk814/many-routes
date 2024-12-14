@@ -14,7 +14,6 @@ import pl.manyroutes.repository.UserChallengeRepository;
 import pl.manyroutes.repository.UserRepository;
 import pl.manyroutes.service.CustomUserDetailsService;
 import pl.manyroutes.service.UserChallengeService;
-import pl.manyroutes.validators.UserChallengeValidator;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,11 +34,11 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.instancio.Select.field;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Import({SpringSecurityConfig.class, CustomUserDetailsService.class})
 @WebMvcTest(UserChallengeController.class)
@@ -50,9 +49,6 @@ class UserChallengeControllerTest {
 
     @MockBean
     UserChallengeService userChallengeService;
-
-    @MockBean
-    UserChallengeValidator userChallengeValidator;
 
     @MockBean
     UserChallengeMapper userChallengeMapper;
@@ -257,7 +253,6 @@ class UserChallengeControllerTest {
                 .andExpect(jsonPath("$.userSummitsSet.size()").value(1))
                 .andExpect(jsonPath("$.userSummitsSet[0].conqueredAt").isNotEmpty())
                 .andExpect(jsonPath("$.score").value(score));
-        Mockito.verify(userChallengeValidator).validateScore(UserSummit.class, userSummit.getId(), score);
         Mockito.verify(userChallengeService).setSummitConquered(userChallenge.getId(), userSummit.getId(), score);
     }
 
@@ -282,8 +277,34 @@ class UserChallengeControllerTest {
 
         // then:
         response.andExpect(status().isOk());
-        Mockito.verify(userChallengeValidator).validateScore(UserChallenge.class, userChallenge.getId(), score);
+//        Mockito.verify(userChallengeValidator).validateScore(UserChallenge.class, userChallenge.getId(), score);
         Mockito.verify(userChallengeService).setUserChallengeScore(userChallenge.getId(), score);
+    }
+
+    @Test
+    @WithMockCustomUser(username = "bella_mystique", id = "7b92d376-cc0d-4a1a-bc2e-d8f7c9d5e5a7")
+    void updateUserChallengeScore_shouldReturn400_whenScoreIsInvalid() throws Exception {
+        // given:
+        int score = -100; //should be score >=0
+
+        UUID userId = UUID.fromString("7b92d376-cc0d-4a1a-bc2e-d8f7c9d5e5a7");
+        User user = Instancio.create(User.class);
+        setId(user, userId);
+
+        UUID conquerorChallengeId = UUID.fromString("4c39c496-ff63-4c8a-bad4-47d6a97053e7");
+        Challenge challenge = new Challenge("Conqueror", "Conquer all summits", Status.ACTIVE);
+        setId(challenge, conquerorChallengeId);
+
+        UserChallenge userChallenge = new UserChallenge(user, challenge);
+
+        // when:
+        ResultActions response = mockMvc.perform(patch("/api/v1/users/me/user-challenges/{challengeId}/update-score/{score}", userChallenge.getId(), score));
+
+        // then:
+        response.andExpect(status().isBadRequest());
+//        System.out.println(response.andReturn().getResponse().getErrorMessage());
+        response.andExpect(status().reason(containsString("score")));
+        Mockito.verify(userChallengeService, Mockito.times(0)).setUserChallengeScore(userChallenge.getId(), score);
     }
 
     @Test

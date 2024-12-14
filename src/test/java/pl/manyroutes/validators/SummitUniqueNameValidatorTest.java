@@ -1,31 +1,32 @@
-package pl.manyroutes.controller.validation;
+package pl.manyroutes.validators;
 
-import pl.manyroutes.entity.Challenge;
+import pl.manyroutes.entity.Summit;
 import pl.manyroutes.errorhandling.DuplicateEntryException;
-import pl.manyroutes.repository.ChallengeRepository;
+import pl.manyroutes.repository.SummitRepository;
 import jakarta.validation.ConstraintValidatorContext;
 import org.assertj.core.api.Assertions;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import pl.manyroutes.validators.SummitUniqueNameValidator;
 
 import java.util.Optional;
 
 
-class ChallengeUniqueNameValidatorTest {
+class SummitUniqueNameValidatorTest {
 
-    private final ChallengeRepository challengeRepository = Mockito.mock();
+    private final SummitRepository summitRepository = Mockito.mock();
 
     private final ConstraintValidatorContext context = Mockito.mock();
 
-    private final ChallengeUniqueNameValidator validator = new ChallengeUniqueNameValidator(challengeRepository);
+    private final SummitUniqueNameValidator validator = new SummitUniqueNameValidator(summitRepository);
 
 
     @Test
     void isValid_shouldReturnTrue() {
         //given:
         String name = "name";
-        Mockito.when(challengeRepository.findByName(name)).thenReturn(Optional.empty());
+        Mockito.when(summitRepository.findByName(name)).thenReturn(Optional.empty());
 
         //when:
         boolean actual = validator.isValid(name, context);
@@ -38,8 +39,8 @@ class ChallengeUniqueNameValidatorTest {
     void isValid_shouldThrown() {
         //given:
         String name = "name";
-        Challenge challenge = Instancio.create(Challenge.class);
-        Mockito.when(challengeRepository.findByName(name)).thenReturn(Optional.of(challenge));
+        Summit summit = Instancio.create(Summit.class);
+        Mockito.when(summitRepository.findByName(name)).thenReturn(Optional.of(summit));
 
         //when:
         Throwable actual = Assertions.catchThrowable(() -> validator.isValid(name, context));

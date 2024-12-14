@@ -1,6 +1,6 @@
 package pl.manyroutes.controller.dto;
 
-import pl.manyroutes.controller.validation.SummitUniqueName;
+import pl.manyroutes.validators.SummitUniqueName;
 import jakarta.validation.constraints.*;
 
 public record SummitRequestDto(

@@ -1,6 +1,6 @@
 package pl.manyroutes.controller.dto;
 
-import pl.manyroutes.controller.validation.ChallengeUniqueName;
+import pl.manyroutes.validators.ChallengeUniqueName;
 import pl.manyroutes.entity.enums.Status;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

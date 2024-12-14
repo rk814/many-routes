@@ -1,4 +1,4 @@
-package pl.manyroutes.controller.validation;
+package pl.manyroutes.validators;
 
 import pl.manyroutes.errorhandling.DuplicateEntryException;
 import pl.manyroutes.repository.ChallengeRepository;
