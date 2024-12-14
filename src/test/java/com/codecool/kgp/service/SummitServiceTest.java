@@ -14,6 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -104,10 +105,14 @@ class SummitServiceTest {
     }
 
     @Test
-    void updateSummit_shouldReturnUpdatedSummit() {
+    void updateSummit_shouldReturnUpdatedSummit() throws NoSuchFieldException, IllegalAccessException {
         //given:
         Summit oldSummit = Instancio.create(Summit.class);
         Summit newSummit = Instancio.create(Summit.class);
+        Class<?> clazz = newSummit.getClass();
+        Field field = clazz.getDeclaredField("id");
+        field.setAccessible(true);
+        field.set(newSummit, oldSummit.getId());
 
         Mockito.when(summitRepository.findById(oldSummit.getId())).thenReturn(Optional.of(oldSummit));
 
@@ -115,7 +120,15 @@ class SummitServiceTest {
         Summit actual = summitService.updateSummit(oldSummit.getId(), newSummit);
 
         //then:
-        Assertions.assertThat(actual).isEqualTo(newSummit);
+        Assertions.assertThat(actual.getName()).isEqualTo(newSummit.getName());
+        Assertions.assertThat(actual.getHeight()).isEqualTo(newSummit.getHeight());
+        Assertions.assertThat(actual.getScore()).isEqualTo(newSummit.getScore());
+        Assertions.assertThat(actual.getDescription()).isEqualTo(newSummit.getDescription());
+        Assertions.assertThat(actual.getGuideNotes()).isEqualTo(newSummit.getGuideNotes());
+        Assertions.assertThat(actual.getMountainRange()).isEqualTo(newSummit.getMountainRange());
+        Assertions.assertThat(actual.getMountainChain()).isEqualTo(newSummit.getMountainChain());
+        Assertions.assertThat(actual.getStatus()).isEqualTo(newSummit.getStatus());
+        Assertions.assertThat(actual.getCoordinates()).isEqualTo(newSummit.getCoordinates());
         Mockito.verify(summitRepository).save(newSummit);
     }
 

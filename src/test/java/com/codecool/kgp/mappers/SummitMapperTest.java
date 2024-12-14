@@ -142,6 +142,15 @@ class SummitMapperTest {
         Summit actual = summitMapper.mapRequestDtoToEntity(dto);
 
         //then:
-        Assertions.assertThat(actual).isEqualTo(result);
+        Assertions.assertThat(actual.getName()).isEqualTo(result.getName());
+        Assertions.assertThat(actual.getStatus()).isEqualTo(result.getStatus());
+        Assertions.assertThat(actual.getHeight()).isEqualTo(result.getHeight() );
+        Assertions.assertThat(actual.getScore()).isEqualTo(result.getScore() );
+        Assertions.assertThat(actual.getDescription()).isEqualTo(result.getDescription() );
+        Assertions.assertThat(actual.getGuideNotes()).isEqualTo(result.getGuideNotes() );
+        Assertions.assertThat(actual.getChallengesSet()).isEqualTo(result.getChallengesSet() );
+        Assertions.assertThat(actual.getMountainRange()).isEqualTo(result.getMountainRange() );
+        Assertions.assertThat(actual.getCoordinatesArray()).isEqualTo(result.getCoordinatesArray() );
+        Assertions.assertThat(actual.getMountainChain()).isEqualTo(result.getMountainChain() );
     }
 }

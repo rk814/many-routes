@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
 public class Summit {
 
     @Id
+    @EqualsAndHashCode.Include
     private UUID id = UUID.randomUUID();
 
     @NotBlank
-    @EqualsAndHashCode.Include
     @Column(unique = true)
     private String name;
 

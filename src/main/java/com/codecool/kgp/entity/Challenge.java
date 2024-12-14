@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 public class Challenge {
 
     @Id
+    @EqualsAndHashCode.Include
     private UUID id = UUID.randomUUID();
 
     @NotBlank
-    @EqualsAndHashCode.Include
     @Column(unique = true)
     private String name;
 

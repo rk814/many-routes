@@ -174,6 +174,8 @@ class ChallengeMapperTest {
         Challenge actual = challengeMapper.mapRequestDtoToEntity(dto);
 
         //then:
-        Assertions.assertThat(actual).isEqualTo(result);
+        Assertions.assertThat(actual.getName()).isEqualTo(result.getName());
+        Assertions.assertThat(actual.getDescription()).isEqualTo(result.getDescription());
+        Assertions.assertThat(actual.getStatus()).isEqualTo(result.getStatus());
     }
 }
