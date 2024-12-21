@@ -104,5 +104,5 @@ Build and run the application with the following commands:
 
 `mvn exec:java`
 
-After starting application with fresh date base, admin user will be initialized with default credentials:
+After starting application with fresh date base, admin user will be initialized with default credentials:  
 `login: admin` `password: admin`
